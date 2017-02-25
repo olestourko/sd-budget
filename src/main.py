@@ -1,7 +1,5 @@
 from __future__ import print_function
 
-import unittest
-
 def calculate_period(revenue=None, expenses=None, adjustments=None, income_target=None, last_balance=None):
 	"""
 	Returns the net income, new account balance, and surplus or defecit for an arbitrary time period. 
