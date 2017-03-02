@@ -4,7 +4,7 @@ import logging
 import blinker
 
 from backend.month import Month
-from frontend.frontend import Frontend
+from frontend_curses.frontend import Frontend
 
 def calculate_period(revenue=None, expenses=None, adjustments=None, income_target=None, last_balance=None):
 	"""
