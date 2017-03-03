@@ -13,19 +13,27 @@ class Period(View):
 
         closing_values = self.calculate_month_closing(self.month)
         self.screen.addstr(0, 0, "[1] Revenues", curses.A_NORMAL)
-        self.screen.addstr(0, 30, str(self.month.revenues), curses.A_NORMAL)
+        self.screen.addstr(0, 40, str(self.month.revenues), curses.A_NORMAL)
         self.screen.addstr(1, 0, "[2] Expenses", curses.A_NORMAL)
-        self.screen.addstr(1, 30, str(self.month.expenses), curses.A_NORMAL)
+        self.screen.addstr(1, 40, str(self.month.expenses), curses.A_NORMAL)
         self.screen.addstr(2, 0, "[3] Adjustments", curses.A_NORMAL)
-        self.screen.addstr(2, 30, str(self.month.adjustments), curses.A_NORMAL)
+        self.screen.addstr(2, 40, str(self.month.adjustments), curses.A_NORMAL)
         self.screen.addstr(4, 0, "[4] Net Income Target", curses.A_NORMAL)
-        self.screen.addstr(4, 30, str(self.month.income_target), curses.A_NORMAL)
+        self.screen.addstr(4, 40, str(self.month.income_target), curses.A_NORMAL)
         self.screen.addstr(5, 0, "[5] Opening Account Balance", curses.A_NORMAL)
-        self.screen.addstr(5, 30, str(self.month.opening_balance), curses.A_NORMAL)
-        self.screen.addstr(6, 4, "Closing Account Balance", curses.A_NORMAL)
-        self.screen.addstr(6, 30, str(closing_values['new_balance']), curses.A_REVERSE)
-        self.screen.addstr(7, 4, "Surplus (Defecit)", curses.A_NORMAL)
-        self.screen.addstr(7, 30, str(closing_values['surplus']), curses.A_REVERSE)
+        self.screen.addstr(5, 40, str(self.month.opening_balance), curses.A_NORMAL)
+
+        self.screen.addstr(6, 4, "Closing Account Balance (Estimated)", curses.A_NORMAL)
+        self.screen.addstr(6, 40, str(closing_values['new_balance']), curses.A_REVERSE)
+        self.screen.addstr(7, 4, "Surplus or Defecit (Estimated)", curses.A_NORMAL)
+        self.screen.addstr(7, 40, str(closing_values['surplus']), curses.A_REVERSE)
+
+        self.screen.addstr(9, 0, "[6] Closing Balance (Actual)", curses.A_NORMAL)
+        self.screen.addstr(9, 40, "", curses.A_NORMAL)
+        self.screen.addstr(10, 4, "Surplus or Defecit (Actual)", curses.A_NORMAL)
+        self.screen.addstr(10, 40, "", curses.A_REVERSE)
+
+
 
     def handle_input(self, input):
         # Returns True if input matched and handled, False otherwise

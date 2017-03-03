@@ -7,7 +7,7 @@ from backend.month import Month
 from frontend_curses.frontend import Frontend
 
 
-def calculate_period(revenue=None, expenses=None, adjustments=None, income_target=None, last_balance=None):
+def calculate_period_estimate(revenue=None, expenses=None, adjustments=None, income_target=None, last_balance=None):
     """
     Returns the net income, new account balance, and surplus or defecit for an arbitrary time period.
     """
@@ -23,8 +23,19 @@ def calculate_period(revenue=None, expenses=None, adjustments=None, income_targe
     }
 
 
+def calculate_period_closing(income_target=None, last_balance=None, closing_balance=None):
+    closing_balance_target = last_balance + income_target
+    closing_surplus = closing_balance - closing_balance_target #TODO: Carry over surplus from the previous month
+    closing_adjustment = closing_surplus
+
+    return {
+        'closing_adjustment': closing_adjustment,
+        'closing_surplus': closing_surplus
+    }
+
+
 def calculate_month_closing(month):
-    return calculate_period(month.revenues, month.expenses, month.adjustments, month.income_target,
+    return calculate_period_estimate(month.revenues, month.expenses, month.adjustments, month.income_target,
                             month.opening_balance)
 
 
