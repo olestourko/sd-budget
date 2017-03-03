@@ -8,6 +8,12 @@ class View():
         value = self.screen.getstr(maxyx[0] - 1, len(label) + 8)
         return int(value)
 
+    def read_string(self, label):
+        maxyx = self.screen.getmaxyx()
+        self.screen.addstr(maxyx[0] - 1, 0, "Enter {}:".format(label), curses.A_REVERSE)
+        value = self.screen.getstr(maxyx[0] - 1, len(label) + 8)
+        return value
+
     def draw(self, erase=True):
         if erase:
             self.screen.erase()
