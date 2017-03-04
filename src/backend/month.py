@@ -5,3 +5,7 @@ class Month():
         self.opening_balance = opening_balance
         self.adjustments = adjustments
         self.income_target = income_target
+        self.transactions = [] # Used by the scratchpad
+
+    def get_transactions_total(self):
+        return sum([transaction['amount'] for transaction in self.transactions])

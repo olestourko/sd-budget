@@ -5,11 +5,12 @@ from views.period import Period
 from views.scratch_pad import ScratchPad
 
 class Frontend:
-    calculate_month_closing = None
+    calculate_month_estimate = None
 
-    def __init__(self, month, calculate_month_closing_function):
+    def __init__(self, month, calculate_month_estimate, calculate_period_closing, ):
         self.month = month
-        self.calculate_month_closing = calculate_month_closing_function
+        self.calculate_month_estimate = calculate_month_estimate
+        self.calculate_period_closing = calculate_period_closing
         self.current_view = None
 
     def read_int(self, label):
@@ -39,8 +40,13 @@ class Frontend:
         def run_wrapped(screen):
             self.screen = screen
             # Views
-            self.period_view = Period(self.screen, self.month, self.calculate_month_closing)
-            self.scratch_pad_view = ScratchPad(self.screen)
+            self.period_view = Period(
+                self.screen,
+                self.month,
+                self.calculate_month_estimate,
+                self.calculate_period_closing
+            )
+            self.scratch_pad_view = ScratchPad(self.screen, self.month)
             self.current_view = self.period_view
 
             while True:

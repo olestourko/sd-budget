@@ -10,7 +10,7 @@ class TestCalculatePeriod(unittest.TestCase):
             expenses=1000,
             adjustments=-250,
             income_target=500,
-            last_balance=0
+            opening=0
         )
         self.assertEqual(end_values["net_income"], 750)
         self.assertEqual(end_values["new_balance"], 750)
@@ -23,7 +23,7 @@ class TestCalculatePeriod(unittest.TestCase):
             expenses=1500,
             adjustments=-500,
             income_target=500,
-            last_balance=0
+            opening=0
         )
         self.assertEqual(end_values["net_income"], 0)
         self.assertEqual(end_values["new_balance"], 0)
@@ -32,7 +32,7 @@ class TestCalculatePeriod(unittest.TestCase):
     def test_3(self):
         end_values = main.calculate_period_closing(
             income_target=500,
-            last_balance=0,
+            opening_balance=0,
             closing_balance=600
         )
         self.assertEqual(end_values["closing_surplus"], 100)
@@ -41,7 +41,7 @@ class TestCalculatePeriod(unittest.TestCase):
     def test_4(self):
         end_values = main.calculate_period_closing(
             income_target=500,
-            last_balance=500,
+            opening_balance=500,
             closing_balance=750
         )
         self.assertEqual(end_values["closing_surplus"], -250)
