@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 import curses
 import blinker
+import logging
+import datetime
+from dateutil.relativedelta import relativedelta
 from views.period import Period
 from views.scratch_pad import ScratchPad
 
@@ -9,8 +12,9 @@ class Frontend:
 
     def __init__(self, backend):
         self.backend = backend
-        self.month = backend.get_current_month()
         self.current_view = None
+        self.month = backend.get_current_month()['month']
+        self.date = datetime.date(backend.get_current_month()['year'], backend.get_current_month()['number'], 1)
 
     def read_int(self, label):
         maxyx = self.screen.getmaxyx()
@@ -20,6 +24,17 @@ class Frontend:
 
     def draw(self):
         # Renders UI that should be visible in every view
+        maxyx = self.screen.getmaxyx()
+
+        self.screen.addstr(maxyx[0] - 3, maxyx[1] - 16, self.date.strftime("%m-%Y"), curses.A_REVERSE)
+
+        label = "[P] Previous Month"
+        self.screen.addstr(maxyx[0] - 2, maxyx[1] - 20, label, curses.A_REVERSE)
+        self.screen.chgat(maxyx[0] - 2, maxyx[1] - 20, -1, curses.A_REVERSE)
+        label = "[N] Next Month"
+        self.screen.addstr(maxyx[0] - 1, maxyx[1] - 20, label, curses.A_REVERSE)
+        self.screen.chgat(maxyx[0] - 1, maxyx[1] - 20, -1, curses.A_REVERSE)
+
         if self.current_view == self.period_view:
             self.screen.addstr(self.screen.getmaxyx()[0] - 3, 0, "[M] Scratchpad", curses.A_NORMAL)
         else:
@@ -35,6 +50,18 @@ class Frontend:
         else:
             self.current_view = self.period_view
 
+    def next_month(self):
+        self.date = self.date + relativedelta(months=+1)
+        self.month = self.backend.get_month(self.date.month, self.date.year)
+        self.period_view.month = self.month
+        self.scratch_pad_view.month = self.month
+
+    def previous_month(self):
+        self.date = self.date + relativedelta(months=-1)
+        self.month = self.backend.get_month(self.date.month, self.date.year)
+        self.period_view.month = self.month
+        self.scratch_pad_view.month = self.month
+
     def run(self):
         def run_wrapped(screen):
             self.screen = screen
@@ -42,8 +69,7 @@ class Frontend:
             self.period_view = Period(
                 self.screen,
                 self.month,
-                self.backend.calculate_month_estimate,
-                self.backend.calculate_month_closing
+                self.backend
             )
             self.scratch_pad_view = ScratchPad(self.screen, self.month)
             self.current_view = self.period_view
@@ -51,14 +77,18 @@ class Frontend:
             while True:
                 self.current_view.draw(erase=True)
                 self.draw()
-                ch = chr(screen.getch())
+                input = chr(screen.getch())
                 screen.refresh()
 
-                if self.current_view.handle_input(ch):
+                if self.current_view.handle_input(input):
                     pass
-                elif ch == 'M':
+                elif input == 'M':
                     self.toggle_view()
-                elif ch == 'X':
+                elif input == 'P':
+                    self.previous_month()
+                elif input == 'N':
+                    self.next_month()
+                elif input == 'X':
                     break
 
                 blinker.signal("ui updated").send(self)

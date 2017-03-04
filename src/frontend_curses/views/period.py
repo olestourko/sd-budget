@@ -3,31 +3,28 @@ from view import View
 
 
 class Period(View):
-    def __init__(self, screen, month, calculate_month_estimate, calculate_period_closing):
+    def __init__(self, screen, month, backend):
         self.screen = screen
         self.month = month
-        self.calculate_period_estimate = calculate_month_estimate
-        self.calculate_period_closing = calculate_period_closing
-
+        self.backend = backend
         self.closing_balance = None
 
     def draw(self, erase=True):
         View.draw(self, erase)
 
-        closing_values = self.calculate_period_estimate(self.month)
+        closing_values = self.backend.calculate_month_estimate(self.month)
         self.screen.addstr(0, 0, "[1] Revenues", curses.A_NORMAL)
         self.screen.addstr(0, 40, str(self.month.revenues), curses.A_NORMAL)
         self.screen.addstr(1, 0, "[2] Expenses", curses.A_NORMAL)
         self.screen.addstr(1, 40, str(self.month.expenses), curses.A_NORMAL)
 
         if self.closing_balance is not None:
-            closing_adjustment = self.calculate_period_closing(self.month, self.closing_balance)["closing_adjustment"]
+            closing_adjustment = self.backend.calculate_month_closing(self.month, self.closing_balance)["closing_adjustment"]
             self.screen.addstr(2, 4, "Adjustments", curses.A_NORMAL)
-            self.screen.addstr(2, 40, str(closing_adjustment), curses.A_REVERSE)
+            self.screen.addstr(2, 40, str(closing_adjustment), curses.A_BOLD)
         else:
             self.screen.addstr(2, 4, "Adjustments", curses.A_NORMAL)
             self.screen.addstr(2, 40, str(self.month.get_transactions_total()), curses.A_NORMAL)
-            self.screen.addstr(2, 50, "<-- Edit with Scratchpad", curses.A_NORMAL)
 
         self.screen.addstr(4, 0, "[4] Net Income Target", curses.A_NORMAL)
         self.screen.addstr(4, 40, str(self.month.income_target), curses.A_NORMAL)
@@ -35,13 +32,13 @@ class Period(View):
         self.screen.addstr(5, 40, str(self.month.opening_balance), curses.A_NORMAL)
 
         expected_closing_balance = self.month.opening_balance + self.month.income_target
-        self.screen.addstr(6, 4, "Closing Balance (Expected)", curses.A_NORMAL)
-        self.screen.addstr(6, 40, str(expected_closing_balance), curses.A_REVERSE)
+        self.screen.addstr(6, 4, "Closing Balance Target", curses.A_NORMAL)
+        self.screen.addstr(6, 40, str(expected_closing_balance), curses.A_BOLD)
 
         self.screen.addstr(8, 4, "Closing Account Balance (Estimated)", curses.A_NORMAL)
-        self.screen.addstr(8, 40, str(closing_values['new_balance']), curses.A_REVERSE)
+        self.screen.addstr(8, 40, str(closing_values['new_balance']), curses.A_BOLD)
         self.screen.addstr(9, 4, "Surplus or Defecit (Estimated)", curses.A_NORMAL)
-        self.screen.addstr(9, 40, str(closing_values['surplus']), curses.A_REVERSE)
+        self.screen.addstr(9, 40, str(closing_values['surplus']), curses.A_BOLD)
 
         self.screen.addstr(11, 0, "[6] Closing Balance (Actual)", curses.A_NORMAL)
         if self.closing_balance is not None:
@@ -51,10 +48,10 @@ class Period(View):
 
         self.screen.addstr(12, 4, "Surplus or Defecit (Actual)", curses.A_NORMAL)
         if self.closing_balance is not None:
-            closing_surplus = self.calculate_period_closing(self.month, self.closing_balance)["closing_surplus"]
-            self.screen.addstr(12, 40, str(closing_surplus), curses.A_REVERSE)
+            closing_surplus = self.backend.calculate_month_closing(self.month, self.closing_balance)["closing_surplus"]
+            self.screen.addstr(12, 40, str(closing_surplus), curses.A_BOLD)
         else:
-            self.screen.addstr(12, 40, "", curses.A_REVERSE)
+            self.screen.addstr(12, 40, "", curses.A_BOLD)
 
 
     def handle_input(self, input):

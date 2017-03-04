@@ -13,10 +13,11 @@ class TestCalculatePeriod(unittest.TestCase):
             opening=0
         )
         self.assertEqual(end_values["net_income"], 750)
+        self.assertEqual(end_values["net_income"], 750)
         self.assertEqual(end_values["new_balance"], 750)
         self.assertEqual(end_values["surplus"], 250)
 
-    def test_estimation_function_1(self):
+    def test_estimation_function_2(self):
         """Expecting deficit"""
         end_values = core_functions.calculate_period_estimate(
             revenue=2000,
@@ -30,6 +31,7 @@ class TestCalculatePeriod(unittest.TestCase):
         self.assertEqual(end_values["surplus"], -500)
 
     def test_closing_function_1(self):
+        """Expecting surplus"""
         end_values = core_functions.calculate_period_closing(
             income_target=500,
             opening_balance=0,
@@ -39,6 +41,7 @@ class TestCalculatePeriod(unittest.TestCase):
         self.assertEqual(end_values["closing_adjustment"], 100)
 
     def test_closing_function_2(self):
+        """Expecting defecit"""
         end_values = core_functions.calculate_period_closing(
             income_target=500,
             opening_balance=500,
