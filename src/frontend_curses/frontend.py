@@ -7,10 +7,9 @@ from views.scratch_pad import ScratchPad
 class Frontend:
     calculate_month_estimate = None
 
-    def __init__(self, month, calculate_month_estimate, calculate_period_closing, ):
-        self.month = month
-        self.calculate_month_estimate = calculate_month_estimate
-        self.calculate_period_closing = calculate_period_closing
+    def __init__(self, backend):
+        self.backend = backend
+        self.month = backend.get_current_month()
         self.current_view = None
 
     def read_int(self, label):
@@ -43,8 +42,8 @@ class Frontend:
             self.period_view = Period(
                 self.screen,
                 self.month,
-                self.calculate_month_estimate,
-                self.calculate_period_closing
+                self.backend.calculate_month_estimate,
+                self.backend.calculate_month_closing
             )
             self.scratch_pad_view = ScratchPad(self.screen, self.month)
             self.current_view = self.period_view
