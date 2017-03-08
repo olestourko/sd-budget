@@ -35,4 +35,9 @@ public class BudgetItem {
     public void setAmount(double amount) {
         this.amount.set(amount);
     }
+    
+    // This is required to get the observableArrayList to update: https://docs.oracle.com/javafx/2/api/javafx/scene/control/TableView.html
+    public SimpleDoubleProperty amountProperty() {
+        return amount;
+    }
 }
