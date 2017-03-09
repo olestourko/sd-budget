@@ -1,6 +1,5 @@
 package com.olestourko.sdbudget;
 
-
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.fxml.FXMLLoader;
@@ -11,6 +10,7 @@ import javafx.stage.Stage;
 import javafx.scene.control.TableColumn;
 import javafx.event.EventHandler;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -21,11 +21,16 @@ import com.olestourko.sdbudget.models.BudgetItem;
 import com.olestourko.sdbudget.services.PeriodServices;
 import com.olestourko.sdbudget.services.EstimateResult;
 import javafx.scene.layout.AnchorPane;
-
+import static javafx.application.Application.launch;
+import javafx.event.ActionEvent;
 
 public class Sdbudget extends Application {
+
     private PeriodServices periodServices = new PeriodServices();
-    private TableView table = new TableView();
+    private TableView budgetTable = new TableView();
+    private Button scratchPadButton = new Button("Scratchpad");
+    private Button budgetButton = new Button("Budget");
+    private TableView scratchPadTable = new TableView();
     private BudgetItem revenues = new BudgetItem("Revenues", 2000);
     private BudgetItem expenses = new BudgetItem("Expenses", 1000);
     private BudgetItem adjustments = new BudgetItem("Adjustments", 0);
@@ -45,27 +50,57 @@ public class Sdbudget extends Application {
             estimatedClosingBalance,
             surplus
     );
-       
+
     @Override
     public void start(Stage stage) throws Exception {
 //        Parent root = FXMLLoader.load(getClass().getResource("/fxml/Scene.fxml"));
+
+        // The Budget Scene
         AnchorPane anchorPane = new AnchorPane(); //http://o7planning.org/en/10645/javafx-anchorpane-layout-tutorial
-        AnchorPane.setTopAnchor(table, 5.0);
-        AnchorPane.setBottomAnchor(table, 5.0);
-        AnchorPane.setLeftAnchor(table, 5.0);
-        AnchorPane.setRightAnchor(table, 5.0);
-        anchorPane.getChildren().add(table);
-        Scene scene = new Scene(anchorPane);
+        AnchorPane.setTopAnchor(budgetTable, 5.0);
+        AnchorPane.setBottomAnchor(budgetTable, 35.0);
+        AnchorPane.setLeftAnchor(budgetTable, 5.0);
+        AnchorPane.setRightAnchor(budgetTable, 5.0);
+        AnchorPane.setBottomAnchor(scratchPadButton, 5.0);
+        AnchorPane.setRightAnchor(scratchPadButton, 5.0);
+        anchorPane.getChildren().addAll(budgetTable, scratchPadButton);
+        Scene budgetScene = new Scene(anchorPane);
+        budgetScene.getStylesheets().add("/styles/Styles.css");
+        stage.setScene(budgetScene);
+
+        // The Scratchpad Scene
+        anchorPane = new AnchorPane(); //http://o7planning.org/en/10645/javafx-anchorpane-layout-tutorial
+        AnchorPane.setTopAnchor(scratchPadTable, 5.0);
+        AnchorPane.setBottomAnchor(scratchPadTable, 35.0);
+        AnchorPane.setLeftAnchor(scratchPadTable, 5.0);
+        AnchorPane.setRightAnchor(scratchPadTable, 5.0);
+        AnchorPane.setBottomAnchor(budgetButton, 5.0);
+        AnchorPane.setRightAnchor(budgetButton, 5.0);
+        anchorPane.getChildren().addAll(scratchPadTable, budgetButton);
+        Scene scratchPadScene = new Scene(anchorPane);
+        scratchPadScene.getStylesheets().add("/styles/Styles.css");
         
-        scene.getStylesheets().add("/styles/Styles.css");
         stage.setTitle("S/D Budget");
         stage.setWidth(380);
         stage.setHeight(480);
 
-        table.setEditable(true);
+        scratchPadButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                stage.setScene(scratchPadScene);
+            }
+        });
+        
+        budgetButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                stage.setScene(budgetScene);
+            }
+        });
+
+        budgetTable.setEditable(true);
 
         TableColumn name = new TableColumn("name");
-//        table.setPrefWidth(300);
 
         name.setCellValueFactory(
                 new PropertyValueFactory<BudgetItem, String>("name")
@@ -96,12 +131,10 @@ public class Sdbudget extends Application {
             }
         });
 
-        table.setItems(data);
-        table.getColumns().addAll(name, amount);
+        budgetTable.setItems(data);
+        budgetTable.getColumns().addAll(name, amount);
 
-        stage.setScene(scene);
         stage.show();
-
     }
 
     /**
