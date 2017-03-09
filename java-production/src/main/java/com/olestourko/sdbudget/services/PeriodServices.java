@@ -1,9 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.olestourko.sdbudget.services;
+
+import com.olestourko.sdbudget.services.EstimateResult;
 
 /**
  *
@@ -11,45 +8,21 @@ package com.olestourko.sdbudget.services;
  */
 public class PeriodServices {
 
-    public Estimate calculateEstimate(double revenue, double expenses, double adjustments, double incomeTarget, double openingBalance) {
+    public EstimateResult calculateEstimate(double revenue, double expenses, double adjustments, double incomeTarget, double openingBalance) {
         double netIncome = revenue - expenses + adjustments;
         double estimatedBalance = openingBalance + netIncome;
         double expectedBalance = openingBalance + incomeTarget;
         double surplus = estimatedBalance - expectedBalance;
-        
-        return new Estimate(netIncome, estimatedBalance, expectedBalance, surplus);
+
+        return new EstimateResult(netIncome, estimatedBalance, expectedBalance, surplus);
     }
-    
-    public Closing calculateClosing(double incomeTarget, double openingBalance, double closingBalance) {
+
+    public ClosingResult calculateClosing(double incomeTarget, double openingBalance, double closingBalance) {
         double closingBalanceTarget = openingBalance + incomeTarget;
         double surplus = closingBalance - closingBalanceTarget;
         double closingAdjustment = surplus;
-        
-        return new Closing(surplus, closingAdjustment);
-    }
-    
-}
 
-final class Estimate {
-    public double netIncome;
-    public double estimatedBalance;
-    public double expectedBalance;
-    public double surplus;
-    
-    public Estimate(double netIncome, double estimatedBalance, double expectedBalance, double surplus) {
-        this.netIncome = netIncome;
-        this.estimatedBalance = estimatedBalance;
-        this.expectedBalance = expectedBalance;
-        this.surplus = surplus;
+        return new ClosingResult(surplus, closingAdjustment);
     }
-}
 
-final class Closing {
-    public double surplus;
-    public double closingAdjustment;
-    
-    public Closing(double surplus, double closingAdjustment) {
-        this.surplus = surplus;
-        this.closingAdjustment = closingAdjustment;
-    }
 }

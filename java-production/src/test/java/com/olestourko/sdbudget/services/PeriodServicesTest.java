@@ -49,7 +49,7 @@ public class PeriodServicesTest {
         double incomeTarget = 500.0;
         double openingBalance = 0.0;
         PeriodServices instance = new PeriodServices();
-        Estimate result = instance.calculateEstimate(revenue, expenses, adjustments, incomeTarget, openingBalance);
+        EstimateResult result = instance.calculateEstimate(revenue, expenses, adjustments, incomeTarget, openingBalance);
         double delta = 0.01;
         assertEquals(result.netIncome, 750.0, delta);
         assertEquals(result.estimatedBalance, 750.0, delta);
@@ -67,7 +67,7 @@ public class PeriodServicesTest {
         double openingBalance = 0.0;
         double closingBalance = 600.0;
         PeriodServices instance = new PeriodServices();
-        Closing result = instance.calculateClosing(incomeTarget, openingBalance, closingBalance);
+        ClosingResult result = instance.calculateClosing(incomeTarget, openingBalance, closingBalance);
         double delta = 0.01;
         assertEquals(result.surplus, 100, delta);
         assertEquals(result.closingAdjustment, 100, delta);

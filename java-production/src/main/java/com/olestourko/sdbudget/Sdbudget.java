@@ -1,5 +1,6 @@
 package com.olestourko.sdbudget;
 
+
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.fxml.FXMLLoader;
@@ -15,25 +16,34 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.VBox;
 import javafx.geometry.Insets;
-//For data
-import com.olestourko.sdbudget.models.BudgetItem;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.util.converter.DoubleStringConverter;
+import com.olestourko.sdbudget.models.BudgetItem;
+import com.olestourko.sdbudget.services.PeriodServices;
+import com.olestourko.sdbudget.services.EstimateResult;
 
 public class Sdbudget extends Application {
-
+    private PeriodServices periodServices = new PeriodServices();
     private TableView table = new TableView();
+    private BudgetItem revenues = new BudgetItem("Revenues", 2000);
+    private BudgetItem expenses = new BudgetItem("Expenses", 1000);
+    private BudgetItem adjustments = new BudgetItem("Adjustments", 0);
+    private BudgetItem netIncomeTarget = new BudgetItem("Net Income Target", 500);
+    private BudgetItem openingBalance = new BudgetItem("Opening Balance", 0);
+    private BudgetItem closingBalanceTarget = new BudgetItem("Closing Balance Target", 0);
     private BudgetItem estimatedClosingBalance = new BudgetItem("Closing Balance (Estimated)", 0);
+    private BudgetItem surplus = new BudgetItem("Surplus or Defecit (Estimated)", 0);
+
     private ObservableList<BudgetItem> data = FXCollections.observableArrayList(
-            new BudgetItem("Revenues", 2000),
-            new BudgetItem("Expenses", 1000),
-            new BudgetItem("Adjustments", 0),
-            new BudgetItem("Net Income Target", 500),
-            new BudgetItem("Opening Balance", 0),
-            new BudgetItem("Closing Balance Target", 0),
+            revenues,
+            expenses,
+            adjustments,
+            netIncomeTarget,
+            openingBalance,
+            closingBalanceTarget,
             estimatedClosingBalance,
-            new BudgetItem("Surplus or Defecit (Estimated)", 0)
+            surplus
     );
 
     @Override
@@ -54,27 +64,28 @@ public class Sdbudget extends Application {
         name.setCellValueFactory(
                 new PropertyValueFactory<BudgetItem, String>("name")
         );
-        //This draws the textfield when editing a table cell
-        name.setCellFactory(TextFieldTableCell.forTableColumn());
 
         TableColumn amount = new TableColumn("amount");
         amount.setCellValueFactory(
                 new PropertyValueFactory<BudgetItem, Double>("amount")
         );
+        //This draws the textfield when editing a table cell
         amount.setCellFactory(TextFieldTableCell.<BudgetItem, Double>forTableColumn(new DoubleStringConverter()));
+        //This is a callback for edits
         amount.setOnEditCommit(new EventHandler<CellEditEvent<BudgetItem, Double>>() {
             @Override
             public void handle(CellEditEvent<BudgetItem, Double> t) {
                 BudgetItem budgetItem = (BudgetItem) t.getTableView().getItems().get(t.getTablePosition().getRow());
                 budgetItem.setAmount(t.getNewValue());
-                double sum = 0;
-                for (BudgetItem b : data) {
-                    if (data == estimatedClosingBalance) {
-                        continue;
-                    }
-                    sum += b.getAmount();
-                }
-                estimatedClosingBalance.setAmount(t.getNewValue());
+                EstimateResult result = periodServices.calculateEstimate(
+                        revenues.getAmount(),
+                        expenses.getAmount(),
+                        adjustments.getAmount(),
+                        netIncomeTarget.getAmount(),
+                        openingBalance.getAmount()
+                );
+
+                estimatedClosingBalance.setAmount(result.estimatedBalance);
             }
         });
 
