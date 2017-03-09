@@ -23,14 +23,17 @@ import com.olestourko.sdbudget.services.EstimateResult;
 import javafx.scene.layout.AnchorPane;
 import static javafx.application.Application.launch;
 import javafx.event.ActionEvent;
+import javafx.scene.control.TableRow;
+import javafx.scene.input.MouseEvent;
+import javafx.util.Callback;
 
 public class Sdbudget extends Application {
 
     private PeriodServices periodServices = new PeriodServices();
-    private TableView budgetTable = new TableView();
+    private TableView budgetTable;
+    private TableView scratchPadTable;
     private Button scratchPadButton = new Button("Scratchpad");
     private Button budgetButton = new Button("Budget");
-    private TableView scratchPadTable = new TableView();
     private BudgetItem revenues = new BudgetItem("Revenues", 2000);
     private BudgetItem expenses = new BudgetItem("Expenses", 1000);
     private BudgetItem adjustments = new BudgetItem("Adjustments", 0);
@@ -51,9 +54,15 @@ public class Sdbudget extends Application {
             surplus
     );
 
+    public void init(PeriodServices periodServices) {
+
+    }
+
     @Override
     public void start(Stage stage) throws Exception {
 //        Parent root = FXMLLoader.load(getClass().getResource("/fxml/Scene.fxml"));
+        buildBudgetTable();
+        buildScratchpadTable();
 
         // The Budget Scene
         AnchorPane anchorPane = new AnchorPane(); //http://o7planning.org/en/10645/javafx-anchorpane-layout-tutorial
@@ -79,7 +88,7 @@ public class Sdbudget extends Application {
         anchorPane.getChildren().addAll(scratchPadTable, budgetButton);
         Scene scratchPadScene = new Scene(anchorPane);
         scratchPadScene.getStylesheets().add("/styles/Styles.css");
-        
+
         stage.setTitle("S/D Budget");
         stage.setWidth(380);
         stage.setHeight(480);
@@ -90,7 +99,7 @@ public class Sdbudget extends Application {
                 stage.setScene(scratchPadScene);
             }
         });
-        
+
         budgetButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
@@ -98,14 +107,28 @@ public class Sdbudget extends Application {
             }
         });
 
+        stage.show();
+    }
+
+    /**
+     * The main() method is ignored in correctly deployed JavaFX application.
+     * main() serves only as fallback in case the application can not be
+     * launched through deployment artifacts, e.g., in IDEs with limited FX
+     * support. NetBeans ignores main().
+     *
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    private final TableView buildBudgetTable() {
+        budgetTable = new TableView();
         budgetTable.setEditable(true);
-
         TableColumn name = new TableColumn("name");
-
         name.setCellValueFactory(
                 new PropertyValueFactory<BudgetItem, String>("name")
         );
-
         TableColumn amount = new TableColumn("amount");
         amount.setCellValueFactory(
                 new PropertyValueFactory<BudgetItem, Double>("amount")
@@ -134,19 +157,57 @@ public class Sdbudget extends Application {
         budgetTable.setItems(data);
         budgetTable.getColumns().addAll(name, amount);
 
-        stage.show();
+        return budgetTable;
     }
 
-    /**
-     * The main() method is ignored in correctly deployed JavaFX application.
-     * main() serves only as fallback in case the application can not be
-     * launched through deployment artifacts, e.g., in IDEs with limited FX
-     * support. NetBeans ignores main().
-     *
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        launch(args);
+    private final TableView buildScratchpadTable() {
+        scratchPadTable = new TableView();
+        scratchPadTable.setEditable(true);
+        TableColumn name = new TableColumn("name");
+        name.setCellValueFactory(
+                new PropertyValueFactory<BudgetItem, String>("name")
+        );
+        TableColumn amount = new TableColumn("amount");
+        amount.setCellValueFactory(
+                new PropertyValueFactory<BudgetItem, Double>("amount")
+        );
+        scratchPadTable.getColumns().addAll(name, amount);
+        BudgetItem totalAdjustments = new BudgetItem("Total Adjustments", 0);
+        scratchPadTable.getItems().addAll(new BudgetItem("Adjustment 1", 0), new BudgetItem("Adjustment 2", 0), totalAdjustments);
+//        scratchPadTable.setRowFactory(new Callback<TableView<BudgetItem>, TableRow<BudgetItem>>() {
+//            @Override
+//            public TableRow<BudgetItem> call(TableView<BudgetItem> param) {
+//                TableRow<BudgetItem> row = new TableRow<BudgetItem>();
+//                row.setOnMouseClicked(new EventHandler<MouseEvent>() {
+//                    @Override
+//                    public void handle(MouseEvent event) {
+//                        BudgetItem budgetItem = new BudgetItem();
+//                        scratchPadTable.getItems().add(budgetItem);
+//                    }
+//                });
+//
+//                return row;
+//            }
+//
+//        });
+        //This draws the textfield when editing a table cell
+        amount.setCellFactory(TextFieldTableCell.<BudgetItem, Double>forTableColumn(new DoubleStringConverter()));
+        //This is a callback for edits
+        amount.setOnEditCommit(new EventHandler<CellEditEvent<BudgetItem, Double>>() {
+            @Override
+            public void handle(CellEditEvent<BudgetItem, Double> t) {
+                BudgetItem budgetItem = (BudgetItem) t.getTableView().getItems().get(t.getTablePosition().getRow());
+                budgetItem.setAmount(t.getNewValue());
+                double sum = 0;
+                for(Object o : scratchPadTable.getItems()) {
+                    BudgetItem item = (BudgetItem) o;
+                    if(item != totalAdjustments) {
+                        sum += item.getAmount();
+                    }
+                }
+                totalAdjustments.setAmount(sum);
+            }
+        });
+        return scratchPadTable;
     }
-
 }
