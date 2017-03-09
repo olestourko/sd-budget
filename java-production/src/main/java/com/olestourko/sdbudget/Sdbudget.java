@@ -14,14 +14,14 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.layout.VBox;
-import javafx.geometry.Insets;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.util.converter.DoubleStringConverter;
 import com.olestourko.sdbudget.models.BudgetItem;
 import com.olestourko.sdbudget.services.PeriodServices;
 import com.olestourko.sdbudget.services.EstimateResult;
+import javafx.scene.layout.AnchorPane;
+
 
 public class Sdbudget extends Application {
     private PeriodServices periodServices = new PeriodServices();
@@ -45,21 +45,27 @@ public class Sdbudget extends Application {
             estimatedClosingBalance,
             surplus
     );
-
+       
     @Override
     public void start(Stage stage) throws Exception {
 //        Parent root = FXMLLoader.load(getClass().getResource("/fxml/Scene.fxml"));
-
-        Scene scene = new Scene(new Group());
+        AnchorPane anchorPane = new AnchorPane(); //http://o7planning.org/en/10645/javafx-anchorpane-layout-tutorial
+        AnchorPane.setTopAnchor(table, 5.0);
+        AnchorPane.setBottomAnchor(table, 5.0);
+        AnchorPane.setLeftAnchor(table, 5.0);
+        AnchorPane.setRightAnchor(table, 5.0);
+        anchorPane.getChildren().add(table);
+        Scene scene = new Scene(anchorPane);
+        
         scene.getStylesheets().add("/styles/Styles.css");
         stage.setTitle("S/D Budget");
-        stage.setWidth(320);
-        stage.setHeight(450);
+        stage.setWidth(380);
+        stage.setHeight(480);
 
         table.setEditable(true);
 
         TableColumn name = new TableColumn("name");
-        table.setPrefWidth(300);
+//        table.setPrefWidth(300);
 
         name.setCellValueFactory(
                 new PropertyValueFactory<BudgetItem, String>("name")
@@ -86,18 +92,12 @@ public class Sdbudget extends Application {
                 );
 
                 estimatedClosingBalance.setAmount(result.estimatedBalance);
+                surplus.setAmount(result.surplus);
             }
         });
 
         table.setItems(data);
         table.getColumns().addAll(name, amount);
-
-        final VBox vbox = new VBox();
-        vbox.setSpacing(5);
-        vbox.setPadding(new Insets(10, 0, 0, 10));
-        vbox.getChildren().addAll(table);
-
-        ((Group) scene.getRoot()).getChildren().addAll(vbox);
 
         stage.setScene(scene);
         stage.show();
