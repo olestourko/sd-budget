@@ -25,12 +25,7 @@ import javafx.scene.layout.AnchorPane;
 import static javafx.application.Application.launch;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
-import javafx.scene.control.TableRow;
-import javafx.scene.input.MouseEvent;
-import javafx.util.Callback;
-
 public class Sdbudget extends Application {
 
     private PeriodServices periodServices = new PeriodServices();
