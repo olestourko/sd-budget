@@ -18,6 +18,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.util.converter.DoubleStringConverter;
 import com.olestourko.sdbudget.models.BudgetItem;
+import com.olestourko.sdbudget.models.Month;
 import com.olestourko.sdbudget.services.PeriodServices;
 import com.olestourko.sdbudget.services.EstimateResult;
 import javafx.scene.layout.AnchorPane;
@@ -31,36 +32,28 @@ import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 
 public class Sdbudget extends Application {
-    
+
     private PeriodServices periodServices = new PeriodServices();
+    private Month month = new Month();
     private TableView budgetTable;
     private TableView scratchPadTable;
     private Button scratchPadButton = new Button("Scratchpad");
     private Button budgetButton = new Button("Budget");
-    private BudgetItem revenues = new BudgetItem("Revenues", 2000);
-    private BudgetItem expenses = new BudgetItem("Expenses", 1000);
-    private BudgetItem adjustments = new BudgetItem("Adjustments", 0);
-    private BudgetItem netIncomeTarget = new BudgetItem("Net Income Target", 500);
-    private BudgetItem openingBalance = new BudgetItem("Opening Balance", 0);
     private BudgetItem closingBalanceTarget = new BudgetItem("Closing Balance Target", 0);
     private BudgetItem estimatedClosingBalance = new BudgetItem("Closing Balance (Estimated)", 0);
     private BudgetItem surplus = new BudgetItem("Surplus or Defecit (Estimated)", 0);
-    
+
     private ObservableList<BudgetItem> data = FXCollections.observableArrayList(
-            revenues,
-            expenses,
-            adjustments,
-            netIncomeTarget,
-            openingBalance,
+            month.revenues,
+            month.expenses,
+            month.adjustments,
+            month.netIncomeTarget,
+            month.openingBalance,
             closingBalanceTarget,
             estimatedClosingBalance,
             surplus
     );
-    
-    public void init(PeriodServices periodServices) {
-        
-    }
-    
+
     @Override
     public void start(Stage stage) throws Exception {
 //        Parent root = FXMLLoader.load(getClass().getResource("/fxml/Scene.fxml"));
@@ -91,25 +84,25 @@ public class Sdbudget extends Application {
         anchorPane.getChildren().addAll(scratchPadTable, budgetButton);
         Scene scratchPadScene = new Scene(anchorPane);
         scratchPadScene.getStylesheets().add("/styles/Styles.css");
-        
+
         stage.setTitle("S/D Budget");
         stage.setWidth(380);
         stage.setHeight(480);
-        
+
         scratchPadButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 stage.setScene(scratchPadScene);
             }
         });
-        
+
         budgetButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
                 stage.setScene(budgetScene);
             }
         });
-        
+
         stage.show();
     }
 
@@ -124,7 +117,7 @@ public class Sdbudget extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-    
+
     private final TableView buildBudgetTable() {
         budgetTable = new TableView();
         budgetTable.setEditable(true);
@@ -145,24 +138,43 @@ public class Sdbudget extends Application {
                 BudgetItem budgetItem = (BudgetItem) t.getTableView().getItems().get(t.getTablePosition().getRow());
                 budgetItem.setAmount(t.getNewValue());
                 EstimateResult result = periodServices.calculateEstimate(
-                        revenues.getAmount(),
-                        expenses.getAmount(),
-                        adjustments.getAmount(),
-                        netIncomeTarget.getAmount(),
-                        openingBalance.getAmount()
+                        month.revenues.getAmount(),
+                        month.expenses.getAmount(),
+                        month.adjustments.getAmount(),
+                        month.netIncomeTarget.getAmount(),
+                        month.openingBalance.getAmount()
                 );
-                
+
+                closingBalanceTarget.setAmount(month.openingBalance.getAmount() + month.netIncomeTarget.getAmount());
                 estimatedClosingBalance.setAmount(result.estimatedBalance);
                 surplus.setAmount(result.surplus);
             }
         });
-        
+
+        // Update the estimates whenever the Adjustment field is updated (from Scratchpad)
+        month.adjustments.amountProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue observable, Number oldValue, Number newValue) {
+                EstimateResult result = periodServices.calculateEstimate(
+                        month.revenues.getAmount(),
+                        month.expenses.getAmount(),
+                        month.adjustments.getAmount(),
+                        month.netIncomeTarget.getAmount(),
+                        month.openingBalance.getAmount()
+                );
+
+                closingBalanceTarget.setAmount(month.openingBalance.getAmount() + month.netIncomeTarget.getAmount());
+                estimatedClosingBalance.setAmount(result.estimatedBalance);
+                surplus.setAmount(result.surplus);
+            }
+        });
+
         budgetTable.setItems(data);
         budgetTable.getColumns().addAll(name, amount);
-        
+
         return budgetTable;
     }
-    
+
     private final TableView buildScratchpadTable() {
         scratchPadTable = new TableView();
         scratchPadTable.setEditable(true);
@@ -179,7 +191,7 @@ public class Sdbudget extends Application {
         totalAdjustments.amountProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue observable, Number oldValue, Number newValue) {
-                adjustments.setAmount((double) newValue);
+                month.adjustments.setAmount((double) newValue);
             }
         });
         scratchPadTable.getItems().addAll(new BudgetItem("Adjustment 1", 0), new BudgetItem("Adjustment 2", 0), totalAdjustments);
