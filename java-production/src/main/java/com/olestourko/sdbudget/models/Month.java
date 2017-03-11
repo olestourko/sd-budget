@@ -7,7 +7,7 @@ package com.olestourko.sdbudget.models;
 
 import java.math.BigDecimal;
 import com.olestourko.sdbudget.models.BudgetItem;
-import java.math.BigInteger;
+import java.util.Calendar;
 
 /**
  *
@@ -20,6 +20,7 @@ public class Month implements IPeriod {
     public BudgetItem adjustments;
     public BudgetItem netIncomeTarget;
     public BudgetItem openingBalance;
+    public Calendar calendar;
 
     public Month() {
         revenues = new BudgetItem("Revenues", 0);
@@ -27,6 +28,7 @@ public class Month implements IPeriod {
         adjustments = new BudgetItem("Adjustments", 0);
         netIncomeTarget = new BudgetItem("Net Income Target", 0);
         openingBalance = new BudgetItem("Opening Balance", 0);
+        calendar = Calendar.getInstance();
     }
 
     // Implementions for IPeriod methods

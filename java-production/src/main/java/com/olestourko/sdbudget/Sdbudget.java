@@ -21,11 +21,15 @@ import com.olestourko.sdbudget.models.BudgetItem;
 import com.olestourko.sdbudget.models.Month;
 import com.olestourko.sdbudget.services.PeriodServices;
 import com.olestourko.sdbudget.services.EstimateResult;
+import java.text.SimpleDateFormat;
 import javafx.scene.layout.AnchorPane;
 import static javafx.application.Application.launch;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.scene.control.Label;
+import java.util.Calendar;
+
 public class Sdbudget extends Application {
 
     private PeriodServices periodServices = new PeriodServices();
@@ -56,27 +60,38 @@ public class Sdbudget extends Application {
         buildScratchpadTable();
 
         // The Budget Scene
+        Label label = new Label();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
+        label.setText(dateFormat.format(month.calendar.getTime()));
+
         AnchorPane anchorPane = new AnchorPane(); //http://o7planning.org/en/10645/javafx-anchorpane-layout-tutorial
-        AnchorPane.setTopAnchor(budgetTable, 5.0);
+        AnchorPane.setTopAnchor(label, 5.0);
+        AnchorPane.setLeftAnchor(label, 5.0);
+        AnchorPane.setTopAnchor(budgetTable, 25.0);
         AnchorPane.setBottomAnchor(budgetTable, 35.0);
         AnchorPane.setLeftAnchor(budgetTable, 5.0);
         AnchorPane.setRightAnchor(budgetTable, 5.0);
         AnchorPane.setBottomAnchor(scratchPadButton, 5.0);
         AnchorPane.setRightAnchor(scratchPadButton, 5.0);
-        anchorPane.getChildren().addAll(budgetTable, scratchPadButton);
+        anchorPane.getChildren().addAll(label, budgetTable, scratchPadButton);
         Scene budgetScene = new Scene(anchorPane);
         budgetScene.getStylesheets().add("/styles/Styles.css");
         stage.setScene(budgetScene);
 
         // The Scratchpad Scene
+        label = new Label();
+        label.setText(dateFormat.format(month.calendar.getTime()));
+
         anchorPane = new AnchorPane(); //http://o7planning.org/en/10645/javafx-anchorpane-layout-tutorial
-        AnchorPane.setTopAnchor(scratchPadTable, 5.0);
+        AnchorPane.setTopAnchor(label, 5.0);
+        AnchorPane.setLeftAnchor(label, 5.0);
+        AnchorPane.setTopAnchor(scratchPadTable, 25.0);
         AnchorPane.setBottomAnchor(scratchPadTable, 35.0);
         AnchorPane.setLeftAnchor(scratchPadTable, 5.0);
         AnchorPane.setRightAnchor(scratchPadTable, 5.0);
         AnchorPane.setBottomAnchor(budgetButton, 5.0);
         AnchorPane.setRightAnchor(budgetButton, 5.0);
-        anchorPane.getChildren().addAll(scratchPadTable, budgetButton);
+        anchorPane.getChildren().addAll(label, scratchPadTable, budgetButton);
         Scene scratchPadScene = new Scene(anchorPane);
         scratchPadScene.getStylesheets().add("/styles/Styles.css");
 
