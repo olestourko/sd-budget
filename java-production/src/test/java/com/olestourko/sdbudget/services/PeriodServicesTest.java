@@ -11,7 +11,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-
+import java.math.BigDecimal;
 /**
  *
  * @author oles
@@ -43,18 +43,17 @@ public class PeriodServicesTest {
     @Test
     public void testCalculateEstimate() {
         System.out.println("calculateEstimate");
-        double revenue = 2000.0;
-        double expenses = 1000.0;
-        double adjustments = -250.0;
-        double incomeTarget = 500.0;
-        double openingBalance = 0.0;
+        BigDecimal revenue = new BigDecimal("2000.0");
+        BigDecimal expenses = new BigDecimal("1000.0");
+        BigDecimal adjustments = new BigDecimal("-250.0");
+        BigDecimal incomeTarget = new BigDecimal("500.0");
+        BigDecimal openingBalance = new BigDecimal("0.0");
         PeriodServices instance = new PeriodServices();
         EstimateResult result = instance.calculateEstimate(revenue, expenses, adjustments, incomeTarget, openingBalance);
-        double delta = 0.01;
-        assertEquals(result.netIncome, 750.0, delta);
-        assertEquals(result.estimatedBalance, 750.0, delta);
-        assertEquals(result.expectedBalance, 500.0, delta);
-        assertEquals(result.surplus, 250.0, delta);
+        assertEquals(result.netIncome, new BigDecimal("750.0"));
+        assertEquals(result.estimatedBalance, new BigDecimal("750.0"));
+        assertEquals(result.expectedBalance, new BigDecimal("500.0"));
+        assertEquals(result.surplus, new BigDecimal("250.0"));
     }
 
     /**
@@ -63,14 +62,13 @@ public class PeriodServicesTest {
     @Test
     public void testCalculateClosing() {
         System.out.println("calculateClosing");
-        double incomeTarget = 500.0;
-        double openingBalance = 0.0;
-        double closingBalance = 600.0;
+        BigDecimal incomeTarget = new BigDecimal("500.0");
+        BigDecimal openingBalance = new BigDecimal("0.0");
+        BigDecimal closingBalance = new BigDecimal("600.0");
         PeriodServices instance = new PeriodServices();
         ClosingResult result = instance.calculateClosing(incomeTarget, openingBalance, closingBalance);
-        double delta = 0.01;
-        assertEquals(result.surplus, 100, delta);
-        assertEquals(result.closingAdjustment, 100, delta);
+        assertEquals(result.surplus, new BigDecimal("100.0"));
+        assertEquals(result.closingAdjustment, new BigDecimal("100.0"));
     }
 
 }

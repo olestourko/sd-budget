@@ -1,15 +1,17 @@
 package com.olestourko.sdbudget.services;
 
+import java.math.BigDecimal;
+
 /**
  *
  * @author oles
  */
 public final class ClosingResult {
 
-    public double surplus;
-    public double closingAdjustment;
+    public final BigDecimal surplus;
+    public final BigDecimal closingAdjustment;
 
-    public ClosingResult(double surplus, double closingAdjustment) {
+    public ClosingResult(BigDecimal surplus, BigDecimal closingAdjustment) {
         this.surplus = surplus;
         this.closingAdjustment = closingAdjustment;
     }

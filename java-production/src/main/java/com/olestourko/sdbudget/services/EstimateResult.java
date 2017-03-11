@@ -1,17 +1,19 @@
 package com.olestourko.sdbudget.services;
 
+import java.math.BigDecimal;
+
 /**
  *
  * @author oles
  */
 public final class EstimateResult {
 
-    public double netIncome;
-    public double estimatedBalance;
-    public double expectedBalance;
-    public double surplus;
+    public final BigDecimal netIncome;
+    public final BigDecimal estimatedBalance;
+    public final BigDecimal expectedBalance;
+    public final BigDecimal surplus;
 
-    public EstimateResult(double netIncome, double estimatedBalance, double expectedBalance, double surplus) {
+    public EstimateResult(BigDecimal netIncome, BigDecimal estimatedBalance, BigDecimal expectedBalance, BigDecimal surplus) {
         this.netIncome = netIncome;
         this.estimatedBalance = estimatedBalance;
         this.expectedBalance = expectedBalance;

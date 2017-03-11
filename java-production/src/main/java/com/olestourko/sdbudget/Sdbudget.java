@@ -21,23 +21,19 @@ import com.olestourko.sdbudget.models.BudgetItem;
 import com.olestourko.sdbudget.models.Month;
 import com.olestourko.sdbudget.services.PeriodServices;
 import com.olestourko.sdbudget.services.EstimateResult;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import javafx.scene.layout.AnchorPane;
-import static javafx.application.Application.launch;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.KeyCode;
-import static javafx.application.Application.launch;
-import static javafx.application.Application.launch;
-import static javafx.application.Application.launch;
-import static javafx.application.Application.launch;
-import static javafx.application.Application.launch;
-import static javafx.application.Application.launch;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.util.converter.BigDecimalStringConverter;
 
 public class Sdbudget extends Application {
 
@@ -47,9 +43,9 @@ public class Sdbudget extends Application {
     private TableView scratchPadTable;
     private Button scratchPadButton = new Button("Scratchpad");
     private Button budgetButton = new Button("Budget");
-    private BudgetItem closingBalanceTarget = new BudgetItem("Closing Balance Target", 0);
-    private BudgetItem estimatedClosingBalance = new BudgetItem("Closing Balance (Estimated)", 0);
-    private BudgetItem surplus = new BudgetItem("Surplus or Defecit (Estimated)", 0);
+    private BudgetItem closingBalanceTarget = new BudgetItem("Closing Balance Target", new BigDecimal(BigInteger.ZERO));
+    private BudgetItem estimatedClosingBalance = new BudgetItem("Closing Balance (Estimated)", new BigDecimal(BigInteger.ZERO));
+    private BudgetItem surplus = new BudgetItem("Surplus or Defecit (Estimated)", new BigDecimal(BigInteger.ZERO));
 
     private ObservableList<BudgetItem> data = FXCollections.observableArrayList(
             month.revenues,
@@ -117,11 +113,11 @@ public class Sdbudget extends Application {
                 new PropertyValueFactory<BudgetItem, Double>("amount")
         );
         //This draws the textfield when editing a table cell
-        amount.setCellFactory(TextFieldTableCell.<BudgetItem, Double>forTableColumn(new DoubleStringConverter()));
+        amount.setCellFactory(TextFieldTableCell.<BudgetItem, BigDecimal>forTableColumn(new BigDecimalStringConverter()));
         //This is a callback for edits
-        amount.setOnEditCommit(new EventHandler<CellEditEvent<BudgetItem, Double>>() {
+        amount.setOnEditCommit(new EventHandler<CellEditEvent<BudgetItem, BigDecimal>>() {
             @Override
-            public void handle(CellEditEvent<BudgetItem, Double> t) {
+            public void handle(CellEditEvent<BudgetItem, BigDecimal> t) {
                 BudgetItem budgetItem = (BudgetItem) t.getTableView().getItems().get(t.getTablePosition().getRow());
                 budgetItem.setAmount(t.getNewValue());
                 EstimateResult result = periodServices.calculateEstimate(
@@ -132,7 +128,8 @@ public class Sdbudget extends Application {
                         month.openingBalance.getAmount()
                 );
 
-                closingBalanceTarget.setAmount(month.openingBalance.getAmount() + month.netIncomeTarget.getAmount());
+                closingBalanceTarget.setAmount(month.openingBalance.getAmount()
+                        .add(month.netIncomeTarget.getAmount()));
                 estimatedClosingBalance.setAmount(result.estimatedBalance);
                 surplus.setAmount(result.surplus);
             }
@@ -150,7 +147,8 @@ public class Sdbudget extends Application {
                         month.openingBalance.getAmount()
                 );
 
-                closingBalanceTarget.setAmount(month.openingBalance.getAmount() + month.netIncomeTarget.getAmount());
+                closingBalanceTarget.setAmount(month.openingBalance.getAmount()
+                        .add(month.netIncomeTarget.getAmount()));
                 estimatedClosingBalance.setAmount(result.estimatedBalance);
                 surplus.setAmount(result.surplus);
             }
@@ -191,14 +189,14 @@ public class Sdbudget extends Application {
                 new PropertyValueFactory<BudgetItem, Double>("amount")
         );
         scratchPadTable.getColumns().addAll(name, amount);
-        BudgetItem totalAdjustments = new BudgetItem("Total Adjustments", 0);
+        BudgetItem totalAdjustments = new BudgetItem("Total Adjustments", BigDecimal.ZERO);
         totalAdjustments.amountProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue observable, Number oldValue, Number newValue) {
-                month.adjustments.setAmount((double) newValue);
+                month.adjustments.setAmount((BigDecimal) newValue);
             }
         });
-        scratchPadTable.getItems().addAll(new BudgetItem("Adjustment 1", 0), new BudgetItem("Adjustment 2", 0), totalAdjustments);
+        scratchPadTable.getItems().addAll(new BudgetItem("Adjustment 1", BigDecimal.ZERO), new BudgetItem("Adjustment 2", BigDecimal.ZERO), totalAdjustments);
         // Remove adjusments when DELETE key is pressed
         scratchPadTable.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
@@ -228,18 +226,18 @@ public class Sdbudget extends Application {
 //            }
 //        });
         //This draws the textfield when editing a table cell
-        amount.setCellFactory(TextFieldTableCell.<BudgetItem, Double>forTableColumn(new DoubleStringConverter()));
+        amount.setCellFactory(TextFieldTableCell.<BudgetItem, BigDecimal>forTableColumn(new BigDecimalStringConverter()));
         //This is a callback for edits
-        amount.setOnEditCommit(new EventHandler<CellEditEvent<BudgetItem, Double>>() {
+        amount.setOnEditCommit(new EventHandler<CellEditEvent<BudgetItem, BigDecimal>>() {
             @Override
-            public void handle(CellEditEvent<BudgetItem, Double> t) {
+            public void handle(CellEditEvent<BudgetItem, BigDecimal> t) {
                 BudgetItem budgetItem = (BudgetItem) t.getTableView().getItems().get(t.getTablePosition().getRow());
                 budgetItem.setAmount(t.getNewValue());
-                double sum = 0;
+                BigDecimal sum = BigDecimal.ZERO;
                 for (Object o : scratchPadTable.getItems()) {
                     BudgetItem item = (BudgetItem) o;
                     if (item != totalAdjustments) {
-                        sum += item.getAmount();
+                        sum = sum.add(item.getAmount());
                     }
                 }
                 totalAdjustments.setAmount(sum);
@@ -262,13 +260,13 @@ public class Sdbudget extends Application {
             @Override
             public void handle(ActionEvent e) {
                 String name = nameField.getText();
-                Double amount = Double.parseDouble(amountField.getText());
+                BigDecimal amount = new BigDecimal(amountField.getText());
                 BudgetItem newItem = new BudgetItem(name, amount);
                 scratchPadTable.getItems().add(newItem);
-                
+
             }
         });
-        
+
         AnchorPane anchorPane = new AnchorPane(); //http://o7planning.org/en/10645/javafx-anchorpane-layout-tutorial
         AnchorPane.setTopAnchor(label, 5.0);
         AnchorPane.setLeftAnchor(label, 5.0);

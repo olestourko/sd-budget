@@ -1,5 +1,6 @@
 package com.olestourko.sdbudget.services;
 
+import java.math.BigDecimal;
 import com.olestourko.sdbudget.services.EstimateResult;
 
 /**
@@ -8,19 +9,20 @@ import com.olestourko.sdbudget.services.EstimateResult;
  */
 public class PeriodServices {
 
-    public EstimateResult calculateEstimate(double revenue, double expenses, double adjustments, double incomeTarget, double openingBalance) {
-        double netIncome = revenue - expenses + adjustments;
-        double estimatedBalance = openingBalance + netIncome;
-        double expectedBalance = openingBalance + incomeTarget;
-        double surplus = estimatedBalance - expectedBalance;
+    public EstimateResult calculateEstimate(BigDecimal revenue, BigDecimal expenses, BigDecimal adjustments, BigDecimal incomeTarget, BigDecimal openingBalance) {
+        BigDecimal netIncome = revenue.subtract(expenses)
+                .add(adjustments);
+        BigDecimal estimatedBalance = openingBalance.add(netIncome);
+        BigDecimal expectedBalance = openingBalance.add(incomeTarget);
+        BigDecimal surplus = estimatedBalance.subtract(expectedBalance);
 
         return new EstimateResult(netIncome, estimatedBalance, expectedBalance, surplus);
     }
 
-    public ClosingResult calculateClosing(double incomeTarget, double openingBalance, double closingBalance) {
-        double closingBalanceTarget = openingBalance + incomeTarget;
-        double surplus = closingBalance - closingBalanceTarget;
-        double closingAdjustment = surplus;
+    public ClosingResult calculateClosing(BigDecimal incomeTarget, BigDecimal openingBalance, BigDecimal closingBalance) {
+        BigDecimal closingBalanceTarget = openingBalance.add(incomeTarget);
+        BigDecimal surplus = closingBalance.subtract(closingBalanceTarget);
+        BigDecimal closingAdjustment = surplus;
 
         return new ClosingResult(surplus, closingAdjustment);
     }

@@ -7,6 +7,7 @@ package com.olestourko.sdbudget.models;
 
 import java.math.BigDecimal;
 import com.olestourko.sdbudget.models.BudgetItem;
+import java.math.BigInteger;
 import java.util.Calendar;
 
 /**
@@ -23,32 +24,32 @@ public class Month implements IPeriod {
     public Calendar calendar;
 
     public Month() {
-        revenues = new BudgetItem("Revenues", 0);
-        expenses = new BudgetItem("Expenses", 0);
-        adjustments = new BudgetItem("Adjustments", 0);
-        netIncomeTarget = new BudgetItem("Net Income Target", 0);
-        openingBalance = new BudgetItem("Opening Balance", 0);
+        revenues = new BudgetItem("Revenues", new BigDecimal(BigInteger.ZERO));
+        expenses = new BudgetItem("Expenses", new BigDecimal(BigInteger.ZERO));
+        adjustments = new BudgetItem("Adjustments", new BigDecimal(BigInteger.ZERO));
+        netIncomeTarget = new BudgetItem("Net Income Target", new BigDecimal(BigInteger.ZERO));
+        openingBalance = new BudgetItem("Opening Balance", new BigDecimal(BigInteger.ZERO));
         calendar = Calendar.getInstance();
     }
 
     // Implementions for IPeriod methods
     public BigDecimal getTotalRevenues() {
-        return new BigDecimal(revenues.getAmount());
+        return revenues.getAmount();
     }
 
     public BigDecimal getTotalExpenses() {
-        return new BigDecimal(expenses.getAmount());
+        return expenses.getAmount();
     }
 
     public BigDecimal getTotalAdjustments() {
-        return new BigDecimal(adjustments.getAmount());
+        return adjustments.getAmount();
     }
 
     public BigDecimal getNetIncomeTarget() {
-        return new BigDecimal(netIncomeTarget.getAmount());
+        return netIncomeTarget.getAmount();
     }
 
     public BigDecimal getOpeningBalance() {
-        return new BigDecimal(openingBalance.getAmount());
+        return openingBalance.getAmount();
     }
 }
