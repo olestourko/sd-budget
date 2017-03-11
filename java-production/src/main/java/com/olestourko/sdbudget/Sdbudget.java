@@ -28,7 +28,16 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Label;
-import java.util.Calendar;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.KeyCode;
+import static javafx.application.Application.launch;
+import static javafx.application.Application.launch;
+import static javafx.application.Application.launch;
+import static javafx.application.Application.launch;
+import static javafx.application.Application.launch;
+import static javafx.application.Application.launch;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 
 public class Sdbudget extends Application {
 
@@ -56,45 +65,13 @@ public class Sdbudget extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 //        Parent root = FXMLLoader.load(getClass().getResource("/fxml/Scene.fxml"));
-        buildBudgetTable();
-        buildScratchpadTable();
+        Scene budgetScene = buildBudgetScene();
+        Scene scratchPadScene = buildScratchpadScene();
 
         // The Budget Scene
-        Label label = new Label();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
-        label.setText(dateFormat.format(month.calendar.getTime()));
-
-        AnchorPane anchorPane = new AnchorPane(); //http://o7planning.org/en/10645/javafx-anchorpane-layout-tutorial
-        AnchorPane.setTopAnchor(label, 5.0);
-        AnchorPane.setLeftAnchor(label, 5.0);
-        AnchorPane.setTopAnchor(budgetTable, 25.0);
-        AnchorPane.setBottomAnchor(budgetTable, 35.0);
-        AnchorPane.setLeftAnchor(budgetTable, 5.0);
-        AnchorPane.setRightAnchor(budgetTable, 5.0);
-        AnchorPane.setBottomAnchor(scratchPadButton, 5.0);
-        AnchorPane.setRightAnchor(scratchPadButton, 5.0);
-        anchorPane.getChildren().addAll(label, budgetTable, scratchPadButton);
-        Scene budgetScene = new Scene(anchorPane);
-        budgetScene.getStylesheets().add("/styles/Styles.css");
         stage.setScene(budgetScene);
 
         // The Scratchpad Scene
-        label = new Label();
-        label.setText(dateFormat.format(month.calendar.getTime()));
-
-        anchorPane = new AnchorPane(); //http://o7planning.org/en/10645/javafx-anchorpane-layout-tutorial
-        AnchorPane.setTopAnchor(label, 5.0);
-        AnchorPane.setLeftAnchor(label, 5.0);
-        AnchorPane.setTopAnchor(scratchPadTable, 25.0);
-        AnchorPane.setBottomAnchor(scratchPadTable, 35.0);
-        AnchorPane.setLeftAnchor(scratchPadTable, 5.0);
-        AnchorPane.setRightAnchor(scratchPadTable, 5.0);
-        AnchorPane.setBottomAnchor(budgetButton, 5.0);
-        AnchorPane.setRightAnchor(budgetButton, 5.0);
-        anchorPane.getChildren().addAll(label, scratchPadTable, budgetButton);
-        Scene scratchPadScene = new Scene(anchorPane);
-        scratchPadScene.getStylesheets().add("/styles/Styles.css");
-
         stage.setTitle("S/D Budget");
         stage.setWidth(380);
         stage.setHeight(480);
@@ -128,7 +105,7 @@ public class Sdbudget extends Application {
         launch(args);
     }
 
-    private final TableView buildBudgetTable() {
+    private final Scene buildBudgetScene() {
         budgetTable = new TableView();
         budgetTable.setEditable(true);
         TableColumn name = new TableColumn("name");
@@ -182,10 +159,27 @@ public class Sdbudget extends Application {
         budgetTable.setItems(data);
         budgetTable.getColumns().addAll(name, amount);
 
-        return budgetTable;
+        Label label = new Label();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
+        label.setText(dateFormat.format(month.calendar.getTime()));
+
+        AnchorPane anchorPane = new AnchorPane(); //http://o7planning.org/en/10645/javafx-anchorpane-layout-tutorial
+        AnchorPane.setTopAnchor(label, 5.0);
+        AnchorPane.setLeftAnchor(label, 5.0);
+        AnchorPane.setTopAnchor(budgetTable, 25.0);
+        AnchorPane.setBottomAnchor(budgetTable, 35.0);
+        AnchorPane.setLeftAnchor(budgetTable, 5.0);
+        AnchorPane.setRightAnchor(budgetTable, 5.0);
+        AnchorPane.setBottomAnchor(scratchPadButton, 5.0);
+        AnchorPane.setRightAnchor(scratchPadButton, 5.0);
+        anchorPane.getChildren().addAll(label, budgetTable, scratchPadButton);
+        Scene scene = new Scene(anchorPane);
+        scene.getStylesheets().add("/styles/Styles.css");
+
+        return scene;
     }
 
-    private final TableView buildScratchpadTable() {
+    private final Scene buildScratchpadScene() {
         scratchPadTable = new TableView();
         scratchPadTable.setEditable(true);
         TableColumn name = new TableColumn("name");
@@ -205,21 +199,33 @@ public class Sdbudget extends Application {
             }
         });
         scratchPadTable.getItems().addAll(new BudgetItem("Adjustment 1", 0), new BudgetItem("Adjustment 2", 0), totalAdjustments);
+        // Remove adjusments when DELETE key is pressed
+        scratchPadTable.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode().equals(KeyCode.DELETE)) {
+                    BudgetItem selectedItem = (BudgetItem) scratchPadTable.getSelectionModel().getSelectedItem();
+                    if (selectedItem == totalAdjustments) {
+                        return;
+                    }
+
+                    scratchPadTable.getItems().remove(selectedItem);
+                }
+            }
+        });
+
 //        scratchPadTable.setRowFactory(new Callback<TableView<BudgetItem>, TableRow<BudgetItem>>() {
 //            @Override
 //            public TableRow<BudgetItem> call(TableView<BudgetItem> param) {
 //                TableRow<BudgetItem> row = new TableRow<BudgetItem>();
-//                row.setOnMouseClicked(new EventHandler<MouseEvent>() {
+//                row.setOnKeyPressed(new EventHandler<KeyEvent>() {
 //                    @Override
-//                    public void handle(MouseEvent event) {
-//                        BudgetItem budgetItem = new BudgetItem();
-//                        scratchPadTable.getItems().add(budgetItem);
+//                    public void handle(KeyEvent event) {
+//                        return;
 //                    }
 //                });
-//
 //                return row;
 //            }
-//
 //        });
         //This draws the textfield when editing a table cell
         amount.setCellFactory(TextFieldTableCell.<BudgetItem, Double>forTableColumn(new DoubleStringConverter()));
@@ -239,6 +245,48 @@ public class Sdbudget extends Application {
                 totalAdjustments.setAmount(sum);
             }
         });
-        return scratchPadTable;
+
+        Label label = new Label();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
+        label.setText(dateFormat.format(month.calendar.getTime()));
+
+        //Inputs for adding new adjustments
+        TextField nameField = new TextField();
+        nameField.getStyleClass().add("input-field");
+        TextField amountField = new TextField();
+        amountField.getStyleClass().add("input-field");
+        Button addTransactionButton = new Button("Add transaction");
+        HBox hbox = new HBox();
+        hbox.getChildren().addAll(nameField, amountField, addTransactionButton);
+        addTransactionButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                String name = nameField.getText();
+                Double amount = Double.parseDouble(amountField.getText());
+                BudgetItem newItem = new BudgetItem(name, amount);
+                scratchPadTable.getItems().add(newItem);
+                
+            }
+        });
+        
+        AnchorPane anchorPane = new AnchorPane(); //http://o7planning.org/en/10645/javafx-anchorpane-layout-tutorial
+        AnchorPane.setTopAnchor(label, 5.0);
+        AnchorPane.setLeftAnchor(label, 5.0);
+        AnchorPane.setTopAnchor(scratchPadTable, 25.0);
+        AnchorPane.setBottomAnchor(scratchPadTable, 65.0);
+        AnchorPane.setLeftAnchor(scratchPadTable, 5.0);
+        AnchorPane.setRightAnchor(scratchPadTable, 5.0);
+        AnchorPane.setBottomAnchor(budgetButton, 5.0);
+        AnchorPane.setRightAnchor(budgetButton, 5.0);
+
+        AnchorPane.setLeftAnchor(hbox, 5.0);
+        AnchorPane.setRightAnchor(hbox, 5.0);
+        AnchorPane.setBottomAnchor(hbox, 35.0);
+
+        anchorPane.getChildren().addAll(label, scratchPadTable, budgetButton, hbox);
+        Scene scene = new Scene(anchorPane);
+        scene.getStylesheets().add("/styles/Styles.css");
+
+        return scene;
     }
 }

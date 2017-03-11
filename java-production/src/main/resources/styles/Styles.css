@@ -8,3 +8,7 @@
     -fx-faint-focus-color: -fx-control-inner-background;
     -fx-background-radius: 0;
 }
+
+.input-field {
+    -fx-pref-width: 120;
+}
