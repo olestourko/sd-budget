@@ -19,6 +19,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.converter.BigDecimalStringConverter;
+import javax.inject.Inject;
 
 public class BudgetSceneController implements Initializable {
 
@@ -38,8 +39,13 @@ public class BudgetSceneController implements Initializable {
     public BudgetItem closingBalanceTarget;
     public BudgetItem estimatedClosingBalance;
     public BudgetItem surplus;
-    public PeriodServices periodServices;
+    final private PeriodServices periodServices;
 
+    @Inject
+    BudgetSceneController(PeriodServices periodServices) {
+        this.periodServices = periodServices;
+    }
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 

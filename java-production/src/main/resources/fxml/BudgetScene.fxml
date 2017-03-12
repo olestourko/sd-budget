@@ -11,7 +11,7 @@
 <?import fxmltableview.*?>
 <?import com.olestourko.sdbudget.models.BudgetItem?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.olestourko.sdbudget.BudgetSceneController">
+<AnchorPane xmlns:fx="http://javafx.com/fxml">
     <Label fx:id="periodDate"
            text=""
            AnchorPane.topAnchor="5.0"

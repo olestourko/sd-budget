@@ -5,13 +5,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.event.EventHandler;
-import javafx.scene.control.TableView;
-import javafx.scene.control.Button;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import com.olestourko.sdbudget.models.BudgetItem;
 import com.olestourko.sdbudget.models.Month;
-import com.olestourko.sdbudget.services.PeriodServices;
 import com.olestourko.sdbudget.services.EstimateResult;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -19,14 +16,14 @@ import javafx.scene.layout.AnchorPane;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import com.olestourko.sdbudget.DaggerComponents.Budget;
+import com.olestourko.sdbudget.DaggerComponents.DaggerBudget;
+
 import static javafx.application.Application.launch;
 
 public class Sdbudget extends Application {
 
-    private PeriodServices periodServices = new PeriodServices();
     private Month month = new Month();
-    private TableView scratchPadTable;
-    private Button budgetButton = new Button("Budget");
     private BudgetItem closingBalanceTarget = new BudgetItem("Closing Balance Target", new BigDecimal(BigInteger.ZERO));
     private BudgetItem estimatedClosingBalance = new BudgetItem("Closing Balance (Estimated)", new BigDecimal(BigInteger.ZERO));
     private BudgetItem surplus = new BudgetItem("Surplus or Defecit (Estimated)", new BigDecimal(BigInteger.ZERO));
@@ -44,15 +41,16 @@ public class Sdbudget extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        final Budget budget = DaggerBudget.create();
+        BudgetSceneController budgetSceneController = budget.budgetSceneController().get();
         FXMLLoader budgetSceneLoader = new FXMLLoader(getClass().getResource("/fxml/BudgetScene.fxml"));
+        budgetSceneLoader.setController(budgetSceneController);
         AnchorPane root = budgetSceneLoader.load();
-        BudgetSceneController budgetSceneController = budgetSceneLoader.getController();
         budgetSceneController.month = month;
         budgetSceneController.items = budgetTableItems;
         budgetSceneController.closingBalanceTarget = closingBalanceTarget;
         budgetSceneController.estimatedClosingBalance = estimatedClosingBalance;
         budgetSceneController.surplus = surplus;
-        budgetSceneController.periodServices = periodServices;
         budgetSceneController.load();
         Scene budgetScene = new Scene(root);
         budgetScene.getStylesheets().add("/styles/Styles.css");
@@ -89,7 +87,7 @@ public class Sdbudget extends Application {
         month.adjustments.amountProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue observable, Number oldValue, Number newValue) {
-                EstimateResult result = periodServices.calculateEstimate(
+                EstimateResult result = budget.periodServices().calculateEstimate(
                         month.revenues.getAmount(),
                         month.expenses.getAmount(),
                         month.adjustments.getAmount(),
