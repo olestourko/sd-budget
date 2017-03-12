@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.cell.*?> 
+<?import javafx.collections.*?> 
+<?import fxmltableview.*?>
+<?import com.olestourko.sdbudget.models.BudgetItem?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.olestourko.sdbudget.BudgetSceneController">
+    <Label fx:id="periodDate"
+           text=""
+           AnchorPane.topAnchor="5.0"
+           AnchorPane.leftAnchor="5.0"/>
+    <TableView fx:id="budgetTable" 
+               AnchorPane.topAnchor="25.0"
+               AnchorPane.bottomAnchor="35.0"
+               AnchorPane.leftAnchor="5.0"
+               AnchorPane.rightAnchor="5.0"
+               editable="true">
+        <columns>
+            <TableColumn fx:id="nameColumn" text="Name" editable="true">
+                <cellValueFactory>
+                    <PropertyValueFactory property="name" />
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="amountColumn" text="Amount" editable="true">
+                <cellValueFactory>
+                    <PropertyValueFactory property="amount" />
+                </cellValueFactory>
+            </TableColumn>
+        </columns>    
+        <items></items>
+    </TableView>
+    <Button fx:id="scratchpadViewButton"
+            text="Scratchpad"
+            AnchorPane.bottomAnchor="5.0"
+            AnchorPane.rightAnchor="5.0"
+    />
+</AnchorPane>
