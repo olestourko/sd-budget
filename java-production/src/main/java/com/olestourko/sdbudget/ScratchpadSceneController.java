@@ -7,7 +7,9 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
+import javafx.collections.ListChangeListener.Change;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -28,6 +30,8 @@ public class ScratchpadSceneController implements Initializable {
     @FXML
     private TableView scratchPadTable;
     @FXML
+    private TableView totalsTable;
+    @FXML
     private Label periodDate;
     @FXML
     private TableColumn nameColumn;
@@ -39,8 +43,9 @@ public class ScratchpadSceneController implements Initializable {
     private TextField amountField;
     @FXML
     public Button budgetViewButton;
-    
+
     public Month month;
+    final private BudgetItem totalAdjustments = new BudgetItem("Total Adjustments", BigDecimal.ZERO);
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -55,9 +60,15 @@ public class ScratchpadSceneController implements Initializable {
         amountColumn.setCellValueFactory(
                 new PropertyValueFactory<BudgetItem, Double>("amount")
         );
+        //Update the totals whenever the scratchpad table is changed
+        scratchPadTable.getItems().addListener(new ListChangeListener<BudgetItem>() {
+            @Override
+            public void onChanged(Change<? extends BudgetItem> change) {
+                calculateTotals();
+            }
+        });
+
         //Add the "Adjustment Totals" item
-        BudgetItem totalAdjustments = new BudgetItem("Total Adjustments", BigDecimal.ZERO);
-        scratchPadTable.getItems().addAll(totalAdjustments);
         totalAdjustments.amountProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue observable, Number oldValue, Number newValue) {
@@ -72,16 +83,12 @@ public class ScratchpadSceneController implements Initializable {
             public void handle(TableColumn.CellEditEvent<BudgetItem, BigDecimal> t) {
                 BudgetItem budgetItem = (BudgetItem) t.getTableView().getItems().get(t.getTablePosition().getRow());
                 budgetItem.setAmount(t.getNewValue());
-                BigDecimal sum = BigDecimal.ZERO;
-                for (Object o : scratchPadTable.getItems()) {
-                    BudgetItem item = (BudgetItem) o;
-                    if (item != totalAdjustments) {
-                        sum = sum.add(item.getAmount());
-                    }
-                }
-                totalAdjustments.setAmount(sum);
+                calculateTotals();
             }
         });
+
+        //Set up the totals table
+        totalsTable.getItems().add(totalAdjustments);
 
         //Set the date on the label
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
@@ -109,9 +116,16 @@ public class ScratchpadSceneController implements Initializable {
         BigDecimal amount = new BigDecimal(amountField.getText());
         BudgetItem newItem = new BudgetItem(name, amount);
         scratchPadTable.getItems().add(newItem);
+        nameField.setText("");
+        amountField.setText("");
     }
 
-    public void handleBudgetButtonAction(ActionEvent event) {
-
+    private void calculateTotals() {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (Object o : scratchPadTable.getItems()) {
+            BudgetItem item = (BudgetItem) o;
+            sum = sum.add(item.getAmount());
+        }
+        totalAdjustments.setAmount(sum);
     }
 }

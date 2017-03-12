@@ -26,6 +26,8 @@ public class BudgetSceneController implements Initializable {
     @FXML
     private TableView budgetTable;
     @FXML
+    private TableView totalsTable;
+    @FXML
     private Label periodDate;
     @FXML
     public TableColumn nameColumn;
@@ -45,7 +47,7 @@ public class BudgetSceneController implements Initializable {
     BudgetSceneController(PeriodServices periodServices) {
         this.periodServices = periodServices;
     }
-    
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
@@ -57,7 +59,7 @@ public class BudgetSceneController implements Initializable {
                 new PropertyValueFactory<BudgetItem, String>("name")
         );
         amountColumn.setCellValueFactory(
-                new PropertyValueFactory<BudgetItem, Double>("amount")
+                new PropertyValueFactory<BudgetItem, BigDecimal>("amount")
         );
         budgetTable.setItems(items);
         //This draws the textfield when editing a table cell
@@ -83,6 +85,9 @@ public class BudgetSceneController implements Initializable {
             }
         });
 
+        //Set up the totals table
+        totalsTable.getItems().addAll(closingBalanceTarget, estimatedClosingBalance, surplus);
+        
         //Set the date on the label
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
         periodDate.setText(dateFormat.format(month.calendar.getTime()));

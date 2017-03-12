@@ -33,10 +33,7 @@ public class Sdbudget extends Application {
             month.expenses,
             month.adjustments,
             month.netIncomeTarget,
-            month.openingBalance,
-            closingBalanceTarget,
-            estimatedClosingBalance,
-            surplus
+            month.openingBalance
     );
 
     @Override
