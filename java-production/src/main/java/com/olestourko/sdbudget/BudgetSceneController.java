@@ -28,6 +28,8 @@ public class BudgetSceneController implements Initializable {
     @FXML
     private TableView totalsTable;
     @FXML
+    private TableView closingTable;
+    @FXML
     private Label periodDate;
     @FXML
     public TableColumn nameColumn;
@@ -43,6 +45,8 @@ public class BudgetSceneController implements Initializable {
     public BudgetItem surplus;
     final private PeriodServices periodServices;
 
+    final private BudgetItem closingBalance = new BudgetItem("Closing Balance", BigDecimal.ZERO);
+    
     @Inject
     BudgetSceneController(PeriodServices periodServices) {
         this.periodServices = periodServices;
@@ -87,6 +91,9 @@ public class BudgetSceneController implements Initializable {
 
         //Set up the totals table
         totalsTable.getItems().addAll(closingBalanceTarget, estimatedClosingBalance, surplus);
+        
+        //Set up the closing table
+        closingTable.getItems().addAll(closingBalance);
         
         //Set the date on the label
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");

@@ -8,20 +8,18 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.cell.*?> 
 <?import javafx.collections.*?> 
-<?import fxmltableview.*?>
-<?import com.olestourko.sdbudget.models.BudgetItem?>
 
 <AnchorPane xmlns:fx="http://javafx.com/fxml">
     <AnchorPane
         AnchorPane.topAnchor="5.0"
         AnchorPane.leftAnchor="5.0"
-        AnchorPane.bottomAnchor="140.0"
+        AnchorPane.bottomAnchor="35.0"
         AnchorPane.rightAnchor="5.0">
         <Label fx:id="periodDate" text=""/>
         <TableView fx:id="budgetTable" editable="true"
                    AnchorPane.topAnchor="20"
                    AnchorPane.leftAnchor="0"
-                   AnchorPane.bottomAnchor="0"
+                   AnchorPane.bottomAnchor="185"
                    AnchorPane.rightAnchor="0">
             <columns>
                 <TableColumn fx:id="nameColumn" text="Name" editable="true">
@@ -37,16 +35,30 @@
             </columns>    
             <items></items>
         </TableView>
-    </AnchorPane>
-    <AnchorPane prefHeight="100.0"
-                AnchorPane.bottomAnchor="35.0"
-                AnchorPane.leftAnchor="5.0"
-                AnchorPane.rightAnchor="5.0">
         <TableView fx:id="totalsTable" editable="true"
-                   AnchorPane.topAnchor="0"
+                   prefHeight="100"
                    AnchorPane.leftAnchor="0"
-                   AnchorPane.bottomAnchor="0"
+                   AnchorPane.bottomAnchor="80"
                    AnchorPane.rightAnchor="0">
+            <columns>
+                <TableColumn text="Name" editable="true">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="name" />
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn text="Amount" editable="true">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="amount" />
+                    </cellValueFactory>
+                </TableColumn>
+            </columns>
+            <items></items>
+        </TableView>
+        <TableView fx:id="closingTable" editable="true"
+                           prefHeight="75"
+                           AnchorPane.leftAnchor="0"
+                           AnchorPane.bottomAnchor="0"
+                           AnchorPane.rightAnchor="0">
             <columns>
                 <TableColumn text="Name" editable="true">
                     <cellValueFactory>
