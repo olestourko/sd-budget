@@ -8,7 +8,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.cell.*?> 
 <?import javafx.collections.*?> 
-<?import fxmltableview.*?>
 <?import com.olestourko.sdbudget.models.BudgetItem?>
 
 <AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.olestourko.sdbudget.ScratchpadSceneController">
@@ -67,8 +66,8 @@
         AnchorPane.leftAnchor="5.0"
         AnchorPane.rightAnchor="5.0"
         AnchorPane.bottomAnchor="35.0">
-        <TextField fx:id="nameField" text="" styleClass="input-field"/>
-        <TextField fx:id="amountField" text="" styleClass="input-field"/>
+        <TextField fx:id="nameField" text="" promptText="Description" styleClass="input-field"/>
+        <TextField fx:id="amountField" text="" promptText="Amount" styleClass="input-field"/>
         <Button fx:id="addTransactionButton"
                 text="Add Transaction"
                 onAction="#handleAddTransactionButtonAction"/>

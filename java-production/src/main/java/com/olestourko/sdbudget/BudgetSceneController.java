@@ -9,6 +9,7 @@ import javafx.scene.control.TableView;
 import javafx.collections.ObservableList;
 import com.olestourko.sdbudget.models.Month;
 import com.olestourko.sdbudget.models.BudgetItem;
+import com.olestourko.sdbudget.services.ClosingResult;
 import com.olestourko.sdbudget.services.EstimateResult;
 import com.olestourko.sdbudget.services.PeriodServices;
 import java.math.BigDecimal;
@@ -46,7 +47,7 @@ public class BudgetSceneController implements Initializable {
     final private PeriodServices periodServices;
 
     final private BudgetItem closingBalance = new BudgetItem("Closing Balance", BigDecimal.ZERO);
-    
+
     @Inject
     BudgetSceneController(PeriodServices periodServices) {
         this.periodServices = periodServices;
@@ -74,29 +75,52 @@ public class BudgetSceneController implements Initializable {
             public void handle(TableColumn.CellEditEvent<BudgetItem, BigDecimal> t) {
                 BudgetItem budgetItem = (BudgetItem) t.getTableView().getItems().get(t.getTablePosition().getRow());
                 budgetItem.setAmount(t.getNewValue());
-                EstimateResult result = periodServices.calculateEstimate(
-                        month.revenues.getAmount(),
-                        month.expenses.getAmount(),
-                        month.adjustments.getAmount(),
-                        month.netIncomeTarget.getAmount(),
-                        month.openingBalance.getAmount()
-                );
-
-                closingBalanceTarget.setAmount(month.openingBalance.getAmount()
-                        .add(month.netIncomeTarget.getAmount()));
-                estimatedClosingBalance.setAmount(result.estimatedBalance);
-                surplus.setAmount(result.surplus);
+                calculate();
             }
         });
 
         //Set up the totals table
         totalsTable.getItems().addAll(closingBalanceTarget, estimatedClosingBalance, surplus);
-        
+
         //Set up the closing table
         closingTable.getItems().addAll(closingBalance);
-        
+        TableColumn closingTableAmountColumn = (TableColumn) closingTable.getColumns().get(1);
+        closingTableAmountColumn.setCellFactory(TextFieldTableCell.<BudgetItem, BigDecimal>forTableColumn(new BigDecimalStringConverter()));
+        closingTableAmountColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<BudgetItem, BigDecimal>>() {
+            @Override
+            public void handle(TableColumn.CellEditEvent<BudgetItem, BigDecimal> t) {
+                BudgetItem budgetItem = (BudgetItem) t.getTableView().getItems().get(t.getTablePosition().getRow());
+                budgetItem.setAmount(t.getNewValue());
+                calculate();
+            }
+        });
+
         //Set the date on the label
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
         periodDate.setText(dateFormat.format(month.calendar.getTime()));
+    }
+
+    private void calculate() {
+        if (closingBalance.getAmount().equals(BigDecimal.ZERO)) {
+            // Calculate innter-month estimates
+            EstimateResult result = periodServices.calculateEstimate(
+                    month.revenues.getAmount(),
+                    month.expenses.getAmount(),
+                    month.adjustments.getAmount(),
+                    month.netIncomeTarget.getAmount(),
+                    month.openingBalance.getAmount()
+            );
+
+            closingBalanceTarget.setAmount(month.openingBalance.getAmount()
+                    .add(month.netIncomeTarget.getAmount()));
+            estimatedClosingBalance.setAmount(result.estimatedBalance);
+            surplus.setAmount(result.surplus);
+        } else {
+            // Calculate closing balances
+            ClosingResult result = periodServices.calculateClosing(month.netIncomeTarget.getAmount(), month.openingBalance.getAmount(), closingBalance.getAmount());
+            month.adjustments.setAmount(result.closingAdjustment);
+            estimatedClosingBalance.setAmount(closingBalance.getAmount());
+            surplus.setAmount(result.surplus);
+        }
     }
 }

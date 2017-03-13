@@ -64,7 +64,7 @@ public class ScratchpadSceneController implements Initializable {
         scratchPadTable.getItems().addListener(new ListChangeListener<BudgetItem>() {
             @Override
             public void onChanged(Change<? extends BudgetItem> change) {
-                calculateTotals();
+                calculate();
             }
         });
 
@@ -83,7 +83,7 @@ public class ScratchpadSceneController implements Initializable {
             public void handle(TableColumn.CellEditEvent<BudgetItem, BigDecimal> t) {
                 BudgetItem budgetItem = (BudgetItem) t.getTableView().getItems().get(t.getTablePosition().getRow());
                 budgetItem.setAmount(t.getNewValue());
-                calculateTotals();
+                calculate();
             }
         });
 
@@ -120,7 +120,7 @@ public class ScratchpadSceneController implements Initializable {
         amountField.setText("");
     }
 
-    private void calculateTotals() {
+    private void calculate() {
         BigDecimal sum = BigDecimal.ZERO;
         for (Object o : scratchPadTable.getItems()) {
             BudgetItem item = (BudgetItem) o;
