@@ -10,74 +10,75 @@
 <?import javafx.collections.*?> 
 
 <AnchorPane xmlns:fx="http://javafx.com/fxml">
-    <AnchorPane
-        AnchorPane.topAnchor="5.0"
-        AnchorPane.leftAnchor="5.0"
-        AnchorPane.bottomAnchor="35.0"
-        AnchorPane.rightAnchor="5.0">
-        <Label fx:id="periodDate" text=""/>
-        <TableView fx:id="budgetTable" editable="true"
-                   AnchorPane.topAnchor="20"
-                   AnchorPane.leftAnchor="0"
-                   AnchorPane.bottomAnchor="185"
-                   AnchorPane.rightAnchor="0">
-            <columns>
-                <TableColumn fx:id="nameColumn" text="Name" editable="true">
-                    <cellValueFactory>
-                        <PropertyValueFactory property="name" />
-                    </cellValueFactory>
-                </TableColumn>
-                <TableColumn fx:id="amountColumn" text="Amount" editable="true">
-                    <cellValueFactory>
-                        <PropertyValueFactory property="amount" />
-                    </cellValueFactory>
-                </TableColumn>
-            </columns>    
-            <items></items>
-        </TableView>
-        <TableView fx:id="totalsTable" editable="true"
-                   prefHeight="100"
-                   AnchorPane.leftAnchor="0"
-                   AnchorPane.bottomAnchor="80"
-                   AnchorPane.rightAnchor="0">
-            <columns>
-                <TableColumn text="Name" editable="true">
-                    <cellValueFactory>
-                        <PropertyValueFactory property="name" />
-                    </cellValueFactory>
-                </TableColumn>
-                <TableColumn text="Amount" editable="true">
-                    <cellValueFactory>
-                        <PropertyValueFactory property="amount" />
-                    </cellValueFactory>
-                </TableColumn>
-            </columns>
-            <items></items>
-        </TableView>
-        <TableView fx:id="closingTable" editable="true"
+    <children>
+        <AnchorPane
+            AnchorPane.topAnchor="5.0"
+            AnchorPane.leftAnchor="5.0"
+            AnchorPane.bottomAnchor="35.0"
+            AnchorPane.rightAnchor="5.0">
+            <children>
+                <Label fx:id="periodDate" text=""/>
+                <TableView fx:id="budgetTable" editable="true"
+                           AnchorPane.topAnchor="20"
+                           AnchorPane.leftAnchor="0"
+                           AnchorPane.bottomAnchor="185"
+                           AnchorPane.rightAnchor="0">
+                    <columns>
+                        <TableColumn fx:id="nameColumn" text="Name" editable="true">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="name" />
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn fx:id="amountColumn" text="Amount" editable="true">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="amount" />
+                            </cellValueFactory>
+                        </TableColumn>
+                    </columns>    
+                </TableView>
+                <TableView fx:id="totalsTable" editable="true"
+                           prefHeight="100"
+                           AnchorPane.leftAnchor="0"
+                           AnchorPane.bottomAnchor="80"
+                           AnchorPane.rightAnchor="0">
+                    <columns>
+                        <TableColumn text="Name" editable="true">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="name" />
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Amount" editable="true">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="amount" />
+                            </cellValueFactory>
+                        </TableColumn>
+                    </columns>
+                </TableView>
+                <TableView fx:id="closingTable" editable="true"
                            prefHeight="75"
                            AnchorPane.leftAnchor="0"
                            AnchorPane.bottomAnchor="0"
                            AnchorPane.rightAnchor="0">
-            <columns>
-                <TableColumn text="Name" editable="true">
-                    <cellValueFactory>
-                        <PropertyValueFactory property="name" />
-                    </cellValueFactory>
-                </TableColumn>
-                <TableColumn text="Amount" editable="true">
-                    <cellValueFactory>
-                        <PropertyValueFactory property="amount" />
-                    </cellValueFactory>
-                </TableColumn>
-            </columns>
-            <items></items>
-        </TableView>
-    </AnchorPane>
+                    <columns>
+                        <TableColumn text="Name" editable="true">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="name" />
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Amount" editable="true">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="amount" />
+                            </cellValueFactory>
+                        </TableColumn>
+                    </columns>
+                </TableView>
+            </children>
+        </AnchorPane>
 
-    <Button fx:id="scratchpadViewButton"
-            text="Scratchpad"
-            AnchorPane.bottomAnchor="5.0"
-            AnchorPane.rightAnchor="5.0"
-    />
+        <Button fx:id="scratchpadViewButton"
+                text="Scratchpad"
+                AnchorPane.bottomAnchor="5.0"
+                AnchorPane.rightAnchor="5.0"
+        />
+    </children>
 </AnchorPane>

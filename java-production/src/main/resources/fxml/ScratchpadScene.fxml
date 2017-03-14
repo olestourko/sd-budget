@@ -8,73 +8,76 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.cell.*?> 
 <?import javafx.collections.*?> 
-<?import com.olestourko.sdbudget.models.BudgetItem?>
 
 <AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.olestourko.sdbudget.ScratchpadSceneController">
-    <AnchorPane
-        AnchorPane.topAnchor="5.0"
-        AnchorPane.leftAnchor="5.0"
-        AnchorPane.bottomAnchor="80.0"
-        AnchorPane.rightAnchor="5.0">
-        <Label fx:id="periodDate" text=""/>
-        <TableView fx:id="scratchPadTable" 
-                   AnchorPane.topAnchor="20.0"
-                   AnchorPane.bottomAnchor="60.0"
-                   AnchorPane.leftAnchor="0"
-                   AnchorPane.rightAnchor="0"
-                   editable="true">
-            <columns>
-                <TableColumn fx:id="nameColumn" text="Name" editable="true">
-                    <cellValueFactory>
-                        <PropertyValueFactory property="name" />
-                    </cellValueFactory>
-                </TableColumn>
-                <TableColumn fx:id="amountColumn" text="Amount" editable="true">
-                    <cellValueFactory>
-                        <PropertyValueFactory property="amount" />
-                    </cellValueFactory>
-                </TableColumn>
-            </columns>    
-            <items></items>
-        </TableView>
-    </AnchorPane>
-    <AnchorPane prefHeight="70.0"
+    <children>
+        <AnchorPane
+            AnchorPane.topAnchor="5.0"
+            AnchorPane.leftAnchor="5.0"
+            AnchorPane.bottomAnchor="80.0"
+            AnchorPane.rightAnchor="5.0">
+            <children>
+                <Label fx:id="periodDate" text=""/>
+                <TableView fx:id="scratchPadTable" 
+                           AnchorPane.topAnchor="20.0"
+                           AnchorPane.bottomAnchor="60.0"
+                           AnchorPane.leftAnchor="0"
+                           AnchorPane.rightAnchor="0"
+                           editable="true">
+                    <columns>
+                        <TableColumn fx:id="nameColumn" text="Name" editable="true">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="name" />
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn fx:id="amountColumn" text="Amount" editable="true">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="amount" />
+                            </cellValueFactory>
+                        </TableColumn>
+                    </columns>    
+                </TableView>
+            </children>
+        </AnchorPane>
+        <AnchorPane prefHeight="70.0"
                     AnchorPane.bottomAnchor="65.0"
                     AnchorPane.leftAnchor="5.0"
                     AnchorPane.rightAnchor="5.0">
-        <TableView fx:id="totalsTable" editable="true"
-                   AnchorPane.topAnchor="0"
-                   AnchorPane.leftAnchor="0"
-                   AnchorPane.bottomAnchor="0"
-                   AnchorPane.rightAnchor="0">
-            <columns>
-                <TableColumn text="Name" editable="true">
-                    <cellValueFactory>
-                        <PropertyValueFactory property="name" />
-                    </cellValueFactory>
-                </TableColumn>
-                <TableColumn text="Amount" editable="true">
-                    <cellValueFactory>
-                        <PropertyValueFactory property="amount" />
-                    </cellValueFactory>
-                </TableColumn>
-            </columns>
-            <items></items>
-        </TableView>
-    </AnchorPane>
-    <HBox
-        AnchorPane.leftAnchor="5.0"
-        AnchorPane.rightAnchor="5.0"
-        AnchorPane.bottomAnchor="35.0">
-        <TextField fx:id="nameField" text="" promptText="Description" styleClass="input-field"/>
-        <TextField fx:id="amountField" text="" promptText="Amount" styleClass="input-field"/>
-        <Button fx:id="addTransactionButton"
-                text="Add Transaction"
-                onAction="#handleAddTransactionButtonAction"/>
-    </HBox>
-    <Button fx:id="budgetViewButton"
-            text="Scratchpad"
-            AnchorPane.bottomAnchor="5.0"
+            <children>
+                <TableView fx:id="totalsTable" editable="true"
+                           AnchorPane.topAnchor="0"
+                           AnchorPane.leftAnchor="0"
+                           AnchorPane.bottomAnchor="0"
+                           AnchorPane.rightAnchor="0">
+                    <columns>
+                        <TableColumn text="Name" editable="true">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="name" />
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Amount" editable="true">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="amount" />
+                            </cellValueFactory>
+                        </TableColumn>
+                    </columns>
+                </TableView>
+            </children>
+        </AnchorPane>
+        <HBox
+            AnchorPane.leftAnchor="5.0"
             AnchorPane.rightAnchor="5.0"
-    />
+            AnchorPane.bottomAnchor="35.0">
+            <TextField fx:id="nameField" text="" promptText="Description" styleClass="input-field"/>
+            <TextField fx:id="amountField" text="" promptText="Amount" styleClass="input-field"/>
+            <Button fx:id="addTransactionButton"
+                    text="Add Transaction"
+                    onAction="#handleAddTransactionButtonAction"/>
+        </HBox>
+        <Button fx:id="budgetViewButton"
+                text="Budget"
+                AnchorPane.bottomAnchor="5.0"
+                AnchorPane.rightAnchor="5.0"
+        />
+    </children>
 </AnchorPane>
