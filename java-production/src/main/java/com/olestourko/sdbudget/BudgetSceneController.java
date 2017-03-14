@@ -38,6 +38,10 @@ public class BudgetSceneController implements Initializable {
     public TableColumn amountColumn;
     @FXML
     public Button scratchpadViewButton;
+    @FXML
+    public Button previousMonthButton;
+    @FXML
+    public Button nextMonthButton;
 
     public Month month;
     public ObservableList<BudgetItem> items;
@@ -55,7 +59,12 @@ public class BudgetSceneController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
+        previousMonthButton.setOnAction(event -> {
+            System.out.println("Previous month");
+        });
+        nextMonthButton.setOnAction(event -> {
+            System.out.println("Next month");
+        });
     }
 
     // TODO: Replace with dependency injection

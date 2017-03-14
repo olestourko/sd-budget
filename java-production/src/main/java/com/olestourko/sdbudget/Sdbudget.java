@@ -66,18 +66,12 @@ public class Sdbudget extends Application {
         stage.setScene(budgetScene);
         stage.show();
 
-        budgetSceneController.scratchpadViewButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                stage.setScene(scratchpadScene);
-            }
+        budgetSceneController.scratchpadViewButton.setOnAction(event -> {
+            stage.setScene(scratchpadScene);
         });
 
-        scratchPadSceneController.budgetViewButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                stage.setScene(budgetScene);
-            }
+        scratchPadSceneController.budgetViewButton.setOnAction(event -> {
+            stage.setScene(budgetScene);
         });
 
         //Listen to changes for the month's adjustments
