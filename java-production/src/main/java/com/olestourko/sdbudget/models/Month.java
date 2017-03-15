@@ -21,15 +21,15 @@ public class Month implements IPeriod {
     public BudgetItem adjustments;
     public BudgetItem netIncomeTarget;
     public BudgetItem openingBalance;
-    public Calendar calendar;
+    final public Calendar calendar;
 
-    public Month() {
+    public Month(Calendar calendar) {
         revenues = new BudgetItem("Revenues", new BigDecimal(BigInteger.ZERO));
         expenses = new BudgetItem("Expenses", new BigDecimal(BigInteger.ZERO));
         adjustments = new BudgetItem("Adjustments", new BigDecimal(BigInteger.ZERO));
         netIncomeTarget = new BudgetItem("Net Income Target", new BigDecimal(BigInteger.ZERO));
         openingBalance = new BudgetItem("Opening Balance", new BigDecimal(BigInteger.ZERO));
-        calendar = Calendar.getInstance();
+        this.calendar = calendar;
     }
 
     // Implementions for IPeriod methods

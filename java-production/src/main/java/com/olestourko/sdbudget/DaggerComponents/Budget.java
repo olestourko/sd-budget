@@ -2,6 +2,7 @@ package com.olestourko.sdbudget.DaggerComponents;
 
 import com.olestourko.sdbudget.BudgetSceneController;
 import com.olestourko.sdbudget.services.PeriodServices;
+import com.olestourko.sdbudget.repositories.MonthRepository;
 import dagger.Component;
 import javax.inject.Singleton;
 import javax.inject.Provider;
@@ -15,4 +16,5 @@ import javax.inject.Provider;
 public interface Budget {
     Provider<BudgetSceneController> budgetSceneController();
     PeriodServices periodServices();
+    MonthRepository monthRepository();
 }

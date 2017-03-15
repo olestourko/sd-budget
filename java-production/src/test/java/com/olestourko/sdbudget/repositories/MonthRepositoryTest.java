@@ -44,7 +44,7 @@ public class MonthRepositoryTest {
      */
     @Test
     public void testPutMonth() {
-        Month month = new Month();
+        Month month = new Month(Calendar.getInstance());
 
         MonthRepository repository = new MonthRepository();
         repository.putMonth(month);
@@ -58,7 +58,7 @@ public class MonthRepositoryTest {
      */
     @Test
     public void testGetMonth() {
-        Month month = new Month();
+        Month month = new Month(Calendar.getInstance());
 
         MonthRepository repository = new MonthRepository();
         repository.putMonth(month);
@@ -72,9 +72,10 @@ public class MonthRepositoryTest {
      */
     @Test
     public void testGetPrevious() {
-        Month currentMonth = new Month();
-        Month previousMonth = new Month();
-        previousMonth.calendar.add(Calendar.MONTH, -1);
+        Month currentMonth = new Month(Calendar.getInstance());
+        Calendar previousCalendar = Calendar.getInstance();
+        previousCalendar.add(Calendar.MONTH, -1);
+        Month previousMonth = new Month(previousCalendar);
 
         MonthRepository repository = new MonthRepository();
         repository.putMonth(currentMonth);
@@ -89,9 +90,10 @@ public class MonthRepositoryTest {
      */
     @Test
     public void testGetNext() {
-        Month currentMonth = new Month();
-        Month nextMonth = new Month();
-        nextMonth.calendar.add(Calendar.MONTH, 1);
+        Month currentMonth = new Month(Calendar.getInstance());
+        Calendar nextCalendar = Calendar.getInstance();
+        nextCalendar.add(Calendar.MONTH, 1);
+        Month nextMonth = new Month(nextCalendar);
 
         MonthRepository repository = new MonthRepository();
         repository.putMonth(currentMonth);

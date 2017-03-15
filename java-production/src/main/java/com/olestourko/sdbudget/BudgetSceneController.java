@@ -15,6 +15,8 @@ import com.olestourko.sdbudget.services.EstimateResult;
 import com.olestourko.sdbudget.services.PeriodServices;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
@@ -44,7 +46,7 @@ public class BudgetSceneController implements Initializable {
     @FXML
     public Button nextMonthButton;
 
-    public Month month;
+    private Month month;
     public ObservableList<BudgetItem> items;
     public BudgetItem closingBalanceTarget;
     public BudgetItem estimatedClosingBalance;
@@ -63,22 +65,43 @@ public class BudgetSceneController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         previousMonthButton.setOnAction(event -> {
-            System.out.println("Previous month");
+            Month previousMonth = monthRepository.getPrevious(month);
+            if (previousMonth != null) {
+                setMonth(previousMonth);
+                nextMonthButton.disableProperty().set(false);
+            } else {
+                previousMonthButton.disableProperty().set(true);
+            }
         });
         nextMonthButton.setOnAction(event -> {
-            System.out.println("Next month");
+            Month nextMonth = monthRepository.getNext(month);
+            if (nextMonth != null) {
+                setMonth(nextMonth);
+                previousMonthButton.disableProperty().set(false);
+            } else {
+                nextMonthButton.disableProperty().set(true);
+            }
         });
     }
 
     // TODO: Replace with dependency injection
     public void load() {
+        Month month = monthRepository.getMonth(Calendar.getInstance());
+        setMonth(month);
+        
+        if(monthRepository.getPrevious(month) == null) {
+            previousMonthButton.disableProperty().set(true);
+        }
+        if(monthRepository.getNext(month) == null) {
+            nextMonthButton.disableProperty().set(true);
+        }
+        
         nameColumn.setCellValueFactory(
                 new PropertyValueFactory<BudgetItem, String>("name")
         );
         amountColumn.setCellValueFactory(
                 new PropertyValueFactory<BudgetItem, BigDecimal>("amount")
         );
-        budgetTable.setItems(items);
         //This draws the textfield when editing a table cell
         amountColumn.setCellFactory(TextFieldTableCell.<BudgetItem, BigDecimal>forTableColumn(new BigDecimalStringConverter()));
         //This is a callback for edits
@@ -106,10 +129,23 @@ public class BudgetSceneController implements Initializable {
                 calculate();
             }
         });
+    }
 
+    private void setMonth(Month month) {
+        this.month = month;
+        budgetTable.setItems(FXCollections.observableArrayList(
+                month.revenues,
+                month.expenses,
+                month.adjustments,
+                month.netIncomeTarget,
+                month.openingBalance
+        ));
+        
         //Set the date on the label
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
         periodDate.setText(dateFormat.format(month.calendar.getTime()));
+        
+        calculate();
     }
 
     private void calculate() {

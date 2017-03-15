@@ -16,32 +16,43 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import com.olestourko.sdbudget.DaggerComponents.Budget;
 import com.olestourko.sdbudget.DaggerComponents.DaggerBudget;
+import com.olestourko.sdbudget.repositories.MonthRepository;
+import java.util.Calendar;
 
 import static javafx.application.Application.launch;
 
 public class Sdbudget extends Application {
 
-    private Month month = new Month();
     private BudgetItem closingBalanceTarget = new BudgetItem("Closing Balance Target", new BigDecimal(BigInteger.ZERO));
     private BudgetItem estimatedClosingBalance = new BudgetItem("Closing Balance (Estimated)", new BigDecimal(BigInteger.ZERO));
     private BudgetItem surplus = new BudgetItem("Surplus or Defecit (Estimated)", new BigDecimal(BigInteger.ZERO));
 
-    private ObservableList<BudgetItem> budgetTableItems = FXCollections.observableArrayList(
-            month.revenues,
-            month.expenses,
-            month.adjustments,
-            month.netIncomeTarget,
-            month.openingBalance
-    );
-
     @Override
     public void start(Stage stage) throws Exception {
         final Budget budget = DaggerBudget.create();
+
+        //Populate the month repository
+        MonthRepository monthRepository = budget.monthRepository();
+        for (int i = 0; i < 12; i++) {
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.MONTH, i);
+            monthRepository.putMonth(new Month(cal));
+        }
+
+        //Set the current month
+        Month month = monthRepository.getMonth(Calendar.getInstance());
+        ObservableList<BudgetItem> budgetTableItems = FXCollections.observableArrayList(
+                month.revenues,
+                month.expenses,
+                month.adjustments,
+                month.netIncomeTarget,
+                month.openingBalance
+        );
+
         BudgetSceneController budgetSceneController = budget.budgetSceneController().get();
         FXMLLoader budgetSceneLoader = new FXMLLoader(getClass().getResource("/fxml/BudgetScene.fxml"));
         budgetSceneLoader.setController(budgetSceneController);
         AnchorPane root = budgetSceneLoader.load();
-        budgetSceneController.month = month;
         budgetSceneController.items = budgetTableItems;
         budgetSceneController.closingBalanceTarget = closingBalanceTarget;
         budgetSceneController.estimatedClosingBalance = estimatedClosingBalance;
