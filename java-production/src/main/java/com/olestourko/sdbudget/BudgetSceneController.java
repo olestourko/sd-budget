@@ -9,6 +9,7 @@ import javafx.scene.control.TableView;
 import javafx.collections.ObservableList;
 import com.olestourko.sdbudget.models.Month;
 import com.olestourko.sdbudget.models.BudgetItem;
+import com.olestourko.sdbudget.repositories.MonthRepository;
 import com.olestourko.sdbudget.services.ClosingResult;
 import com.olestourko.sdbudget.services.EstimateResult;
 import com.olestourko.sdbudget.services.PeriodServices;
@@ -49,12 +50,14 @@ public class BudgetSceneController implements Initializable {
     public BudgetItem estimatedClosingBalance;
     public BudgetItem surplus;
     final private PeriodServices periodServices;
+    final private MonthRepository monthRepository;
 
     final private BudgetItem closingBalance = new BudgetItem("Closing Balance", BigDecimal.ZERO);
 
     @Inject
-    BudgetSceneController(PeriodServices periodServices) {
+    BudgetSceneController(PeriodServices periodServices, MonthRepository monthRepository) {
         this.periodServices = periodServices;
+        this.monthRepository = monthRepository;
     }
 
     @Override

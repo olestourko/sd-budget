@@ -4,7 +4,6 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.event.EventHandler;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import com.olestourko.sdbudget.models.BudgetItem;
@@ -15,7 +14,6 @@ import java.math.BigInteger;
 import javafx.scene.layout.AnchorPane;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import com.olestourko.sdbudget.DaggerComponents.Budget;
 import com.olestourko.sdbudget.DaggerComponents.DaggerBudget;
 
