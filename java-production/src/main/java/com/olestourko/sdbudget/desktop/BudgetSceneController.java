@@ -1,4 +1,4 @@
-package com.olestourko.sdbudget;
+package com.olestourko.sdbudget.desktop;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -7,12 +7,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.collections.ObservableList;
-import com.olestourko.sdbudget.models.Month;
-import com.olestourko.sdbudget.models.BudgetItem;
-import com.olestourko.sdbudget.repositories.MonthRepository;
-import com.olestourko.sdbudget.services.ClosingResult;
-import com.olestourko.sdbudget.services.EstimateResult;
-import com.olestourko.sdbudget.services.PeriodServices;
+import com.olestourko.sdbudget.core.models.Month;
+import com.olestourko.sdbudget.core.models.BudgetItem;
+import com.olestourko.sdbudget.core.repositories.MonthRepository;
+import com.olestourko.sdbudget.core.services.ClosingResult;
+import com.olestourko.sdbudget.core.services.EstimateResult;
+import com.olestourko.sdbudget.core.services.PeriodServices;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

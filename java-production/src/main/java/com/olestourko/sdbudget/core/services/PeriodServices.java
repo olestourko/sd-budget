@@ -1,7 +1,7 @@
-package com.olestourko.sdbudget.services;
+package com.olestourko.sdbudget.core.services;
 
 import java.math.BigDecimal;
-import com.olestourko.sdbudget.services.EstimateResult;
+import com.olestourko.sdbudget.core.services.EstimateResult;
 
 /**
  *

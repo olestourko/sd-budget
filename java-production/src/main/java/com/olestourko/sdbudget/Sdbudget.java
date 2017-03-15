@@ -1,22 +1,24 @@
 package com.olestourko.sdbudget;
 
+import com.olestourko.sdbudget.desktop.BudgetSceneController;
+import com.olestourko.sdbudget.desktop.ScratchpadSceneController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import com.olestourko.sdbudget.models.BudgetItem;
-import com.olestourko.sdbudget.models.Month;
-import com.olestourko.sdbudget.services.EstimateResult;
+import com.olestourko.sdbudget.core.models.BudgetItem;
+import com.olestourko.sdbudget.core.models.Month;
+import com.olestourko.sdbudget.core.services.EstimateResult;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import javafx.scene.layout.AnchorPane;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import com.olestourko.sdbudget.DaggerComponents.Budget;
-import com.olestourko.sdbudget.DaggerComponents.DaggerBudget;
-import com.olestourko.sdbudget.repositories.MonthRepository;
+import com.olestourko.sdbudget.core.dagger.Budget;
+import com.olestourko.sdbudget.core.dagger.DaggerBudget;
+import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import java.util.Calendar;
 
 import static javafx.application.Application.launch;
@@ -50,7 +52,7 @@ public class Sdbudget extends Application {
         );
 
         BudgetSceneController budgetSceneController = budget.budgetSceneController().get();
-        FXMLLoader budgetSceneLoader = new FXMLLoader(getClass().getResource("/fxml/BudgetScene.fxml"));
+        FXMLLoader budgetSceneLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/BudgetScene.fxml"));
         budgetSceneLoader.setController(budgetSceneController);
         AnchorPane root = budgetSceneLoader.load();
         budgetSceneController.items = budgetTableItems;
@@ -59,15 +61,15 @@ public class Sdbudget extends Application {
         budgetSceneController.surplus = surplus;
         budgetSceneController.load();
         Scene budgetScene = new Scene(root);
-        budgetScene.getStylesheets().add("/styles/Styles.css");
+        budgetScene.getStylesheets().add("/desktop/styles/Styles.css");
 
-        FXMLLoader scratchpadSceneLoader = new FXMLLoader(getClass().getResource("/fxml/ScratchpadScene.fxml"));
+        FXMLLoader scratchpadSceneLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/ScratchpadScene.fxml"));
         root = scratchpadSceneLoader.load();
         ScratchpadSceneController scratchPadSceneController = scratchpadSceneLoader.getController();
         scratchPadSceneController.month = month;
         scratchPadSceneController.load();
         Scene scratchpadScene = new Scene(root);
-        scratchpadScene.getStylesheets().add("/styles/Styles.css");
+        scratchpadScene.getStylesheets().add("/desktop/styles/Styles.css");
 
         stage.setTitle("S/D Budget");
         stage.setWidth(380);

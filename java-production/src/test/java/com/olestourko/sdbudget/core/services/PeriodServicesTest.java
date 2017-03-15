@@ -3,8 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.olestourko.sdbudget.services;
+package com.olestourko.sdbudget.core.services;
 
+import com.olestourko.sdbudget.core.services.PeriodServices;
+import com.olestourko.sdbudget.core.services.ClosingResult;
+import com.olestourko.sdbudget.core.services.EstimateResult;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

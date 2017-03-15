@@ -1,7 +1,7 @@
-package com.olestourko.sdbudget.DaggerComponents;
+package com.olestourko.sdbudget.core.dagger;
 
-import com.olestourko.sdbudget.repositories.MonthRepository;
-import com.olestourko.sdbudget.services.PeriodServices;
+import com.olestourko.sdbudget.core.repositories.MonthRepository;
+import com.olestourko.sdbudget.core.services.PeriodServices;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Singleton;

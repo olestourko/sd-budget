@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.olestourko.sdbudget.models;
+package com.olestourko.sdbudget.core.models;
 
 import java.math.BigDecimal;
-import com.olestourko.sdbudget.models.BudgetItem;
+import com.olestourko.sdbudget.core.models.BudgetItem;
 import java.math.BigInteger;
 import java.util.Calendar;
 

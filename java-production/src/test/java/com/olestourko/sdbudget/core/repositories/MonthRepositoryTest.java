@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.olestourko.sdbudget.repositories;
+package com.olestourko.sdbudget.core.repositories;
 
-import com.olestourko.sdbudget.models.Month;
+import com.olestourko.sdbudget.core.repositories.MonthRepository;
+import com.olestourko.sdbudget.core.models.Month;
 import java.util.Calendar;
 import org.junit.After;
 import org.junit.AfterClass;

@@ -1,4 +1,4 @@
-package com.olestourko.sdbudget.services;
+package com.olestourko.sdbudget.core.services;
 
 import java.math.BigDecimal;
 

@@ -1,7 +1,7 @@
-package com.olestourko.sdbudget;
+package com.olestourko.sdbudget.desktop;
 
-import com.olestourko.sdbudget.models.BudgetItem;
-import com.olestourko.sdbudget.models.Month;
+import com.olestourko.sdbudget.core.models.BudgetItem;
+import com.olestourko.sdbudget.core.models.Month;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.text.SimpleDateFormat;

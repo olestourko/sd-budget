@@ -1,4 +1,4 @@
-package com.olestourko.sdbudget.models;
+package com.olestourko.sdbudget.core.models;
 
 import java.math.BigDecimal;
 import javafx.beans.property.SimpleStringProperty;
