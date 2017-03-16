@@ -2,6 +2,7 @@ package com.olestourko.sdbudget.desktop.dagger;
 
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.core.services.PeriodServices;
+import com.olestourko.sdbudget.core.models.Budget;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Singleton;
@@ -18,10 +19,17 @@ public class BudgetModule {
     PeriodServices providePeriodServices() {
         return new PeriodServices();
     }
-    
+
     @Provides
     @Singleton
     MonthRepository provideMonthRepository() {
         return new MonthRepository();
     }
+
+    @Provides
+    @Singleton
+    Budget provideBudget() {
+        return new Budget();
+    }
+
 }

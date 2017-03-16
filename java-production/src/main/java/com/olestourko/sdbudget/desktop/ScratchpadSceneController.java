@@ -3,6 +3,7 @@ package com.olestourko.sdbudget.desktop;
 import com.olestourko.sdbudget.desktop.models.BudgetItem;
 import com.olestourko.sdbudget.desktop.models.Month;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
+import com.olestourko.sdbudget.core.models.Budget;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -11,7 +12,6 @@ import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener.Change;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -48,9 +48,16 @@ public class ScratchpadSceneController implements Initializable {
     @FXML
     public Button budgetViewButton;
 
-    private Month month;
     final private MonthRepository monthRepository;
     final private BudgetItem totalAdjustments = new BudgetItem("Total Adjustments", BigDecimal.ZERO);
+    final private Budget budget;
+
+    final private ListChangeListener<BudgetItem> listChangeListener = new ListChangeListener<BudgetItem>() {
+        @Override
+        public void onChanged(Change<? extends BudgetItem> change) {
+            calculate();
+        }
+    };
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -58,34 +65,31 @@ public class ScratchpadSceneController implements Initializable {
     }
 
     @Inject
-    public ScratchpadSceneController(MonthRepository monthRepository) {
+    public ScratchpadSceneController(MonthRepository monthRepository, Budget budget) {
         this.monthRepository = monthRepository;
+        this.budget = budget;
     }
-    
+
     // TODO: Replace with dependency injection
     public void load() {
-        this.month = monthRepository.getMonth(Calendar.getInstance());
-        this.setMonth(month);
-        
+        //Set the month and add callback for when the month property in the Budget model changes
+        this.setMonth(budget.getCurrentMonth());
+        budget.currentMonthProperty().addListener(event -> {
+            this.setMonth(budget.getCurrentMonth());
+        });
+
         nameColumn.setCellValueFactory(
                 new PropertyValueFactory<BudgetItem, String>("name")
         );
         amountColumn.setCellValueFactory(
                 new PropertyValueFactory<BudgetItem, Double>("amount")
         );
-        //Update the totals whenever the scratchpad table is changed
-        scratchPadTable.getItems().addListener(new ListChangeListener<BudgetItem>() {
-            @Override
-            public void onChanged(Change<? extends BudgetItem> change) {
-                calculate();
-            }
-        });
 
         //Add the "Adjustment Totals" item
         totalAdjustments.amountProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue observable, Number oldValue, Number newValue) {
-                month.adjustments.setAmount((BigDecimal) newValue);
+                budget.getCurrentMonth().adjustments.setAmount((BigDecimal) newValue);
             }
         });
 
@@ -105,7 +109,7 @@ public class ScratchpadSceneController implements Initializable {
 
         //Set the date on the label
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
-        periodDate.setText(dateFormat.format(month.calendar.getTime()));
+        periodDate.setText(dateFormat.format(budget.getCurrentMonth().calendar.getTime()));
 
         // Remove adjusments when DELETE key is pressed
         scratchPadTable.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -116,7 +120,7 @@ public class ScratchpadSceneController implements Initializable {
                     if (selectedItem == totalAdjustments) {
                         return;
                     }
-                    month.transactions.remove(selectedItem);
+                    budget.getCurrentMonth().transactions.remove(selectedItem);
                 }
             }
         });
@@ -129,7 +133,7 @@ public class ScratchpadSceneController implements Initializable {
         BudgetItem newItem = new BudgetItem(name, amount);
         nameField.setText("");
         amountField.setText("");
-        month.transactions.add(newItem);
+        budget.getCurrentMonth().transactions.add(newItem);
     }
 
     private void calculate() {
@@ -140,10 +144,12 @@ public class ScratchpadSceneController implements Initializable {
         }
         totalAdjustments.setAmount(sum);
     }
-    
-    public void setMonth(Month month) {
-        this.month = month;
+
+    private void setMonth(Month month) {
+        budget.setCurrentMonth(month);
+        scratchPadTable.getItems().removeListener(listChangeListener);
         scratchPadTable.setItems(month.transactions);
-        calculate();
+        scratchPadTable.getItems().addListener(listChangeListener);
+        calculate();        
     }
 }

@@ -13,6 +13,7 @@ import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.core.services.ClosingResult;
 import com.olestourko.sdbudget.core.services.EstimateResult;
 import com.olestourko.sdbudget.core.services.PeriodServices;
+import com.olestourko.sdbudget.core.models.Budget;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -46,26 +47,27 @@ public class BudgetSceneController implements Initializable {
     @FXML
     public Button nextMonthButton;
 
-    private Month month;
     public ObservableList<BudgetItem> items;
     public BudgetItem closingBalanceTarget;
     public BudgetItem estimatedClosingBalance;
     public BudgetItem surplus;
     final private PeriodServices periodServices;
     final private MonthRepository monthRepository;
+    final private Budget budget;
 
     final private BudgetItem closingBalance = new BudgetItem("Closing Balance", BigDecimal.ZERO);
 
     @Inject
-    BudgetSceneController(PeriodServices periodServices, MonthRepository monthRepository) {
+    BudgetSceneController(PeriodServices periodServices, MonthRepository monthRepository, Budget budget) {
         this.periodServices = periodServices;
         this.monthRepository = monthRepository;
+        this.budget = budget;
     }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         previousMonthButton.setOnAction(event -> {
-            Month previousMonth = monthRepository.getPrevious(month);
+            Month previousMonth = monthRepository.getPrevious(budget.getCurrentMonth());
             if (previousMonth != null) {
                 setMonth(previousMonth);
                 nextMonthButton.disableProperty().set(false);
@@ -74,7 +76,7 @@ public class BudgetSceneController implements Initializable {
             }
         });
         nextMonthButton.setOnAction(event -> {
-            Month nextMonth = monthRepository.getNext(month);
+            Month nextMonth = monthRepository.getNext(budget.getCurrentMonth());
             if (nextMonth != null) {
                 setMonth(nextMonth);
                 previousMonthButton.disableProperty().set(false);
@@ -86,13 +88,16 @@ public class BudgetSceneController implements Initializable {
 
     // TODO: Replace with dependency injection
     public void load() {
-        Month month = monthRepository.getMonth(Calendar.getInstance());
-        setMonth(month);
+        //Set the month and add callback for when the month property in the Budget model changes
+        this.setMonth(budget.getCurrentMonth());
+        budget.currentMonthProperty().addListener(event -> {
+            this.setMonth(budget.getCurrentMonth());
+        });
         
-        if(monthRepository.getPrevious(month) == null) {
+        if(monthRepository.getPrevious(budget.getCurrentMonth()) == null) {
             previousMonthButton.disableProperty().set(true);
         }
-        if(monthRepository.getNext(month) == null) {
+        if(monthRepository.getNext(budget.getCurrentMonth()) == null) {
             nextMonthButton.disableProperty().set(true);
         }
         
@@ -131,8 +136,8 @@ public class BudgetSceneController implements Initializable {
         });
     }
 
-    public void setMonth(Month month) {
-        this.month = month;
+    private void setMonth(Month month) {
+        budget.setCurrentMonth(month);
         budgetTable.setItems(FXCollections.observableArrayList(
                 month.revenues,
                 month.expenses,
@@ -149,6 +154,7 @@ public class BudgetSceneController implements Initializable {
     }
 
     private void calculate() {
+        Month month = budget.getCurrentMonth();
         if (closingBalance.getAmount().equals(BigDecimal.ZERO)) {
             // Calculate innter-month estimates
             EstimateResult result = periodServices.calculateEstimate(

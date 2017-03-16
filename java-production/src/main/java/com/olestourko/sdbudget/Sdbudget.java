@@ -16,10 +16,11 @@ import java.math.BigInteger;
 import javafx.scene.layout.AnchorPane;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import com.olestourko.sdbudget.desktop.dagger.Budget;
-import com.olestourko.sdbudget.desktop.dagger.DaggerBudget;
+import com.olestourko.sdbudget.desktop.dagger.DaggerBudgetInjector;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
+import com.olestourko.sdbudget.core.models.Budget;
 import java.util.Calendar;
+import com.olestourko.sdbudget.desktop.dagger.BudgetInjector;
 
 public class Sdbudget extends Application {
 
@@ -29,15 +30,16 @@ public class Sdbudget extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        final Budget budget = DaggerBudget.create();
-
+        final BudgetInjector budgetInjector = DaggerBudgetInjector.create();
+        final Budget budget = budgetInjector.budget();
         //Populate the month repository
-        MonthRepository monthRepository = budget.monthRepository();
+        MonthRepository monthRepository = budgetInjector.monthRepository();
         for (int i = 0; i < 12; i++) {
             Calendar cal = Calendar.getInstance();
             cal.add(Calendar.MONTH, i);
             monthRepository.putMonth(new Month(cal));
         }
+        budget.setCurrentMonth(monthRepository.getMonth(Calendar.getInstance()));
 
         //Set the current month
         Month month = monthRepository.getMonth(Calendar.getInstance());
@@ -49,7 +51,7 @@ public class Sdbudget extends Application {
                 month.openingBalance
         );
 
-        BudgetSceneController budgetSceneController = budget.budgetSceneController().get();
+        BudgetSceneController budgetSceneController = budgetInjector.budgetSceneController().get();
         FXMLLoader budgetSceneLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/BudgetScene.fxml"));
         budgetSceneLoader.setController(budgetSceneController);
         AnchorPane root = budgetSceneLoader.load();
@@ -61,7 +63,7 @@ public class Sdbudget extends Application {
         Scene budgetScene = new Scene(root);
         budgetScene.getStylesheets().add("/desktop/styles/Styles.css");
 
-        ScratchpadSceneController scratchpadSceneController = budget.scratchpadSceneController().get();
+        ScratchpadSceneController scratchpadSceneController = budgetInjector.scratchpadSceneController().get();
         FXMLLoader scratchpadSceneLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/ScratchpadScene.fxml"));
         scratchpadSceneLoader.setController(scratchpadSceneController);
         root = scratchpadSceneLoader.load();
@@ -88,7 +90,7 @@ public class Sdbudget extends Application {
         month.adjustments.amountProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue observable, Number oldValue, Number newValue) {
-                EstimateResult result = budget.periodServices().calculateEstimate(
+                EstimateResult result = budgetInjector.periodServices().calculateEstimate(
                         month.revenues.getAmount(),
                         month.expenses.getAmount(),
                         month.adjustments.getAmount(),
