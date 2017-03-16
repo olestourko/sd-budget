@@ -1,8 +1,7 @@
-package com.olestourko.sdbudget.core.models;
+package com.olestourko.sdbudget.desktop.models;
 
 import java.math.BigDecimal;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
 /**

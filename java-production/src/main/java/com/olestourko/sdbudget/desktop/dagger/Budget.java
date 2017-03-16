@@ -1,4 +1,4 @@
-package com.olestourko.sdbudget.core.dagger;
+package com.olestourko.sdbudget.desktop.dagger;
 
 import com.olestourko.sdbudget.desktop.BudgetSceneController;
 import com.olestourko.sdbudget.core.services.PeriodServices;

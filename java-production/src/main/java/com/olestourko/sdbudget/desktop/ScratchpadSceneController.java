@@ -1,7 +1,7 @@
 package com.olestourko.sdbudget.desktop;
 
-import com.olestourko.sdbudget.core.models.BudgetItem;
-import com.olestourko.sdbudget.core.models.Month;
+import com.olestourko.sdbudget.desktop.models.BudgetItem;
+import com.olestourko.sdbudget.desktop.models.Month;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import java.math.BigDecimal;
 import java.net.URL;
@@ -65,6 +65,7 @@ public class ScratchpadSceneController implements Initializable {
     // TODO: Replace with dependency injection
     public void load() {
         this.month = monthRepository.getMonth(Calendar.getInstance());
+        this.setMonth(month);
         
         nameColumn.setCellValueFactory(
                 new PropertyValueFactory<BudgetItem, String>("name")
@@ -115,8 +116,6 @@ public class ScratchpadSceneController implements Initializable {
                     if (selectedItem == totalAdjustments) {
                         return;
                     }
-
-                    scratchPadTable.getItems().remove(selectedItem);
                     month.transactions.remove(selectedItem);
                 }
             }
@@ -128,7 +127,6 @@ public class ScratchpadSceneController implements Initializable {
         String name = nameField.getText();
         BigDecimal amount = new BigDecimal(amountField.getText());
         BudgetItem newItem = new BudgetItem(name, amount);
-        scratchPadTable.getItems().add(newItem);
         nameField.setText("");
         amountField.setText("");
         month.transactions.add(newItem);
@@ -141,5 +139,11 @@ public class ScratchpadSceneController implements Initializable {
             sum = sum.add(item.getAmount());
         }
         totalAdjustments.setAmount(sum);
+    }
+    
+    public void setMonth(Month month) {
+        this.month = month;
+        scratchPadTable.setItems(month.transactions);
+        calculate();
     }
 }

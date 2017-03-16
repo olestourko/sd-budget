@@ -3,13 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.olestourko.sdbudget.core.models;
+package com.olestourko.sdbudget.desktop.models;
 
 import java.math.BigDecimal;
-import com.olestourko.sdbudget.core.models.BudgetItem;
+import com.olestourko.sdbudget.desktop.models.BudgetItem;
+import com.olestourko.sdbudget.core.models.IPeriod;
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Calendar;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  *
@@ -22,7 +24,7 @@ public class Month implements IPeriod {
     public BudgetItem adjustments;
     public BudgetItem netIncomeTarget;
     public BudgetItem openingBalance;
-    public ArrayList<BudgetItem> transactions = new ArrayList<BudgetItem>(); //Adjustment transactions
+    public ObservableList transactions = FXCollections.observableArrayList(); //Adjustment transactions
     final public Calendar calendar;
     
     public Month(Calendar calendar) {

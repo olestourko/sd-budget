@@ -7,8 +7,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.collections.ObservableList;
-import com.olestourko.sdbudget.core.models.Month;
-import com.olestourko.sdbudget.core.models.BudgetItem;
+import com.olestourko.sdbudget.desktop.models.Month;
+import com.olestourko.sdbudget.desktop.models.BudgetItem;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.core.services.ClosingResult;
 import com.olestourko.sdbudget.core.services.EstimateResult;
@@ -131,7 +131,7 @@ public class BudgetSceneController implements Initializable {
         });
     }
 
-    private void setMonth(Month month) {
+    public void setMonth(Month month) {
         this.month = month;
         budgetTable.setItems(FXCollections.observableArrayList(
                 month.revenues,
