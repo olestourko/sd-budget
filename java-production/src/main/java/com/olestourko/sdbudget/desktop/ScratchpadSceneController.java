@@ -2,13 +2,16 @@ package com.olestourko.sdbudget.desktop;
 
 import com.olestourko.sdbudget.core.models.BudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
+import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener.Change;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -24,6 +27,7 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.util.converter.BigDecimalStringConverter;
+import javax.inject.Inject;
 
 public class ScratchpadSceneController implements Initializable {
 
@@ -44,7 +48,8 @@ public class ScratchpadSceneController implements Initializable {
     @FXML
     public Button budgetViewButton;
 
-    public Month month;
+    private Month month;
+    final private MonthRepository monthRepository;
     final private BudgetItem totalAdjustments = new BudgetItem("Total Adjustments", BigDecimal.ZERO);
 
     @Override
@@ -52,8 +57,15 @@ public class ScratchpadSceneController implements Initializable {
 
     }
 
+    @Inject
+    public ScratchpadSceneController(MonthRepository monthRepository) {
+        this.monthRepository = monthRepository;
+    }
+    
     // TODO: Replace with dependency injection
     public void load() {
+        this.month = monthRepository.getMonth(Calendar.getInstance());
+        
         nameColumn.setCellValueFactory(
                 new PropertyValueFactory<BudgetItem, String>("name")
         );
@@ -105,6 +117,7 @@ public class ScratchpadSceneController implements Initializable {
                     }
 
                     scratchPadTable.getItems().remove(selectedItem);
+                    month.transactions.remove(selectedItem);
                 }
             }
         });
@@ -118,6 +131,7 @@ public class ScratchpadSceneController implements Initializable {
         scratchPadTable.getItems().add(newItem);
         nameField.setText("");
         amountField.setText("");
+        month.transactions.add(newItem);
     }
 
     private void calculate() {

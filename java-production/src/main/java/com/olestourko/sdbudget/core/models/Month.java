@@ -8,6 +8,7 @@ package com.olestourko.sdbudget.core.models;
 import java.math.BigDecimal;
 import com.olestourko.sdbudget.core.models.BudgetItem;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
@@ -21,8 +22,9 @@ public class Month implements IPeriod {
     public BudgetItem adjustments;
     public BudgetItem netIncomeTarget;
     public BudgetItem openingBalance;
+    public ArrayList<BudgetItem> transactions = new ArrayList<BudgetItem>(); //Adjustment transactions
     final public Calendar calendar;
-
+    
     public Month(Calendar calendar) {
         revenues = new BudgetItem("Revenues", new BigDecimal(BigInteger.ZERO));
         expenses = new BudgetItem("Expenses", new BigDecimal(BigInteger.ZERO));

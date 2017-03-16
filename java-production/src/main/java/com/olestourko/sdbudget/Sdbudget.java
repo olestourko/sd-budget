@@ -21,8 +21,6 @@ import com.olestourko.sdbudget.core.dagger.DaggerBudget;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import java.util.Calendar;
 
-import static javafx.application.Application.launch;
-
 public class Sdbudget extends Application {
 
     private BudgetItem closingBalanceTarget = new BudgetItem("Closing Balance Target", new BigDecimal(BigInteger.ZERO));
@@ -63,10 +61,11 @@ public class Sdbudget extends Application {
         Scene budgetScene = new Scene(root);
         budgetScene.getStylesheets().add("/desktop/styles/Styles.css");
 
+        ScratchpadSceneController scratchpadSceneController = budget.scratchpadSceneController().get();
         FXMLLoader scratchpadSceneLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/ScratchpadScene.fxml"));
+        scratchpadSceneLoader.setController(scratchpadSceneController);
         root = scratchpadSceneLoader.load();
         ScratchpadSceneController scratchPadSceneController = scratchpadSceneLoader.getController();
-        scratchPadSceneController.month = month;
         scratchPadSceneController.load();
         Scene scratchpadScene = new Scene(root);
         scratchpadScene.getStylesheets().add("/desktop/styles/Styles.css");

@@ -9,7 +9,7 @@
 <?import javafx.scene.control.cell.*?>
 <?import javafx.collections.*?>
 
-<AnchorPane prefHeight="565.0" prefWidth="457.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="com.olestourko.sdbudget.desktop.ScratchpadSceneController">
+<AnchorPane prefHeight="565.0" prefWidth="457.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
     <children>
         <AnchorPane AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
             <children>
