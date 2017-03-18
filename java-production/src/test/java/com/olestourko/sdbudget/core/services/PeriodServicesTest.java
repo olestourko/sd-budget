@@ -15,6 +15,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import java.math.BigDecimal;
+
 /**
  *
  * @author oles
@@ -51,8 +52,9 @@ public class PeriodServicesTest {
         BigDecimal adjustments = new BigDecimal("-250.0");
         BigDecimal incomeTarget = new BigDecimal("500.0");
         BigDecimal openingBalance = new BigDecimal("0.0");
+        BigDecimal carriedSurplus = new BigDecimal("0.0");
         PeriodServices instance = new PeriodServices();
-        EstimateResult result = instance.calculateEstimate(revenue, expenses, adjustments, incomeTarget, openingBalance);
+        EstimateResult result = instance.calculateEstimate(revenue, expenses, adjustments, incomeTarget, openingBalance, carriedSurplus);
         assertEquals(result.netIncome, new BigDecimal("750.0"));
         assertEquals(result.estimatedBalance, new BigDecimal("750.0"));
         assertEquals(result.expectedBalance, new BigDecimal("500.0"));
@@ -68,9 +70,46 @@ public class PeriodServicesTest {
         BigDecimal incomeTarget = new BigDecimal("500.0");
         BigDecimal openingBalance = new BigDecimal("0.0");
         BigDecimal closingBalance = new BigDecimal("600.0");
+        BigDecimal carriedSurplus = new BigDecimal("0.0");
         PeriodServices instance = new PeriodServices();
-        ClosingResult result = instance.calculateClosing(incomeTarget, openingBalance, closingBalance);
+        ClosingResult result = instance.calculateClosing(incomeTarget, openingBalance, closingBalance, carriedSurplus);
         assertEquals(result.surplus, new BigDecimal("100.0"));
+        assertEquals(result.closingAdjustment, new BigDecimal("100.0"));
+    }
+
+    /**
+     * Test of carried surplus on estimate calculation
+     */
+    @Test
+    public void testEstimate_CarriedSurplus() {
+        System.out.println("calculateClosing");
+        BigDecimal revenue = new BigDecimal("2000.0");
+        BigDecimal expenses = new BigDecimal("1000.0");
+        BigDecimal adjustments = new BigDecimal("-250.0");
+        BigDecimal incomeTarget = new BigDecimal("500.0");
+        BigDecimal openingBalance = new BigDecimal("0.0");
+        BigDecimal carriedSurplus = new BigDecimal("100.0");
+        PeriodServices instance = new PeriodServices();
+        EstimateResult result = instance.calculateEstimate(revenue, expenses, adjustments, incomeTarget, openingBalance, carriedSurplus);
+        assertEquals(result.netIncome, new BigDecimal("750.0"));
+        assertEquals(result.estimatedBalance, new BigDecimal("850.0"));
+        assertEquals(result.expectedBalance, new BigDecimal("500.0"));
+        assertEquals(result.surplus, new BigDecimal("350.0"));
+    }
+
+    /**
+     * Test of carried surplus on closing calculation
+     */
+    @Test
+    public void testClosing_CarriedSurplus() {
+        System.out.println("calculateClosing");
+        BigDecimal incomeTarget = new BigDecimal("500.0");
+        BigDecimal openingBalance = new BigDecimal("0.0");
+        BigDecimal closingBalance = new BigDecimal("600.0");
+        BigDecimal carriedSurplus = new BigDecimal("100.0");
+        PeriodServices instance = new PeriodServices();
+        ClosingResult result = instance.calculateClosing(incomeTarget, openingBalance, closingBalance, carriedSurplus);
+        assertEquals(result.surplus, new BigDecimal("200.0"));
         assertEquals(result.closingAdjustment, new BigDecimal("100.0"));
     }
 

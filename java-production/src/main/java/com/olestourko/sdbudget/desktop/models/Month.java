@@ -19,16 +19,18 @@ import javafx.collections.ObservableList;
  */
 public class Month implements IPeriod {
 
-    final public BudgetItem revenues = new BudgetItem("Revenues", new BigDecimal(BigInteger.ZERO));
-    final public BudgetItem expenses = new BudgetItem("Expenses", new BigDecimal(BigInteger.ZERO));
-    final public BudgetItem adjustments = new BudgetItem("Adjustments", new BigDecimal(BigInteger.ZERO));
-    final public BudgetItem netIncomeTarget = new BudgetItem("Net Income Target", new BigDecimal(BigInteger.ZERO));
-    final public BudgetItem openingBalance = new BudgetItem("Opening Balance", new BigDecimal(BigInteger.ZERO));
+    public final BudgetItem revenues = new BudgetItem("Revenues", new BigDecimal(BigInteger.ZERO));
+    public final BudgetItem expenses = new BudgetItem("Expenses", new BigDecimal(BigInteger.ZERO));
+    public final BudgetItem adjustments = new BudgetItem("Adjustments", new BigDecimal(BigInteger.ZERO));
+    public final BudgetItem netIncomeTarget = new BudgetItem("Net Income Target", new BigDecimal(BigInteger.ZERO));
     
-    final public BudgetItem closingBalanceTarget = new BudgetItem("Closing Balance Target", new BigDecimal(BigInteger.ZERO));
-    final public BudgetItem estimatedClosingBalance = new BudgetItem("Closing Balance (Estimated)", new BigDecimal(BigInteger.ZERO));
-    final public BudgetItem surplus = new BudgetItem("Surplus or Defecit (Estimated)", new BigDecimal(BigInteger.ZERO));
-    final public BudgetItem closingBalance = new BudgetItem("Closing Balance", BigDecimal.ZERO);
+    public final BudgetItem openingBalance = new BudgetItem("Opening Balance", new BigDecimal(BigInteger.ZERO));
+    public final BudgetItem openingSurplus = new BudgetItem("Carried Surplus", new BigDecimal(BigInteger.ZERO));
+    
+    public final BudgetItem closingBalanceTarget = new BudgetItem("Closing Balance Target", new BigDecimal(BigInteger.ZERO));
+    public final BudgetItem estimatedClosingBalance = new BudgetItem("Closing Balance (Estimated)", new BigDecimal(BigInteger.ZERO));
+    public final BudgetItem totalSurplus = new BudgetItem("Total Surplus", new BigDecimal(BigInteger.ZERO));
+    public final BudgetItem closingBalance = new BudgetItem("Closing Balance", BigDecimal.ZERO);
     
     public ObservableList transactions = FXCollections.observableArrayList(); //Adjustment transactions
     final public Calendar calendar;

@@ -43,7 +43,7 @@ public class MonthControl extends AnchorPane {
     private final SimpleObjectProperty<Month> month = new SimpleObjectProperty<Month>();
 
     public MonthControl() {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/desktop/fxml/BudgetMonthComponent.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/desktop/fxml/MonthControl.fxml"));
         loader.setRoot(this);
         loader.setController(this);
         try {
@@ -81,7 +81,10 @@ public class MonthControl extends AnchorPane {
                     month.openingBalance
             ));
             totalsTable.getItems().clear();
-            totalsTable.getItems().addAll(month.closingBalanceTarget, month.estimatedClosingBalance, month.surplus);
+            totalsTable.getItems().addAll(month.closingBalanceTarget,
+                    month.estimatedClosingBalance,
+                    month.openingSurplus,
+                    month.totalSurplus);
             closingTable.getItems().clear();
             closingTable.getItems().addAll(month.closingBalance);
 

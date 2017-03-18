@@ -42,6 +42,11 @@ public class BudgetSceneController implements Initializable {
             if (previousMonth != null) {
                 nextMonthButton.disableProperty().set(false);
                 monthControl.setMonth(previousMonth);
+                budget.setCurrentMonth(previousMonth);
+
+                if (monthRepository.getPrevious(this.monthControl.getMonth()) == null) {
+                    previousMonthButton.disableProperty().set(true);
+                }
             } else {
                 previousMonthButton.disableProperty().set(true);
             }
@@ -51,6 +56,11 @@ public class BudgetSceneController implements Initializable {
             if (nextMonth != null) {
                 previousMonthButton.disableProperty().set(false);
                 this.monthControl.setMonth(nextMonth);
+                budget.setCurrentMonth(nextMonth);
+
+                if (monthRepository.getNext(this.monthControl.getMonth()) == null) {
+                    nextMonthButton.disableProperty().set(true);
+                }
             } else {
                 nextMonthButton.disableProperty().set(true);
             }
@@ -58,18 +68,26 @@ public class BudgetSceneController implements Initializable {
         monthControl.setOnMonthChange(event -> {
             // Calculate innter-month estimates
             Month month = monthControl.getMonth();
+
+            Month previousMonth = monthRepository.getPrevious(month);
+            if (previousMonth != null) {
+                month.openingBalance.setAmount(previousMonth.estimatedClosingBalance.getAmount());
+                month.openingSurplus.setAmount(previousMonth.totalSurplus.getAmount());
+            }
+
             EstimateResult result = periodServices.calculateEstimate(
                     month.revenues.getAmount(),
                     month.expenses.getAmount(),
                     month.adjustments.getAmount(),
                     month.netIncomeTarget.getAmount(),
-                    month.openingBalance.getAmount()
+                    month.openingBalance.getAmount(),
+                    month.openingSurplus.getAmount()
             );
 
             month.closingBalanceTarget.setAmount(month.openingBalance.getAmount()
                     .add(month.netIncomeTarget.getAmount()));
-            month.estimatedClosingBalance.setAmount(result.estimatedBalance);
-            month.surplus.setAmount(result.surplus);
+            month.estimatedClosingBalance.setAmount(result.estimatedBalance.subtract(month.openingSurplus.getAmount()));
+            month.totalSurplus.setAmount(result.surplus);
         });
     }
 
