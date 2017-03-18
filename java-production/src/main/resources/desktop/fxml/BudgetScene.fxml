@@ -8,63 +8,22 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.cell.*?>
 <?import javafx.collections.*?>
+<?import com.olestourko.sdbudget.desktop.MonthComponent?>
 
-<AnchorPane prefHeight="645.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <AnchorPane AnchorPane.bottomAnchor="35.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+        <MonthComponent fx:id="monthComponent"
+                        AnchorPane.topAnchor="0"
+                        AnchorPane.bottomAnchor="0"
+                        AnchorPane.leftAnchor="0"
+                        AnchorPane.rightAnchor="0"/>
+        
+        <HBox spacing="5.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0">
             <children>
-                <Label fx:id="periodDate" text="&lt;Date goes here&gt;" />
-                <TableView fx:id="budgetTable" editable="true" layoutY="23.0" prefHeight="397.0" prefWidth="430.0" AnchorPane.bottomAnchor="185" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="20.0">
-                    <columns>
-                        <TableColumn fx:id="nameColumn" editable="true" text="Name">
-                            <cellValueFactory>
-                                <PropertyValueFactory property="name" />
-                            </cellValueFactory>
-                        </TableColumn>
-                        <TableColumn fx:id="amountColumn" editable="true" text="Amount">
-                            <cellValueFactory>
-                                <PropertyValueFactory property="amount" />
-                            </cellValueFactory>
-                        </TableColumn>
-                    </columns>    
-                </TableView>
-                <TableView fx:id="totalsTable" editable="true" prefHeight="100" AnchorPane.bottomAnchor="80" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
-                    <columns>
-                        <TableColumn editable="true" text="Name">
-                            <cellValueFactory>
-                                <PropertyValueFactory property="name" />
-                            </cellValueFactory>
-                        </TableColumn>
-                        <TableColumn editable="true" text="Amount">
-                            <cellValueFactory>
-                                <PropertyValueFactory property="amount" />
-                            </cellValueFactory>
-                        </TableColumn>
-                    </columns>
-                </TableView>
-                <TableView fx:id="closingTable" editable="true" prefHeight="75" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
-                    <columns>
-                        <TableColumn editable="true" text="Name">
-                            <cellValueFactory>
-                                <PropertyValueFactory property="name" />
-                            </cellValueFactory>
-                        </TableColumn>
-                        <TableColumn editable="true" text="Amount">
-                            <cellValueFactory>
-                                <PropertyValueFactory property="amount" />
-                            </cellValueFactory>
-                        </TableColumn>
-                    </columns>
-                </TableView>
+                <Button id="previousMonthButton" fx:id="previousMonthButton" mnemonicParsing="false" text="Previous Month" />
+                <Button id="nextMonthButton" fx:id="nextMonthButton" mnemonicParsing="false" text="Next Month" />
             </children>
-        </AnchorPane>
-      <HBox spacing="5.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0">
-         <children>
-            <Button id="previousMonthButton" fx:id="previousMonthButton" mnemonicParsing="false" text="Previous Month" />
-            <Button id="nextMonthButton" fx:id="nextMonthButton" mnemonicParsing="false" text="Next Month" />
-         </children>
-      </HBox>
-
+        </HBox>
         <Button fx:id="scratchpadViewButton" text="Scratchpad" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0" />
     </children>
 </AnchorPane>
