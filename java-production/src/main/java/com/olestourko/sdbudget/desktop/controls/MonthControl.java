@@ -1,4 +1,4 @@
-package com.olestourko.sdbudget.desktop;
+package com.olestourko.sdbudget.desktop.controls;
 
 import com.olestourko.sdbudget.desktop.models.BudgetItem;
 import javafx.fxml.FXML;
@@ -10,6 +10,8 @@ import com.olestourko.sdbudget.desktop.models.Month;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ObjectPropertyBase;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
@@ -17,12 +19,13 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.converter.BigDecimalStringConverter;
+import javafx.event.ActionEvent;
 
 /**
  *
  * @author oles
  */
-public class MonthComponent extends AnchorPane {
+public class MonthControl extends AnchorPane {
 
     @FXML
     private TableView budgetTable;
@@ -37,9 +40,9 @@ public class MonthComponent extends AnchorPane {
     @FXML
     public TableColumn amountColumn;
 
-    final private SimpleObjectProperty<Month> month = new SimpleObjectProperty<Month>();
+    private final SimpleObjectProperty<Month> month = new SimpleObjectProperty<Month>();
 
-    public MonthComponent() {
+    public MonthControl() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/desktop/fxml/BudgetMonthComponent.fxml"));
         loader.setRoot(this);
         loader.setController(this);
@@ -63,6 +66,7 @@ public class MonthComponent extends AnchorPane {
             public void handle(TableColumn.CellEditEvent<BudgetItem, BigDecimal> t) {
                 BudgetItem budgetItem = (BudgetItem) t.getTableView().getItems().get(t.getTablePosition().getRow());
                 budgetItem.setAmount(t.getNewValue());
+                MonthControl.this.fireEvent(new ActionEvent());
             }
         });
 
@@ -84,7 +88,7 @@ public class MonthComponent extends AnchorPane {
             //Set the date on the label
             SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
             periodDate.setText(dateFormat.format(month.calendar.getTime()));
-
+            MonthControl.this.fireEvent(new ActionEvent());
         });
 
         //Set up the closing table
@@ -111,4 +115,38 @@ public class MonthComponent extends AnchorPane {
     public SimpleObjectProperty<Month> monthProperty() {
         return this.month;
     }
+
+    /**
+     * Month change event
+     * http://book2s.com/java/src/package/javafx/scene/control/buttonbase.html
+     * http://book2s.com/java/src/package/javafx/scene/control/button.html
+     */
+    public final ObjectProperty<EventHandler<ActionEvent>> onMonthChangeProperty() {
+        return onMonthChange;
+    }
+
+    public final void setOnMonthChange(EventHandler<ActionEvent> value) {
+        onMonthChangeProperty().set(value);
+    }
+
+    public final EventHandler<ActionEvent> getOnMonthChange() {
+        return onMonthChange.get();
+    }
+
+    private ObjectProperty<EventHandler<ActionEvent>> onMonthChange = new ObjectPropertyBase<EventHandler<ActionEvent>>() {
+        @Override
+        protected void invalidated() {
+            setEventHandler(ActionEvent.ACTION, get());
+        }
+
+        @Override
+        public Object getBean() {
+            return MonthControl.this;
+        }
+
+        @Override
+        public String getName() {
+            return "onMonthChange";
+        }
+    };
 }

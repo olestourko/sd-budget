@@ -8,11 +8,11 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.cell.*?>
 <?import javafx.collections.*?>
-<?import com.olestourko.sdbudget.desktop.MonthComponent?>
+<?import com.olestourko.sdbudget.desktop.controls.*?>
 
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <MonthComponent fx:id="monthComponent"
+        <MonthControl fx:id="monthControl"
                         AnchorPane.topAnchor="0"
                         AnchorPane.bottomAnchor="0"
                         AnchorPane.leftAnchor="0"
