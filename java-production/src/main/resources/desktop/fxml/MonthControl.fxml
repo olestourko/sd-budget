@@ -10,16 +10,12 @@
 <?import javafx.collections.*?>
 
 <fx:root type="javafx.scene.layout.Pane" xmlns:fx="http://javafx.com/fxml">
-    <AnchorPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8"
-                AnchorPane.topAnchor="0"
-                AnchorPane.bottomAnchor="0" 
-                AnchorPane.leftAnchor="0" 
-                AnchorPane.rightAnchor="0">
+    <AnchorPane AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
         <children>
             <AnchorPane AnchorPane.bottomAnchor="35.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
                 <children>
                     <Label fx:id="periodDate" text="Date goes here" />
-                    <TableView fx:id="budgetTable" editable="true" AnchorPane.bottomAnchor="215" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="20.0">
+                    <TableView fx:id="budgetTable" editable="true" AnchorPane.bottomAnchor="245.0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="20.0">
                         <columns>
                             <TableColumn fx:id="nameColumn" editable="true" text="Name">
                                 <cellValueFactory>
@@ -33,7 +29,7 @@
                             </TableColumn>
                         </columns>    
                     </TableView>
-                    <TableView fx:id="totalsTable" editable="true" prefHeight="130" AnchorPane.bottomAnchor="80" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+                    <TableView fx:id="totalsTable" editable="true" prefHeight="130" AnchorPane.bottomAnchor="110.0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
                         <columns>
                             <TableColumn editable="true" text="Name">
                                 <cellValueFactory>
@@ -47,7 +43,7 @@
                             </TableColumn>
                         </columns>
                     </TableView>
-                    <TableView fx:id="closingTable" editable="true" prefHeight="75" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+                    <TableView fx:id="closingTable" editable="true" prefHeight="75" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
                         <columns>
                             <TableColumn editable="true" text="Name">
                                 <cellValueFactory>
@@ -61,6 +57,11 @@
                             </TableColumn>
                         </columns>
                     </TableView>
+                    <HBox AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0">
+                        <children>
+                            <CheckBox fx:id="closeMonthCheckBox" mnemonicParsing="false" text="Close Month" />
+                        </children>
+                    </HBox>
                 </children>
             </AnchorPane>
         </children>

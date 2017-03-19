@@ -20,6 +20,7 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.converter.BigDecimalStringConverter;
 import javafx.event.ActionEvent;
+import javafx.scene.control.CheckBox;
 
 /**
  *
@@ -28,17 +29,19 @@ import javafx.event.ActionEvent;
 public class MonthControl extends AnchorPane {
 
     @FXML
+    private Label periodDate;
+    @FXML
     private TableView budgetTable;
     @FXML
     private TableView totalsTable;
     @FXML
     private TableView closingTable;
     @FXML
-    private Label periodDate;
-    @FXML
     public TableColumn nameColumn;
     @FXML
     public TableColumn amountColumn;
+    @FXML
+    public CheckBox closeMonthCheckBox;
 
     private final SimpleObjectProperty<Month> month = new SimpleObjectProperty<Month>();
 
@@ -58,9 +61,9 @@ public class MonthControl extends AnchorPane {
         amountColumn.setCellValueFactory(
                 new PropertyValueFactory<BudgetItem, BigDecimal>("amount")
         );
-        //This draws the textfield when editing a table cell
+        // This draws the textfield when editing a table cell
         amountColumn.setCellFactory(TextFieldTableCell.<BudgetItem, BigDecimal>forTableColumn(new BigDecimalStringConverter()));
-        //This is a callback for edits
+        // This is a callback for edits
         amountColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<BudgetItem, BigDecimal>>() {
             @Override
             public void handle(TableColumn.CellEditEvent<BudgetItem, BigDecimal> t) {
@@ -88,13 +91,16 @@ public class MonthControl extends AnchorPane {
             closingTable.getItems().clear();
             closingTable.getItems().addAll(month.closingBalance);
 
-            //Set the date on the label
+            // Set the date on the label
             SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
             periodDate.setText(dateFormat.format(month.calendar.getTime()));
             MonthControl.this.fireEvent(new ActionEvent());
+
+            // Set the closing checkbox value
+            closeMonthCheckBox.setSelected(month.getIsClosed());
         });
 
-        //Set up the closing table
+        // Set up the closing table
         TableColumn closingTableAmountColumn = (TableColumn) closingTable.getColumns().get(1);
         closingTableAmountColumn.setCellFactory(TextFieldTableCell.<BudgetItem, BigDecimal>forTableColumn(new BigDecimalStringConverter()));
         closingTableAmountColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<BudgetItem, BigDecimal>>() {
@@ -104,6 +110,29 @@ public class MonthControl extends AnchorPane {
                 budgetItem.setAmount(t.getNewValue());
             }
         });
+
+        // Set the handler for the "Close Month" checkbox
+        this.closeMonthCheckBox.selectedProperty().addListener(checkbox -> {
+            this.month.get().setIsClosed(this.closeMonthCheckBox.isSelected());
+            updateTableStyles();
+        });
+        
+        updateTableStyles();
+    }
+
+    // Enable / disable tables based on the "Month Closed" checkbox
+    private void updateTableStyles() {
+        if (this.closeMonthCheckBox.isSelected()) {
+            budgetTable.getStyleClass().add("disabled");
+            budgetTable.setEditable(false);
+            closingTable.getStyleClass().removeAll("disabled");
+            closingTable.setEditable(true);
+        } else {
+            budgetTable.getStyleClass().removeAll("disabled");
+            budgetTable.setEditable(true);
+            closingTable.getStyleClass().addAll("disabled");
+            closingTable.setEditable(false);
+        }
     }
 
     // Month property

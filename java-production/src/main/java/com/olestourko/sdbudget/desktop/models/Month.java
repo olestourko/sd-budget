@@ -10,6 +10,7 @@ import com.olestourko.sdbudget.desktop.models.BudgetItem;
 import com.olestourko.sdbudget.core.models.IPeriod;
 import java.math.BigInteger;
 import java.util.Calendar;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -35,6 +36,8 @@ public class Month implements IPeriod {
     public ObservableList transactions = FXCollections.observableArrayList(); //Adjustment transactions
     final public Calendar calendar;
     
+    private final SimpleBooleanProperty isClosed = new SimpleBooleanProperty();
+    
     public Month(Calendar calendar) {
         this.calendar = calendar;
     }
@@ -58,5 +61,18 @@ public class Month implements IPeriod {
 
     public BigDecimal getOpeningBalance() {
         return openingBalance.getAmount();
+    }
+    
+    // Properties
+    public void setIsClosed(boolean value) {
+        this.isClosed.set(value);
+    }
+    
+    public boolean getIsClosed() {
+        return this.isClosed.getValue();
+    }
+    
+    public SimpleBooleanProperty isClosedProperty() {
+        return this.isClosed;
     }
 }
