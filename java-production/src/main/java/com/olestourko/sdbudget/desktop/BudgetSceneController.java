@@ -9,7 +9,10 @@ import com.olestourko.sdbudget.desktop.models.Month;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.core.services.PeriodServices;
 import com.olestourko.sdbudget.core.models.Budget;
+import com.olestourko.sdbudget.core.services.ClosingResult;
 import com.olestourko.sdbudget.core.services.EstimateResult;
+import com.olestourko.sdbudget.desktop.models.BudgetItem;
+import java.math.BigDecimal;
 import javafx.scene.control.Button;
 import javax.inject.Inject;
 
@@ -66,28 +69,49 @@ public class BudgetSceneController implements Initializable {
             }
         });
         monthControl.setOnMonthChange(event -> {
-            // Calculate innter-month estimates
             Month month = monthControl.getMonth();
-
             Month previousMonth = monthRepository.getPrevious(month);
-            if (previousMonth != null) {
-                month.openingBalance.setAmount(previousMonth.estimatedClosingBalance.getAmount());
-                month.openingSurplus.setAmount(previousMonth.totalSurplus.getAmount());
+
+            // Calculate innter-month estimates
+            if (!month.getIsClosed()) {
+                if (previousMonth != null) {
+                    month.openingBalance.setAmount(previousMonth.estimatedClosingBalance.getAmount());
+                    month.openingSurplus.setAmount(previousMonth.totalSurplus.getAmount());
+                }
+
+                EstimateResult result = periodServices.calculateEstimate(
+                        month.revenues.getAmount(),
+                        month.expenses.getAmount(),
+                        month.adjustments.getAmount(),
+                        month.netIncomeTarget.getAmount(),
+                        month.openingBalance.getAmount(),
+                        month.openingSurplus.getAmount()
+                );
+
+                month.closingBalanceTarget.setAmount(month.openingBalance.getAmount()
+                        .add(month.netIncomeTarget.getAmount()));
+                month.estimatedClosingBalance.setAmount(result.estimatedBalance.subtract(month.openingSurplus.getAmount()));
+                month.totalSurplus.setAmount(result.surplus);
+
+                BigDecimal sum = BigDecimal.ZERO;
+                for (Object o : month.transactions) {
+                    BudgetItem item = (BudgetItem) o;
+                    sum = sum.add(item.getAmount());
+                }
+                month.adjustments.setAmount(sum);
+            } // Calculate end of month totals
+            else {
+                ClosingResult result = periodServices.calculateClosing(
+                        month.netIncomeTarget.getAmount(),
+                        month.openingBalance.getAmount(),
+                        month.closingBalance.getAmount(),
+                        month.openingSurplus.getAmount()
+                );
+
+                month.estimatedClosingBalance.setAmount(month.closingBalance.getAmount());
+                month.totalSurplus.setAmount(result.surplus);
+                month.adjustments.setAmount(result.closingAdjustment);
             }
-
-            EstimateResult result = periodServices.calculateEstimate(
-                    month.revenues.getAmount(),
-                    month.expenses.getAmount(),
-                    month.adjustments.getAmount(),
-                    month.netIncomeTarget.getAmount(),
-                    month.openingBalance.getAmount(),
-                    month.openingSurplus.getAmount()
-            );
-
-            month.closingBalanceTarget.setAmount(month.openingBalance.getAmount()
-                    .add(month.netIncomeTarget.getAmount()));
-            month.estimatedClosingBalance.setAmount(result.estimatedBalance.subtract(month.openingSurplus.getAmount()));
-            month.totalSurplus.setAmount(result.surplus);
         });
     }
 

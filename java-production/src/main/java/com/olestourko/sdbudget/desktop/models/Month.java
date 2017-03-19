@@ -51,7 +51,7 @@ public class Month implements IPeriod {
         return expenses.getAmount();
     }
 
-    public BigDecimal getTotalAdjustments() {
+    public BigDecimal getTotalAdjustments() {       
         return adjustments.getAmount();
     }
 

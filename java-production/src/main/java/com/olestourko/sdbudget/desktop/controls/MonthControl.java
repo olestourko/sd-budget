@@ -108,6 +108,7 @@ public class MonthControl extends AnchorPane {
             public void handle(TableColumn.CellEditEvent<BudgetItem, BigDecimal> t) {
                 BudgetItem budgetItem = (BudgetItem) t.getTableView().getItems().get(t.getTablePosition().getRow());
                 budgetItem.setAmount(t.getNewValue());
+                MonthControl.this.fireEvent(new ActionEvent());
             }
         });
 
