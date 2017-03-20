@@ -12,11 +12,22 @@
 
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1">
     <children>
+        <MenuBar fx:id="mainMenu"
+            AnchorPane.leftAnchor="0"
+            AnchorPane.rightAnchor="0">
+            <menus>
+                <Menu text="View">
+                    <items>
+                        <CheckMenuItem text="3-Month View"/>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
         <MonthControl fx:id="monthControl"
-                              AnchorPane.topAnchor="0"
-                              AnchorPane.bottomAnchor="0"
-                              AnchorPane.leftAnchor="0"
-                              AnchorPane.rightAnchor="0"/>
+                      AnchorPane.topAnchor="30"
+                      AnchorPane.bottomAnchor="0"
+                      AnchorPane.leftAnchor="0"
+                      AnchorPane.rightAnchor="0"/>
         
         <HBox spacing="5.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0">
             <children>

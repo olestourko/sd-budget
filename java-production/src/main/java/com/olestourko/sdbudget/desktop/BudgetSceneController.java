@@ -14,7 +14,9 @@ import com.olestourko.sdbudget.core.services.EstimateResult;
 import com.olestourko.sdbudget.desktop.models.BudgetItem;
 import java.math.BigDecimal;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuBar;
 import javax.inject.Inject;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class BudgetSceneController implements Initializable {
 
@@ -26,6 +28,8 @@ public class BudgetSceneController implements Initializable {
     public Button previousMonthButton;
     @FXML
     public Button nextMonthButton;
+    @FXML
+    public MenuBar mainMenu;
 
     final private PeriodServices periodServices;
     final private MonthRepository monthRepository;
@@ -40,6 +44,10 @@ public class BudgetSceneController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        mainMenu.getMenus().get(0).setOnAction(event -> {
+            throw new NotImplementedException();
+        });
+        
         previousMonthButton.setOnAction(event -> {
             Month previousMonth = monthRepository.getPrevious(this.monthControl.getMonth());
             if (previousMonth != null) {
