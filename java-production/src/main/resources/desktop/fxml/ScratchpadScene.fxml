@@ -9,7 +9,11 @@
 <?import javafx.scene.control.cell.*?>
 <?import javafx.collections.*?>
 
-<AnchorPane prefHeight="565.0" prefWidth="457.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1"
+            AnchorPane.topAnchor="30"
+            AnchorPane.bottomAnchor="0"
+            AnchorPane.leftAnchor="0"
+            AnchorPane.rightAnchor="0">
     <children>
         <AnchorPane AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
             <children>
@@ -49,11 +53,11 @@
             </children>
         </AnchorPane>
         <HBox spacing="5.0" AnchorPane.bottomAnchor="35.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
-           <children>
-               <TextField fx:id="nameField" promptText="Description" styleClass="input-field" text="" />
-               <TextField fx:id="amountField" promptText="Amount" styleClass="input-field" text="" />
-               <Button fx:id="addTransactionButton" onAction="#handleAddTransactionButtonAction" text="Add Transaction" />
-           </children>
+            <children>
+                <TextField fx:id="nameField" promptText="Description" styleClass="input-field" text="" />
+                <TextField fx:id="amountField" promptText="Amount" styleClass="input-field" text="" />
+                <Button fx:id="addTransactionButton" onAction="#handleAddTransactionButtonAction" text="Add Transaction" />
+            </children>
         </HBox>
         <Button fx:id="budgetViewButton" text="Budget" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0" />
     </children>

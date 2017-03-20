@@ -10,21 +10,14 @@
 <?import javafx.collections.*?>
 <?import com.olestourko.sdbudget.desktop.controls.*?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1">
-    <children>
-        <MenuBar fx:id="mainMenu"
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1"
+            AnchorPane.topAnchor="30"
+            AnchorPane.bottomAnchor="0"
             AnchorPane.leftAnchor="0"
             AnchorPane.rightAnchor="0">
-            <menus>
-                <Menu text="View">
-                    <items>
-                        <CheckMenuItem text="3-Month View"/>
-                    </items>
-                </Menu>
-            </menus>
-        </MenuBar>
+    <children>
         <MonthControl fx:id="monthControl"
-                      AnchorPane.topAnchor="30"
+                      AnchorPane.topAnchor="0"
                       AnchorPane.bottomAnchor="0"
                       AnchorPane.leftAnchor="0"
                       AnchorPane.rightAnchor="0"/>

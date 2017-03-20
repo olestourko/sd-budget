@@ -28,8 +28,6 @@ public class BudgetSceneController implements Initializable {
     public Button previousMonthButton;
     @FXML
     public Button nextMonthButton;
-    @FXML
-    public MenuBar mainMenu;
 
     final private PeriodServices periodServices;
     final private MonthRepository monthRepository;
@@ -43,11 +41,7 @@ public class BudgetSceneController implements Initializable {
     }
 
     @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        mainMenu.getMenus().get(0).setOnAction(event -> {
-            throw new NotImplementedException();
-        });
-        
+    public void initialize(URL url, ResourceBundle rb) {       
         previousMonthButton.setOnAction(event -> {
             Month previousMonth = monthRepository.getPrevious(this.monthControl.getMonth());
             if (previousMonth != null) {

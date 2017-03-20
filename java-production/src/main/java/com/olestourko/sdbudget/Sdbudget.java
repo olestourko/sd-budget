@@ -15,6 +15,7 @@ import java.util.Calendar;
 import com.olestourko.sdbudget.desktop.dagger.BudgetInjector;
 
 public class Sdbudget extends Application {
+
     @Override
     public void start(Stage stage) throws Exception {
         final BudgetInjector budgetInjector = DaggerBudgetInjector.create();
@@ -27,36 +28,40 @@ public class Sdbudget extends Application {
             monthRepository.putMonth(new Month(cal));
         }
         budget.setCurrentMonth(monthRepository.getMonth(Calendar.getInstance()));
-        
+
         BudgetSceneController budgetSceneController = budgetInjector.budgetSceneController().get();
         FXMLLoader budgetSceneLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/BudgetScene.fxml"));
         budgetSceneLoader.setController(budgetSceneController);
-        AnchorPane root = budgetSceneLoader.load();
+        AnchorPane budgetRoot = budgetSceneLoader.load();
         budgetSceneController.load();
-        Scene budgetScene = new Scene(root);
-        budgetScene.getStylesheets().add("/desktop/styles/Styles.css");
 
         ScratchpadSceneController scratchpadSceneController = budgetInjector.scratchpadSceneController().get();
         FXMLLoader scratchpadSceneLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/ScratchpadScene.fxml"));
         scratchpadSceneLoader.setController(scratchpadSceneController);
-        root = scratchpadSceneLoader.load();
+        AnchorPane scratchPadRoot = scratchpadSceneLoader.load();
         ScratchpadSceneController scratchPadSceneController = scratchpadSceneLoader.getController();
         scratchPadSceneController.load();
-        Scene scratchpadScene = new Scene(root);
-        scratchpadScene.getStylesheets().add("/desktop/styles/Styles.css");
+
+        FXMLLoader mainSceneLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/MainScene.fxml"));
+        AnchorPane mainRoot = mainSceneLoader.load();
+        mainRoot.getChildren().addAll(budgetRoot);
+        Scene mainScene = new Scene(mainRoot);
+        mainScene.getStylesheets().add("/desktop/styles/Styles.css");
 
         stage.setTitle("S/D Budget");
         stage.setWidth(380);
         stage.setHeight(580);
-        stage.setScene(budgetScene);
+        stage.setScene(mainScene);
         stage.show();
 
         budgetSceneController.scratchpadViewButton.setOnAction(event -> {
-            stage.setScene(scratchpadScene);
+            mainRoot.getChildren().remove(budgetRoot);
+            mainRoot.getChildren().add(scratchPadRoot);
         });
 
         scratchPadSceneController.budgetViewButton.setOnAction(event -> {
-            stage.setScene(budgetScene);
+            mainRoot.getChildren().remove(scratchPadRoot);
+            mainRoot.getChildren().add(budgetRoot);
         });
     }
 
