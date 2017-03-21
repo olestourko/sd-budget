@@ -12,8 +12,10 @@ import javafx.scene.layout.AnchorPane;
 import com.olestourko.sdbudget.desktop.dagger.DaggerBudgetInjector;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.core.models.Budget;
+import com.olestourko.sdbudget.desktop.controllers.MainController;
 import java.util.Calendar;
 import com.olestourko.sdbudget.desktop.dagger.BudgetInjector;
+import javafx.scene.control.CheckMenuItem;
 
 public class Sdbudget extends Application {
 
@@ -50,12 +52,26 @@ public class Sdbudget extends Application {
 
         FXMLLoader mainLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/MainScene.fxml"));
         AnchorPane mainRoot = mainLoader.load();
-        mainRoot.getChildren().addAll(threeMonthRoot);
+        MainController mainController = mainLoader.getController();
+        mainRoot.getChildren().addAll(oneMonthRoot);
         Scene mainScene = new Scene(mainRoot);
         mainScene.getStylesheets().add("/desktop/styles/Styles.css");
-
+        
+        mainController.mainMenu.getMenus().get(0).getItems().get(0).setOnAction(event -> {
+            CheckMenuItem menu = (CheckMenuItem) mainController.mainMenu.getMenus().get(0).getItems().get(0);
+            if(menu.isSelected()) {
+                mainRoot.getChildren().remove(oneMonthRoot);
+                mainRoot.getChildren().add(threeMonthRoot);
+                stage.setWidth(920);
+            } else {
+                mainRoot.getChildren().remove(threeMonthRoot);
+                mainRoot.getChildren().add(oneMonthRoot);
+                stage.setWidth(400);
+            }
+        });
+        
         stage.setTitle("S/D Budget");
-        stage.setWidth(900);
+        stage.setWidth(400);
         stage.setHeight(580);
         stage.setScene(mainScene);
         stage.show();

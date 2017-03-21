@@ -18,9 +18,7 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        mainMenu.getMenus().get(0).setOnAction(event -> {
-            throw new NotImplementedException();
-        });
+
     }
 
 }

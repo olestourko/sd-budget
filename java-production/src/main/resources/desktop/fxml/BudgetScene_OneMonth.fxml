@@ -17,10 +17,10 @@
             AnchorPane.rightAnchor="0">
     <children>
         <MonthControl fx:id="monthControl"
-                      AnchorPane.topAnchor="0"
-                      AnchorPane.bottomAnchor="0"
-                      AnchorPane.leftAnchor="0"
-                      AnchorPane.rightAnchor="0"/>
+                      AnchorPane.topAnchor="5"
+                      AnchorPane.bottomAnchor="5"
+                      AnchorPane.leftAnchor="5"
+                      AnchorPane.rightAnchor="5"/>
         
         <HBox spacing="5.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0">
             <children>
