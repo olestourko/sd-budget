@@ -1,4 +1,4 @@
-package com.olestourko.sdbudget.desktop;
+package com.olestourko.sdbudget.desktop.controllers;
 
 import java.net.URL;
 import java.util.ResourceBundle;

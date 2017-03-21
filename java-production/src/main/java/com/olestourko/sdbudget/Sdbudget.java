@@ -1,7 +1,8 @@
 package com.olestourko.sdbudget;
 
-import com.olestourko.sdbudget.desktop.BudgetSceneController;
-import com.olestourko.sdbudget.desktop.ScratchpadSceneController;
+import com.olestourko.sdbudget.desktop.controllers.OneMonthController;
+import com.olestourko.sdbudget.desktop.controllers.ThreeMonthController;
+import com.olestourko.sdbudget.desktop.controllers.ScratchpadController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -29,39 +30,44 @@ public class Sdbudget extends Application {
         }
         budget.setCurrentMonth(monthRepository.getMonth(Calendar.getInstance()));
 
-        BudgetSceneController budgetSceneController = budgetInjector.budgetSceneController().get();
-        FXMLLoader budgetSceneLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/BudgetScene.fxml"));
-        budgetSceneLoader.setController(budgetSceneController);
-        AnchorPane budgetRoot = budgetSceneLoader.load();
-        budgetSceneController.load();
+        OneMonthController oneMonthController = budgetInjector.oneMonthController().get();
+        FXMLLoader oneMonthLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/BudgetScene_OneMonth.fxml"));
+        oneMonthLoader.setController(oneMonthController);
+        AnchorPane oneMonthRoot = oneMonthLoader.load();
+        oneMonthController.load();
+        
+        ThreeMonthController threeMonthController = budgetInjector.threeMonthController().get();
+        FXMLLoader threeMonthLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/BudgetScene_ThreeMonth.fxml"));
+        threeMonthLoader.setController(threeMonthController);
+        AnchorPane threeMonthRoot = threeMonthLoader.load();
+        threeMonthController.load();        
 
-        ScratchpadSceneController scratchpadSceneController = budgetInjector.scratchpadSceneController().get();
-        FXMLLoader scratchpadSceneLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/ScratchpadScene.fxml"));
-        scratchpadSceneLoader.setController(scratchpadSceneController);
-        AnchorPane scratchPadRoot = scratchpadSceneLoader.load();
-        ScratchpadSceneController scratchPadSceneController = scratchpadSceneLoader.getController();
-        scratchPadSceneController.load();
+        ScratchpadController scratchpadController = budgetInjector.scratchpadController().get();
+        FXMLLoader scratchpadLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/ScratchpadScene.fxml"));
+        scratchpadLoader.setController(scratchpadController);
+        AnchorPane scratchPadRoot = scratchpadLoader.load();
+        scratchpadController.load();
 
-        FXMLLoader mainSceneLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/MainScene.fxml"));
-        AnchorPane mainRoot = mainSceneLoader.load();
-        mainRoot.getChildren().addAll(budgetRoot);
+        FXMLLoader mainLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/MainScene.fxml"));
+        AnchorPane mainRoot = mainLoader.load();
+        mainRoot.getChildren().addAll(threeMonthRoot);
         Scene mainScene = new Scene(mainRoot);
         mainScene.getStylesheets().add("/desktop/styles/Styles.css");
 
         stage.setTitle("S/D Budget");
-        stage.setWidth(380);
+        stage.setWidth(900);
         stage.setHeight(580);
         stage.setScene(mainScene);
         stage.show();
 
-        budgetSceneController.scratchpadViewButton.setOnAction(event -> {
-            mainRoot.getChildren().remove(budgetRoot);
+        oneMonthController.scratchpadViewButton.setOnAction(event -> {
+            mainRoot.getChildren().remove(oneMonthRoot);
             mainRoot.getChildren().add(scratchPadRoot);
         });
 
-        scratchPadSceneController.budgetViewButton.setOnAction(event -> {
+        scratchpadController.budgetViewButton.setOnAction(event -> {
             mainRoot.getChildren().remove(scratchPadRoot);
-            mainRoot.getChildren().add(budgetRoot);
+            mainRoot.getChildren().add(oneMonthRoot);
         });
     }
 

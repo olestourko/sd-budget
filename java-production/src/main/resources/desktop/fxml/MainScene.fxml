@@ -6,7 +6,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.olestourko.sdbudget.desktop.MainController">
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.olestourko.sdbudget.desktop.controllers.MainController">
     <children>
         <MenuBar fx:id="mainMenu"
                  AnchorPane.leftAnchor="0"

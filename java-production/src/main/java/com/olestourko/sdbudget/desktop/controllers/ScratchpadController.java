@@ -1,4 +1,4 @@
-package com.olestourko.sdbudget.desktop;
+package com.olestourko.sdbudget.desktop.controllers;
 
 import com.olestourko.sdbudget.desktop.models.BudgetItem;
 import com.olestourko.sdbudget.desktop.models.Month;
@@ -28,7 +28,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.util.converter.BigDecimalStringConverter;
 import javax.inject.Inject;
 
-public class ScratchpadSceneController implements Initializable {
+public class ScratchpadController implements Initializable {
 
     @FXML
     private TableView scratchPadTable;
@@ -64,7 +64,7 @@ public class ScratchpadSceneController implements Initializable {
     }
 
     @Inject
-    public ScratchpadSceneController(MonthRepository monthRepository, Budget budget) {
+    public ScratchpadController(MonthRepository monthRepository, Budget budget) {
         this.monthRepository = monthRepository;
         this.budget = budget;
     }

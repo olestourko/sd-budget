@@ -1,4 +1,4 @@
-package com.olestourko.sdbudget.desktop;
+package com.olestourko.sdbudget.desktop.controllers;
 
 import com.olestourko.sdbudget.desktop.controls.MonthControl;
 import java.net.URL;
@@ -14,11 +14,9 @@ import com.olestourko.sdbudget.core.services.EstimateResult;
 import com.olestourko.sdbudget.desktop.models.BudgetItem;
 import java.math.BigDecimal;
 import javafx.scene.control.Button;
-import javafx.scene.control.MenuBar;
 import javax.inject.Inject;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-public class BudgetSceneController implements Initializable {
+public class OneMonthController implements Initializable {
 
     @FXML
     public MonthControl monthControl;
@@ -34,7 +32,7 @@ public class BudgetSceneController implements Initializable {
     final private Budget budget;
 
     @Inject
-    BudgetSceneController(PeriodServices periodServices, MonthRepository monthRepository, Budget budget) {
+    OneMonthController(PeriodServices periodServices, MonthRepository monthRepository, Budget budget) {
         this.periodServices = periodServices;
         this.monthRepository = monthRepository;
         this.budget = budget;
