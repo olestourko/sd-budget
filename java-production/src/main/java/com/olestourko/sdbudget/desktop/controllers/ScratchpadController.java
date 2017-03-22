@@ -44,8 +44,6 @@ public class ScratchpadController implements Initializable {
     private TextField nameField;
     @FXML
     private TextField amountField;
-    @FXML
-    public Button budgetViewButton;
 
     final private MonthRepository monthRepository;
     final private BudgetItem totalAdjustments = new BudgetItem("Total Adjustments", BigDecimal.ZERO);

@@ -14,9 +14,9 @@ import com.olestourko.sdbudget.core.services.EstimateResult;
 import com.olestourko.sdbudget.desktop.models.BudgetItem;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javax.inject.Inject;
 
@@ -24,12 +24,6 @@ public class ThreeMonthController implements Initializable {
 
     @FXML
     public Pane monthControlContainer;
-    @FXML
-    public Button scratchpadViewButton;
-    @FXML
-    public Button previousMonthButton;
-    @FXML
-    public Button nextMonthButton;
 
     final private ArrayList<MonthControl> monthControls = new ArrayList<MonthControl>();
     final private PeriodServices periodServices;
@@ -49,33 +43,9 @@ public class ThreeMonthController implements Initializable {
         monthControls.add((MonthControl) monthControlContainer.getChildren().get(1));
         monthControls.add((MonthControl) monthControlContainer.getChildren().get(2));
 
-        previousMonthButton.setOnAction(event -> {
-            Month previousMonth = monthRepository.getPrevious(this.getMonth());
-            if (previousMonth != null) {
-                nextMonthButton.disableProperty().set(false);
-                this.setMonth(previousMonth);
-                budget.setCurrentMonth(previousMonth);
-
-                if (monthRepository.getPrevious(this.getMonth()) == null) {
-                    previousMonthButton.disableProperty().set(true);
-                }
-            } else {
-                previousMonthButton.disableProperty().set(true);
-            }
-        });
-        nextMonthButton.setOnAction(event -> {
-            Month nextMonth = monthRepository.getNext(this.getMonth());
-            if (nextMonth != null) {
-                previousMonthButton.disableProperty().set(false);
-                this.setMonth(nextMonth);
-                budget.setCurrentMonth(nextMonth);
-
-                if (monthRepository.getNext(this.getMonth()) == null) {
-                    nextMonthButton.disableProperty().set(true);
-                }
-            } else {
-                nextMonthButton.disableProperty().set(true);
-            }
+        this.budget.currentMonthProperty().addListener(month -> {
+            SimpleObjectProperty<Month> monthProperty = (SimpleObjectProperty<Month>) month;
+            this.setMonth(monthProperty.getValue());
         });
 
         // This event updates all the months
@@ -130,20 +100,14 @@ public class ThreeMonthController implements Initializable {
                 } while (month != null);
             }
         };
-        
+
         // Set event handlers for all the month components
-        for(MonthControl monthControl : monthControls) {
+        for (MonthControl monthControl : monthControls) {
             monthControl.setOnMonthChange(handleMonthChange);
         }
     }
 
     public void load() {
-        if (monthRepository.getPrevious(budget.getCurrentMonth()) == null) {
-            previousMonthButton.disableProperty().set(true);
-        }
-        if (monthRepository.getNext(budget.getCurrentMonth()) == null) {
-            nextMonthButton.disableProperty().set(true);
-        }
         this.setMonth(budget.getCurrentMonth());
     }
 

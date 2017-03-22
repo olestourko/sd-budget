@@ -11,7 +11,7 @@
 <?import com.olestourko.sdbudget.desktop.controls.*?>
 
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1"
-            AnchorPane.topAnchor="30"
+            AnchorPane.topAnchor="0"
             AnchorPane.bottomAnchor="0"
             AnchorPane.leftAnchor="0"
             AnchorPane.rightAnchor="0">
@@ -21,13 +21,5 @@
                       AnchorPane.bottomAnchor="5"
                       AnchorPane.leftAnchor="5"
                       AnchorPane.rightAnchor="5"/>
-        
-        <HBox spacing="5.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0">
-            <children>
-                <Button id="previousMonthButton" fx:id="previousMonthButton" mnemonicParsing="false" text="Previous Month" />
-                <Button id="nextMonthButton" fx:id="nextMonthButton" mnemonicParsing="false" text="Next Month" />
-            </children>
-        </HBox>
-        <Button fx:id="scratchpadViewButton" text="Scratchpad" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0" />
     </children>
 </AnchorPane>

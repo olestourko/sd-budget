@@ -19,6 +19,8 @@ import javafx.scene.control.CheckMenuItem;
 
 public class Sdbudget extends Application {
 
+    private AnchorPane currentRoot;
+
     @Override
     public void start(Stage stage) throws Exception {
         final BudgetInjector budgetInjector = DaggerBudgetInjector.create();
@@ -37,12 +39,12 @@ public class Sdbudget extends Application {
         oneMonthLoader.setController(oneMonthController);
         AnchorPane oneMonthRoot = oneMonthLoader.load();
         oneMonthController.load();
-        
+
         ThreeMonthController threeMonthController = budgetInjector.threeMonthController().get();
         FXMLLoader threeMonthLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/BudgetScene_ThreeMonth.fxml"));
         threeMonthLoader.setController(threeMonthController);
         AnchorPane threeMonthRoot = threeMonthLoader.load();
-        threeMonthController.load();        
+        threeMonthController.load();
 
         ScratchpadController scratchpadController = budgetInjector.scratchpadController().get();
         FXMLLoader scratchpadLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/ScratchpadScene.fxml"));
@@ -50,40 +52,51 @@ public class Sdbudget extends Application {
         AnchorPane scratchPadRoot = scratchpadLoader.load();
         scratchpadController.load();
 
+        MainController mainController = budgetInjector.mainController().get();
         FXMLLoader mainLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/MainScene.fxml"));
+        mainLoader.setController(mainController);
         AnchorPane mainRoot = mainLoader.load();
-        MainController mainController = mainLoader.getController();
-        mainRoot.getChildren().addAll(oneMonthRoot);
+
+        currentRoot = oneMonthRoot;
+        mainController.contentContainer.getChildren().addAll(currentRoot); // Set the month view
         Scene mainScene = new Scene(mainRoot);
         mainScene.getStylesheets().add("/desktop/styles/Styles.css");
-        
+
         mainController.mainMenu.getMenus().get(0).getItems().get(0).setOnAction(event -> {
             CheckMenuItem menu = (CheckMenuItem) mainController.mainMenu.getMenus().get(0).getItems().get(0);
-            if(menu.isSelected()) {
-                mainRoot.getChildren().remove(oneMonthRoot);
-                mainRoot.getChildren().add(threeMonthRoot);
-                stage.setWidth(920);
+            if (menu.isSelected()) {
+                currentRoot = threeMonthRoot;
+                if (!mainController.contentContainer.getChildren().contains(scratchPadRoot)) {
+                    mainController.contentContainer.getChildren().remove(oneMonthRoot);
+                    mainController.contentContainer.getChildren().add(threeMonthRoot);
+                    stage.setWidth(920);
+                }
             } else {
-                mainRoot.getChildren().remove(threeMonthRoot);
-                mainRoot.getChildren().add(oneMonthRoot);
-                stage.setWidth(400);
+                currentRoot = oneMonthRoot;
+                if (!mainController.contentContainer.getChildren().contains(scratchPadRoot)) {
+                    mainController.contentContainer.getChildren().remove(threeMonthRoot);
+                    mainController.contentContainer.getChildren().add(oneMonthRoot);
+                    stage.setWidth(400);
+                }
             }
         });
-        
+
         stage.setTitle("S/D Budget");
         stage.setWidth(400);
         stage.setHeight(580);
         stage.setScene(mainScene);
         stage.show();
 
-        oneMonthController.scratchpadViewButton.setOnAction(event -> {
-            mainRoot.getChildren().remove(oneMonthRoot);
-            mainRoot.getChildren().add(scratchPadRoot);
-        });
-
-        scratchpadController.budgetViewButton.setOnAction(event -> {
-            mainRoot.getChildren().remove(scratchPadRoot);
-            mainRoot.getChildren().add(oneMonthRoot);
+        mainController.scratchpadViewButton.setOnAction(event -> {
+            if (!mainController.contentContainer.getChildren().contains(scratchPadRoot)) {
+                mainController.scratchpadViewButton.setText("Budget");
+                mainController.contentContainer.getChildren().clear();
+                mainController.contentContainer.getChildren().add(scratchPadRoot);
+            } else {
+                mainController.scratchpadViewButton.setText("Scratchpad");
+                mainController.contentContainer.getChildren().clear();
+                mainController.contentContainer.getChildren().add(currentRoot);
+            }
         });
     }
 

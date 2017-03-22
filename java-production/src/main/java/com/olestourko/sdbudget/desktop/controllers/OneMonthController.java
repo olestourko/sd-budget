@@ -13,19 +13,13 @@ import com.olestourko.sdbudget.core.services.ClosingResult;
 import com.olestourko.sdbudget.core.services.EstimateResult;
 import com.olestourko.sdbudget.desktop.models.BudgetItem;
 import java.math.BigDecimal;
-import javafx.scene.control.Button;
+import javafx.beans.property.SimpleObjectProperty;
 import javax.inject.Inject;
 
 public class OneMonthController implements Initializable {
 
     @FXML
     public MonthControl monthControl;
-    @FXML
-    public Button scratchpadViewButton;
-    @FXML
-    public Button previousMonthButton;
-    @FXML
-    public Button nextMonthButton;
 
     final private PeriodServices periodServices;
     final private MonthRepository monthRepository;
@@ -39,35 +33,12 @@ public class OneMonthController implements Initializable {
     }
 
     @Override
-    public void initialize(URL url, ResourceBundle rb) {       
-        previousMonthButton.setOnAction(event -> {
-            Month previousMonth = monthRepository.getPrevious(this.monthControl.getMonth());
-            if (previousMonth != null) {
-                nextMonthButton.disableProperty().set(false);
-                monthControl.setMonth(previousMonth);
-                budget.setCurrentMonth(previousMonth);
-
-                if (monthRepository.getPrevious(this.monthControl.getMonth()) == null) {
-                    previousMonthButton.disableProperty().set(true);
-                }
-            } else {
-                previousMonthButton.disableProperty().set(true);
-            }
+    public void initialize(URL url, ResourceBundle rb) {
+        this.budget.currentMonthProperty().addListener(month -> {
+            SimpleObjectProperty<Month> monthProperty = (SimpleObjectProperty<Month>) month;
+            this.monthControl.setMonth(monthProperty.getValue());
         });
-        nextMonthButton.setOnAction(event -> {
-            Month nextMonth = monthRepository.getNext(this.monthControl.getMonth());
-            if (nextMonth != null) {
-                previousMonthButton.disableProperty().set(false);
-                this.monthControl.setMonth(nextMonth);
-                budget.setCurrentMonth(nextMonth);
 
-                if (monthRepository.getNext(this.monthControl.getMonth()) == null) {
-                    nextMonthButton.disableProperty().set(true);
-                }
-            } else {
-                nextMonthButton.disableProperty().set(true);
-            }
-        });
         monthControl.setOnMonthChange(event -> {
             Month month = monthControl.getMonth();
             Month previousMonth = monthRepository.getPrevious(month);
@@ -116,12 +87,6 @@ public class OneMonthController implements Initializable {
     }
 
     public void load() {
-        if (monthRepository.getPrevious(budget.getCurrentMonth()) == null) {
-            previousMonthButton.disableProperty().set(true);
-        }
-        if (monthRepository.getNext(budget.getCurrentMonth()) == null) {
-            nextMonthButton.disableProperty().set(true);
-        }
         this.monthControl.setMonth(budget.getCurrentMonth());
     }
 }
