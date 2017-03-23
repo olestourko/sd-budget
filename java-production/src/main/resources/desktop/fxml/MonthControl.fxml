@@ -15,23 +15,15 @@
             <AnchorPane AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
                 <children>
                     <Label fx:id="periodDate" text="Date goes here" />
-                    <TableView fx:id="budgetTable" editable="true" AnchorPane.bottomAnchor="245.0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="20.0">
+                    <TreeTableView fx:id="budgetTable" editable="true" AnchorPane.bottomAnchor="245.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
                         <columns>
-                            <TableColumn fx:id="nameColumn" editable="true" text="Name">
-                                <cellValueFactory>
-                                    <PropertyValueFactory property="name" />
-                                </cellValueFactory>
-                            </TableColumn>
-                            <TableColumn fx:id="amountColumn" editable="true" text="Amount">
-                                <cellValueFactory>
-                                    <PropertyValueFactory property="amount" />
-                                </cellValueFactory>
-                            </TableColumn>
-                        </columns>    
-                    </TableView>
+                            <TreeTableColumn fx:id="nameColumn" editable="true"  prefWidth="150"  text="Name" />
+                            <TreeTableColumn fx:id="amountColumn" editable="true" text="Amount" />
+                        </columns>
+                    </TreeTableView>
                     <TableView fx:id="totalsTable" editable="true" prefHeight="130" AnchorPane.bottomAnchor="110.0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
                         <columns>
-                            <TableColumn editable="true" text="Name">
+                           <TableColumn editable="true" text="Name">
                                 <cellValueFactory>
                                     <PropertyValueFactory property="name" />
                                 </cellValueFactory>
