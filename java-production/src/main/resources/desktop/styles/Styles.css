@@ -2,10 +2,7 @@
     -fx-font-weight: bold;
 }
 
-.table-view .table-cell {
-    
-}
-
+.text-field-tree-table-cell > *,
 .text-field-table-cell > * {
     -fx-padding: 0;
     -fx-focus-color: -fx-control-inner-background;
@@ -17,6 +14,7 @@
     -fx-pref-width: 120;
 }
 
+.tree-table-view.disabled .tree-table-cell,
 .table-view.disabled .table-cell {
     -fx-text-fill: darkgray;
 }

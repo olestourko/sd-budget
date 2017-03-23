@@ -24,6 +24,8 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableColumn.CellDataFeatures;
 import javafx.scene.control.TreeTableView;
+import javafx.scene.control.cell.TextFieldTreeCell;
+import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.util.Callback;
 
 /**
@@ -79,6 +81,7 @@ public class MonthControl extends AnchorPane {
 
         // This draws the textfield when editing a table cell
 //        amountColumn.setCellFactory(TextFieldTableCell.<BudgetItem, BigDecimal>forTableColumn(new BigDecimalStringConverter()));        
+        amountColumn.setCellFactory(TextFieldTreeTableCell.forTreeTableColumn(new BigDecimalStringConverter()));        
         // This is a callback for edits
         amountColumn.setOnEditCommit(new EventHandler<TreeTableColumn.CellEditEvent<BudgetItem, BigDecimal>>() {
             @Override
@@ -91,6 +94,7 @@ public class MonthControl extends AnchorPane {
         });
 
         budgetTableRoot.setExpanded(true);
+        budgetTable.setEditable(true);
         budgetTable.setRoot(budgetTableRoot);
 
         // Update the tables when the month is changed
@@ -103,13 +107,6 @@ public class MonthControl extends AnchorPane {
             budgetTableRoot.getChildren().add(new TreeItem<>(month.netIncomeTarget));
             budgetTableRoot.getChildren().add(new TreeItem<>(month.openingBalance));
 
-//            budgetTable.setItems(FXCollections.observableArrayList(
-//                    month.revenues,
-//                    month.expenses,
-//                    month.adjustments,
-//                    month.netIncomeTarget,
-//                    month.openingBalance
-//            ));
             totalsTable.getItems().clear();
             totalsTable.getItems().addAll(month.closingBalanceTarget,
                     month.estimatedClosingBalance,
