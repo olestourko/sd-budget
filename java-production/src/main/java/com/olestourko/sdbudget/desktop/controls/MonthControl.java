@@ -86,7 +86,8 @@ public class MonthControl extends AnchorPane {
         amountColumn.setOnEditCommit(new EventHandler<TreeTableColumn.CellEditEvent<BudgetItem, BigDecimal>>() {
             @Override
             public void handle(TreeTableColumn.CellEditEvent<BudgetItem, BigDecimal> t) {
-                BudgetItem budgetItem = t.getTreeTablePosition().getTreeItem().getValue();
+                TreeItem treeItem = t.getTreeTablePosition().getTreeItem();                
+                BudgetItem budgetItem = (BudgetItem) treeItem.getValue();
 //                BudgetItem budgetItem = (BudgetItem) t.getTableView().getItems().get(t.getTablePosition().getRow());
                 budgetItem.setAmount(t.getNewValue());
                 MonthControl.this.fireEvent(new ActionEvent());

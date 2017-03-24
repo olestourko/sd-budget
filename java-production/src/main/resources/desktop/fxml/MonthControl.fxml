@@ -16,12 +16,14 @@
                 <children>
                     <Label fx:id="periodDate" text="Date goes here" />
                     <TreeTableView fx:id="budgetTable" editable="true" AnchorPane.bottomAnchor="245.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
+                        <columnResizePolicy><TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
                         <columns>
                             <TreeTableColumn fx:id="nameColumn" editable="true"  prefWidth="150"  text="Name" />
                             <TreeTableColumn fx:id="amountColumn" editable="true" text="Amount" />
                         </columns>
                     </TreeTableView>
                     <TableView fx:id="totalsTable" editable="true" prefHeight="130" AnchorPane.bottomAnchor="110.0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+                        <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
                         <columns>
                            <TableColumn editable="true" text="Name">
                                 <cellValueFactory>
@@ -36,6 +38,7 @@
                         </columns>
                     </TableView>
                     <TableView fx:id="closingTable" editable="true" prefHeight="75" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+                        <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
                         <columns>
                             <TableColumn editable="true" text="Name">
                                 <cellValueFactory>
