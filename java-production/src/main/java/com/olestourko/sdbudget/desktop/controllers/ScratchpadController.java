@@ -86,7 +86,7 @@ public class ScratchpadController implements Initializable {
         totalAdjustments.amountProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue observable, Number oldValue, Number newValue) {
-                budget.getCurrentMonth().adjustments.setAmount((BigDecimal) newValue);
+//                budget.getCurrentMonth().adjustments.setAmount((BigDecimal) newValue);
             }
         });
 
@@ -117,7 +117,7 @@ public class ScratchpadController implements Initializable {
                     if (selectedItem == totalAdjustments) {
                         return;
                     }
-                    budget.getCurrentMonth().transactions.remove(selectedItem);
+//                    budget.getCurrentMonth().transactions.remove(selectedItem);
                 }
             }
         });
@@ -130,7 +130,7 @@ public class ScratchpadController implements Initializable {
         BudgetItem newItem = new BudgetItem(name, amount);
         nameField.setText("");
         amountField.setText("");
-        budget.getCurrentMonth().transactions.add(newItem);
+//        budget.getCurrentMonth().transactions.add(newItem);
     }
 
     private void calculate() {
@@ -145,7 +145,7 @@ public class ScratchpadController implements Initializable {
     private void setMonth(Month month) {
         budget.setCurrentMonth(month);
         scratchPadTable.getItems().removeListener(listChangeListener);
-        scratchPadTable.setItems(month.transactions);
+//        scratchPadTable.setItems(month.transactions);
         scratchPadTable.getItems().addListener(listChangeListener);
         calculate();        
     }

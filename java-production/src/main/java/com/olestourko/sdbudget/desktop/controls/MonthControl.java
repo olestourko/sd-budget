@@ -19,6 +19,7 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.converter.BigDecimalStringConverter;
 import javafx.event.ActionEvent;
+import javafx.event.EventType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TreeItem;
@@ -39,7 +40,11 @@ public class MonthControl extends AnchorPane {
     private Label periodDate;
     @FXML
     private TreeTableView budgetTable;
-    private TreeItem<BudgetItem> budgetTableRoot = new TreeItem<>(new BudgetItem("Budget", BigDecimal.ZERO));
+
+    private final TreeItem<BudgetItem> budgetTableRoot = new TreeItem<>(new BudgetItem("Budget", BigDecimal.ZERO));
+    private final TreeItem<BudgetItem> revenuesRoot = new TreeItem<>(new BudgetItem("Revenues", BigDecimal.ZERO));
+    private final TreeItem<BudgetItem> expensesRoot = new TreeItem<>(new BudgetItem("Expenses", BigDecimal.ZERO));
+    private final TreeItem<BudgetItem> adjustmentsRoot = new TreeItem<>(new BudgetItem("Adjustments", BigDecimal.ZERO));
     @FXML
     private TableView totalsTable;
     @FXML
@@ -62,25 +67,39 @@ public class MonthControl extends AnchorPane {
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
-        
+
         nameColumn.setCellFactory(new Callback<TreeTableColumn<BudgetItem, String>, TreeTableCell<BudgetItem, String>>() {
             @Override
             public TreeTableCell<BudgetItem, String> call(TreeTableColumn<BudgetItem, String> p) {
-                TreeTableCell<BudgetItem, String> newCell = new TreeTableCell<BudgetItem, String>() {
-                    Button addItemButton = new Button("+");
-                    
+                ButtonTreeTableCell cell = new ButtonTreeTableCell("+");
+                cell.setShowButtonCondition(new Callback<ButtonTreeTableCell, Boolean>() {
                     @Override
-                    public void updateItem(String item, boolean empty) {
-                        super.updateItem(item, empty);
-                        this.setText(item);
-                        TreeItem treeItem = this.getTreeTableRow().getTreeItem();
-                        if(!empty && treeItem.getChildren().size() != 0) {
-                            setGraphic(addItemButton);
+                    public Boolean call(ButtonTreeTableCell cell) {
+                        TreeItem treeItem = cell.getTreeTableRow().getTreeItem();
+                        try {
+                            return (treeItem == revenuesRoot || treeItem == expensesRoot || treeItem == adjustmentsRoot);
+                        } catch (NullPointerException exception) {
+                            // Do nothing
                         }
+                        return false;
                     }
-                };
+                });
 
-                return newCell;
+                cell.button.setOnAction(event -> {
+                    BudgetItem newBudgetItem = new BudgetItem("New Item", BigDecimal.ZERO);
+                    TreeItem<BudgetItem> treeItem = cell.getTreeTableRow().getTreeItem();
+                    if (treeItem.getValue() == revenuesRoot.getValue()) {
+                        month.getValue().addRevenue(newBudgetItem);
+                    } else if(treeItem.getValue() == expensesRoot.getValue()) {
+                        month.getValue().addExpense(newBudgetItem);
+                    } else if(treeItem.getValue() == adjustmentsRoot.getValue()) {
+                        month.getValue().addAdjustment(newBudgetItem);
+                    }
+                    TreeItem<BudgetItem> newTreeItem = new TreeItem<BudgetItem>(newBudgetItem);
+                    treeItem.getChildren().add(newTreeItem);
+                    treeItem.setExpanded(true);
+                });
+                return cell;
             }
         });
 
@@ -114,7 +133,7 @@ public class MonthControl extends AnchorPane {
             }
         });
 
-        budgetTableRoot.setExpanded(true);        
+        budgetTableRoot.setExpanded(true);
         budgetTable.setEditable(true);
         budgetTable.setRoot(budgetTableRoot);
 
@@ -122,9 +141,26 @@ public class MonthControl extends AnchorPane {
         this.monthProperty().addListener(event -> {
             Month month = this.getMonth();
             budgetTableRoot.getChildren().clear();
-            budgetTableRoot.getChildren().add(new TreeItem<>(month.revenues));
-            budgetTableRoot.getChildren().add(new TreeItem<>(month.expenses));
-            budgetTableRoot.getChildren().add(new TreeItem<>(month.adjustments));
+            revenuesRoot.getChildren().clear();
+            expensesRoot.getChildren().clear();
+            adjustmentsRoot.getChildren().clear();
+
+            budgetTableRoot.getChildren().add(revenuesRoot);
+            budgetTableRoot.getChildren().add(expensesRoot);
+            budgetTableRoot.getChildren().add(adjustmentsRoot);
+
+            for (BudgetItem revenue : month.getRevenues()) {
+                revenuesRoot.getChildren().add(new TreeItem<BudgetItem>(revenue));
+            }
+
+            for (BudgetItem expense : month.getExpenses()) {
+                expensesRoot.getChildren().add(new TreeItem<BudgetItem>(expense));
+            }
+
+            for (BudgetItem adjustment : month.getAdjustments()) {
+                adjustmentsRoot.getChildren().add(new TreeItem<BudgetItem>(adjustment));
+            }
+
             budgetTableRoot.getChildren().add(new TreeItem<>(month.netIncomeTarget));
             budgetTableRoot.getChildren().add(new TreeItem<>(month.openingBalance));
 
