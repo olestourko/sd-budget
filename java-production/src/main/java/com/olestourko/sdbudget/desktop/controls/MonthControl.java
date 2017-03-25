@@ -19,12 +19,13 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.converter.BigDecimalStringConverter;
 import javafx.event.ActionEvent;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn.CellDataFeatures;
 import javafx.scene.control.TreeTableView;
-import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.util.Callback;
 
@@ -33,7 +34,7 @@ import javafx.util.Callback;
  * @author oles
  */
 public class MonthControl extends AnchorPane {
-    
+
     @FXML
     private Label periodDate;
     @FXML
@@ -49,9 +50,9 @@ public class MonthControl extends AnchorPane {
     public TreeTableColumn amountColumn;
     @FXML
     public CheckBox closeMonthCheckBox;
-    
+
     private final SimpleObjectProperty<Month> month = new SimpleObjectProperty<Month>();
-    
+
     public MonthControl() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/desktop/fxml/MonthControl.fxml"));
         loader.setRoot(this);
@@ -62,10 +63,29 @@ public class MonthControl extends AnchorPane {
             throw new RuntimeException(ex);
         }
         
+        nameColumn.setCellFactory(new Callback<TreeTableColumn<BudgetItem, String>, TreeTableCell<BudgetItem, String>>() {
+            @Override
+            public TreeTableCell<BudgetItem, String> call(TreeTableColumn<BudgetItem, String> p) {
+                TreeTableCell<BudgetItem, String> newCell = new TreeTableCell<BudgetItem, String>() {
+                    Button addItemButton = new Button("+");
+                    
+                    @Override
+                    public void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        this.setText(item);
+                        TreeItem treeItem = this.getTreeTableRow().getTreeItem();
+                        if(!empty && treeItem.getChildren().size() != 0) {
+                            setGraphic(addItemButton);
+                        }
+                    }
+                };
+
+                return newCell;
+            }
+        });
+
         nameColumn.setCellValueFactory(new Callback<CellDataFeatures<BudgetItem, String>, ObservableValue<String>>() {
             public ObservableValue<String> call(CellDataFeatures<BudgetItem, String> p) {
-                // p.getValue() returns the TreeItem<Person> instance for a particular TreeTableView row,
-                // p.getValue().getValue() returns the Person instance inside the TreeItem<Person>
                 return p.getValue().getValue().nameProperty();
             }
         });
@@ -81,12 +101,12 @@ public class MonthControl extends AnchorPane {
 
         // This draws the textfield when editing a table cell
 //        amountColumn.setCellFactory(TextFieldTableCell.<BudgetItem, BigDecimal>forTableColumn(new BigDecimalStringConverter()));        
-        amountColumn.setCellFactory(TextFieldTreeTableCell.forTreeTableColumn(new BigDecimalStringConverter()));        
+        amountColumn.setCellFactory(TextFieldTreeTableCell.forTreeTableColumn(new BigDecimalStringConverter()));
         // This is a callback for edits
         amountColumn.setOnEditCommit(new EventHandler<TreeTableColumn.CellEditEvent<BudgetItem, BigDecimal>>() {
             @Override
             public void handle(TreeTableColumn.CellEditEvent<BudgetItem, BigDecimal> t) {
-                TreeItem treeItem = t.getTreeTablePosition().getTreeItem();                
+                TreeItem treeItem = t.getTreeTablePosition().getTreeItem();
                 BudgetItem budgetItem = (BudgetItem) treeItem.getValue();
 //                BudgetItem budgetItem = (BudgetItem) t.getTableView().getItems().get(t.getTablePosition().getRow());
                 budgetItem.setAmount(t.getNewValue());
@@ -94,7 +114,7 @@ public class MonthControl extends AnchorPane {
             }
         });
 
-        budgetTableRoot.setExpanded(true);
+        budgetTableRoot.setExpanded(true);        
         budgetTable.setEditable(true);
         budgetTable.setRoot(budgetTableRoot);
 
@@ -142,7 +162,7 @@ public class MonthControl extends AnchorPane {
             this.month.get().setIsClosed(this.closeMonthCheckBox.isSelected());
             updateTableStyles();
         });
-        
+
         updateTableStyles();
     }
 
@@ -165,11 +185,11 @@ public class MonthControl extends AnchorPane {
     public Month getMonth() {
         return this.month.get();
     }
-    
+
     public void setMonth(Month month) {
         this.month.set(month);
     }
-    
+
     public SimpleObjectProperty<Month> monthProperty() {
         return this.month;
     }
@@ -182,26 +202,26 @@ public class MonthControl extends AnchorPane {
     public final ObjectProperty<EventHandler<ActionEvent>> onMonthChangeProperty() {
         return onMonthChange;
     }
-    
+
     public final void setOnMonthChange(EventHandler<ActionEvent> value) {
         onMonthChangeProperty().set(value);
     }
-    
+
     public final EventHandler<ActionEvent> getOnMonthChange() {
         return onMonthChange.get();
     }
-    
+
     private ObjectProperty<EventHandler<ActionEvent>> onMonthChange = new ObjectPropertyBase<EventHandler<ActionEvent>>() {
         @Override
         protected void invalidated() {
             setEventHandler(ActionEvent.ACTION, get());
         }
-        
+
         @Override
         public Object getBean() {
             return MonthControl.this;
         }
-        
+
         @Override
         public String getName() {
             return "onMonthChange";
