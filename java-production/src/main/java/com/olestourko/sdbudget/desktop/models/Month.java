@@ -24,10 +24,8 @@ public class Month implements IPeriod {
     protected final ObservableList<BudgetItem> adjustments = FXCollections.observableArrayList();
 
     public final BudgetItem netIncomeTarget = new BudgetItem("Net Income Target", new BigDecimal(BigInteger.ZERO));
-
     public final BudgetItem openingBalance = new BudgetItem("Opening Balance", new BigDecimal(BigInteger.ZERO));
     public final BudgetItem openingSurplus = new BudgetItem("Carried Surplus", new BigDecimal(BigInteger.ZERO));
-
     public final BudgetItem closingBalanceTarget = new BudgetItem("Closing Balance Target", new BigDecimal(BigInteger.ZERO));
     public final BudgetItem estimatedClosingBalance = new BudgetItem("Closing Balance (Estimated)", new BigDecimal(BigInteger.ZERO));
     public final BudgetItem totalSurplus = new BudgetItem("Total Surplus", new BigDecimal(BigInteger.ZERO));

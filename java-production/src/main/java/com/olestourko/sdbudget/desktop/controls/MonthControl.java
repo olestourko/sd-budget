@@ -19,8 +19,6 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.converter.BigDecimalStringConverter;
 import javafx.event.ActionEvent;
-import javafx.event.EventType;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
@@ -90,7 +88,7 @@ public class MonthControl extends AnchorPane {
                     TreeItem<BudgetItem> treeItem = cell.getTreeTableRow().getTreeItem();
                     if (treeItem.getValue() == revenuesRoot.getValue()) {
                         month.getValue().addRevenue(newBudgetItem);
-                    } else if(treeItem.getValue() == expensesRoot.getValue()) {
+                    } else if (treeItem.getValue() == expensesRoot.getValue()) {
                         month.getValue().addExpense(newBudgetItem);
                     }
                     TreeItem<BudgetItem> newTreeItem = new TreeItem<BudgetItem>(newBudgetItem);
@@ -117,7 +115,6 @@ public class MonthControl extends AnchorPane {
         });
 
         // This draws the textfield when editing a table cell
-//        amountColumn.setCellFactory(TextFieldTableCell.<BudgetItem, BigDecimal>forTableColumn(new BigDecimalStringConverter()));        
         amountColumn.setCellFactory(TextFieldTreeTableCell.forTreeTableColumn(new BigDecimalStringConverter()));
         // This is a callback for edits
         amountColumn.setOnEditCommit(new EventHandler<TreeTableColumn.CellEditEvent<BudgetItem, BigDecimal>>() {
@@ -128,6 +125,7 @@ public class MonthControl extends AnchorPane {
 //                BudgetItem budgetItem = (BudgetItem) t.getTableView().getItems().get(t.getTablePosition().getRow());
                 budgetItem.setAmount(t.getNewValue());
                 MonthControl.this.fireEvent(new ActionEvent());
+                refreshTables();
             }
         });
 
@@ -137,43 +135,7 @@ public class MonthControl extends AnchorPane {
 
         // Update the tables when the month is changed
         this.monthProperty().addListener(event -> {
-            Month month = this.getMonth();
-            budgetTableRoot.getChildren().clear();
-            revenuesRoot.getChildren().clear();
-            expensesRoot.getChildren().clear();
-            adjustmentsRoot.getChildren().clear();
-
-            budgetTableRoot.getChildren().add(revenuesRoot);
-            budgetTableRoot.getChildren().add(expensesRoot);
-            budgetTableRoot.getChildren().add(adjustmentsRoot);
-
-            for (BudgetItem revenue : month.getRevenues()) {
-                revenuesRoot.getChildren().add(new TreeItem<BudgetItem>(revenue));
-            }
-
-            for (BudgetItem expense : month.getExpenses()) {
-                expensesRoot.getChildren().add(new TreeItem<BudgetItem>(expense));
-            }
-            
-            adjustmentsRoot.getValue().setAmount(month.getTotalAdjustments());
-            budgetTableRoot.getChildren().add(new TreeItem<>(month.netIncomeTarget));
-            budgetTableRoot.getChildren().add(new TreeItem<>(month.openingBalance));
-
-            totalsTable.getItems().clear();
-            totalsTable.getItems().addAll(month.closingBalanceTarget,
-                    month.estimatedClosingBalance,
-                    month.openingSurplus,
-                    month.totalSurplus);
-            closingTable.getItems().clear();
-            closingTable.getItems().addAll(month.closingBalance);
-
-            // Set the date on the label
-            SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
-            periodDate.setText(dateFormat.format(month.calendar.getTime()));
-            MonthControl.this.fireEvent(new ActionEvent());
-
-            // Set the closing checkbox value
-            closeMonthCheckBox.setSelected(month.getIsClosed());
+            refreshTables();
         });
 
         // Set up the closing table
@@ -195,6 +157,48 @@ public class MonthControl extends AnchorPane {
         });
 
         updateTableStyles();
+    }
+
+    private void refreshTables() {
+        Month month = this.getMonth();
+        budgetTableRoot.getChildren().clear();
+        revenuesRoot.getChildren().clear();
+        revenuesRoot.getValue().setAmount(month.getTotalRevenues());
+        expensesRoot.getChildren().clear();
+        expensesRoot.getValue().setAmount(month.getTotalExpenses());
+        adjustmentsRoot.getChildren().clear();
+        adjustmentsRoot.getValue().setAmount(month.getTotalAdjustments());
+
+        budgetTableRoot.getChildren().add(revenuesRoot);
+        budgetTableRoot.getChildren().add(expensesRoot);
+        budgetTableRoot.getChildren().add(adjustmentsRoot);
+
+        for (BudgetItem revenue : month.getRevenues()) {
+            revenuesRoot.getChildren().add(new TreeItem<BudgetItem>(revenue));
+        }
+
+        for (BudgetItem expense : month.getExpenses()) {
+            expensesRoot.getChildren().add(new TreeItem<BudgetItem>(expense));
+        }
+
+        budgetTableRoot.getChildren().add(new TreeItem<>(month.netIncomeTarget));
+        budgetTableRoot.getChildren().add(new TreeItem<>(month.openingBalance));
+
+        totalsTable.getItems().clear();
+        totalsTable.getItems().addAll(month.closingBalanceTarget,
+                month.estimatedClosingBalance,
+                month.openingSurplus,
+                month.totalSurplus);
+        closingTable.getItems().clear();
+        closingTable.getItems().addAll(month.closingBalance);
+
+        // Set the date on the label
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
+        periodDate.setText(dateFormat.format(month.calendar.getTime()));
+        MonthControl.this.fireEvent(new ActionEvent());
+
+        // Set the closing checkbox value
+        closeMonthCheckBox.setSelected(month.getIsClosed());
     }
 
     // Enable / disable tables based on the "Month Closed" checkbox
