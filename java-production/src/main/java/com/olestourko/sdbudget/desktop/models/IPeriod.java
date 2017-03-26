@@ -21,6 +21,12 @@ public interface IPeriod {
     
     public void addAdjustment(BudgetItem item);
     
+    public void removeRevenue(BudgetItem item);
+    
+    public void removeExpense(BudgetItem item);
+    
+    public void removeAdjustment(BudgetItem item);
+    
     public BigDecimal getTotalRevenues();
 
     public BigDecimal getTotalExpenses();

@@ -81,7 +81,6 @@ public class ThreeMonthController implements Initializable {
                             BudgetItem item = (BudgetItem) o;
                             sum = sum.add(item.getAmount());
                         }
-//                        month.adjustments.setAmount(sum);
                     } // Calculate end of month totals
                     else {
                         ClosingResult result = periodServices.calculateClosing(
@@ -93,7 +92,6 @@ public class ThreeMonthController implements Initializable {
 
                         month.estimatedClosingBalance.setAmount(month.closingBalance.getAmount());
                         month.totalSurplus.setAmount(result.surplus);
-//                        month.adjustments.setAmount(result.closingAdjustment);
                     }
                     // Get the next month
                     month = monthRepository.getNext(month);

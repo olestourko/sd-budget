@@ -82,6 +82,21 @@ public class Month implements IPeriod {
     }
 
     @Override
+    public void removeRevenue(BudgetItem item) {
+        revenues.remove(item);
+    }
+
+    @Override
+    public void removeExpense(BudgetItem item) {
+        expenses.remove(item);
+    }
+
+    @Override
+    public void removeAdjustment(BudgetItem item) {
+        adjustments.remove(item);
+    }
+
+    @Override
     public void addRevenue(BudgetItem item) {
         revenues.add(item);
     }

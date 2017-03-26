@@ -77,7 +77,7 @@ public class MonthControl extends AnchorPane {
                     public Boolean call(ButtonTreeTableCell cell) {
                         TreeItem treeItem = cell.getTreeTableRow().getTreeItem();
                         try {
-                            return (treeItem == revenuesRoot || treeItem == expensesRoot || treeItem == adjustmentsRoot);
+                            return (treeItem == revenuesRoot || treeItem == expensesRoot);
                         } catch (NullPointerException exception) {
                             // Do nothing
                         }
@@ -92,8 +92,6 @@ public class MonthControl extends AnchorPane {
                         month.getValue().addRevenue(newBudgetItem);
                     } else if(treeItem.getValue() == expensesRoot.getValue()) {
                         month.getValue().addExpense(newBudgetItem);
-                    } else if(treeItem.getValue() == adjustmentsRoot.getValue()) {
-                        month.getValue().addAdjustment(newBudgetItem);
                     }
                     TreeItem<BudgetItem> newTreeItem = new TreeItem<BudgetItem>(newBudgetItem);
                     treeItem.getChildren().add(newTreeItem);
@@ -156,11 +154,8 @@ public class MonthControl extends AnchorPane {
             for (BudgetItem expense : month.getExpenses()) {
                 expensesRoot.getChildren().add(new TreeItem<BudgetItem>(expense));
             }
-
-            for (BudgetItem adjustment : month.getAdjustments()) {
-                adjustmentsRoot.getChildren().add(new TreeItem<BudgetItem>(adjustment));
-            }
-
+            
+            adjustmentsRoot.getValue().setAmount(month.getTotalAdjustments());
             budgetTableRoot.getChildren().add(new TreeItem<>(month.netIncomeTarget));
             budgetTableRoot.getChildren().add(new TreeItem<>(month.openingBalance));
 

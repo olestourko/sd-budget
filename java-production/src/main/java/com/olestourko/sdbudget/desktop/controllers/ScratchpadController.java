@@ -52,7 +52,7 @@ public class ScratchpadController implements Initializable {
     final private ListChangeListener<BudgetItem> listChangeListener = new ListChangeListener<BudgetItem>() {
         @Override
         public void onChanged(Change<? extends BudgetItem> change) {
-            calculate();
+            totalAdjustments.setAmount(budget.getCurrentMonth().getTotalAdjustments());
         }
     };
 
@@ -97,7 +97,7 @@ public class ScratchpadController implements Initializable {
             public void handle(TableColumn.CellEditEvent<BudgetItem, BigDecimal> t) {
                 BudgetItem budgetItem = (BudgetItem) t.getTableView().getItems().get(t.getTablePosition().getRow());
                 budgetItem.setAmount(t.getNewValue());
-                calculate();
+                totalAdjustments.setAmount(budget.getCurrentMonth().getTotalAdjustments());
             }
         });
 
@@ -117,7 +117,7 @@ public class ScratchpadController implements Initializable {
                     if (selectedItem == totalAdjustments) {
                         return;
                     }
-//                    budget.getCurrentMonth().transactions.remove(selectedItem);
+                    budget.getCurrentMonth().removeAdjustment(selectedItem);
                 }
             }
         });
@@ -130,23 +130,14 @@ public class ScratchpadController implements Initializable {
         BudgetItem newItem = new BudgetItem(name, amount);
         nameField.setText("");
         amountField.setText("");
-//        budget.getCurrentMonth().transactions.add(newItem);
-    }
-
-    private void calculate() {
-        BigDecimal sum = BigDecimal.ZERO;
-        for (Object o : scratchPadTable.getItems()) {
-            BudgetItem item = (BudgetItem) o;
-            sum = sum.add(item.getAmount());
-        }
-        totalAdjustments.setAmount(sum);
+        budget.getCurrentMonth().addAdjustment(newItem);
     }
 
     private void setMonth(Month month) {
         budget.setCurrentMonth(month);
         scratchPadTable.getItems().removeListener(listChangeListener);
-//        scratchPadTable.setItems(month.transactions);
+        scratchPadTable.setItems(month.getAdjustments());
         scratchPadTable.getItems().addListener(listChangeListener);
-        calculate();        
+        totalAdjustments.setAmount(month.getTotalAdjustments());
     }
 }
