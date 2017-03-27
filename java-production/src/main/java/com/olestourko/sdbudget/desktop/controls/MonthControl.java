@@ -14,6 +14,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ObjectPropertyBase;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
@@ -55,6 +56,15 @@ public class MonthControl extends AnchorPane {
     public CheckBox closeMonthCheckBox;
 
     private final SimpleObjectProperty<Month> month = new SimpleObjectProperty<Month>();
+
+    private final ListChangeListener<BudgetItem> monthListChangeListener = new ListChangeListener<BudgetItem>() {
+        @Override
+        public void onChanged(ListChangeListener.Change<? extends BudgetItem> change) {
+            revenuesRoot.getValue().setAmount(month.getValue().getTotalRevenues());
+            expensesRoot.getValue().setAmount(month.getValue().getTotalExpenses());
+            adjustmentsRoot.getValue().setAmount(month.getValue().getTotalAdjustments());
+        }
+    };
 
     public MonthControl() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/desktop/fxml/MonthControl.fxml"));
@@ -125,7 +135,6 @@ public class MonthControl extends AnchorPane {
 //                BudgetItem budgetItem = (BudgetItem) t.getTableView().getItems().get(t.getTablePosition().getRow());
                 budgetItem.setAmount(t.getNewValue());
                 MonthControl.this.fireEvent(new ActionEvent());
-                refreshTables();
             }
         });
 
@@ -134,7 +143,7 @@ public class MonthControl extends AnchorPane {
         budgetTable.setRoot(budgetTableRoot);
 
         // Update the tables when the month is changed
-        this.monthProperty().addListener(event -> {
+        this.monthProperty().addListener(property -> {
             refreshTables();
         });
 
@@ -159,7 +168,7 @@ public class MonthControl extends AnchorPane {
         updateTableStyles();
     }
 
-    private void refreshTables() {
+    public void refreshTables() {
         Month month = this.getMonth();
         budgetTableRoot.getChildren().clear();
         revenuesRoot.getChildren().clear();
@@ -222,7 +231,15 @@ public class MonthControl extends AnchorPane {
     }
 
     public void setMonth(Month month) {
+        if (this.month.getValue() != null) {
+            this.month.getValue().getRevenues().removeListener(monthListChangeListener);
+            this.month.getValue().getExpenses().removeListener(monthListChangeListener);
+            this.month.getValue().getAdjustments().removeListener(monthListChangeListener);
+        }
         this.month.set(month);
+        this.month.getValue().getRevenues().addListener(monthListChangeListener);
+        this.month.getValue().getExpenses().addListener(monthListChangeListener);
+        this.month.getValue().getAdjustments().addListener(monthListChangeListener);
     }
 
     public SimpleObjectProperty<Month> monthProperty() {

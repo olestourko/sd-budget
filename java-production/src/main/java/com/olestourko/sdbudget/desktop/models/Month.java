@@ -9,9 +9,11 @@ import java.math.BigDecimal;
 import com.olestourko.sdbudget.desktop.models.BudgetItem;
 import java.math.BigInteger;
 import java.util.Calendar;
+import javafx.beans.Observable;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.util.Callback;
 
 /**
  *
@@ -19,9 +21,23 @@ import javafx.collections.ObservableList;
  */
 public class Month implements IPeriod {
 
-    protected final ObservableList<BudgetItem> revenues = FXCollections.observableArrayList();
-    protected final ObservableList<BudgetItem> expenses = FXCollections.observableArrayList();
-    protected final ObservableList<BudgetItem> adjustments = FXCollections.observableArrayList();
+    /*
+    An extractor is used to detect changes within list items (instead of just detecting added/removed items from the observable list)
+    https://gist.github.com/andytill/3116203
+    http://docs.oracle.com/javase/8/javafx/api/javafx/collections/FXCollections.html#observableArrayList-javafx.util.Callback-
+     */
+    private final Callback<BudgetItem, Observable[]> extractor = new Callback<BudgetItem, Observable[]>() {
+        @Override
+        public Observable[] call(BudgetItem item) {
+            return new Observable[]{
+                item.nameProperty(), item.amountProperty()
+            };
+        }
+    };
+
+    protected final ObservableList<BudgetItem> revenues = FXCollections.observableArrayList(extractor);
+    protected final ObservableList<BudgetItem> expenses = FXCollections.observableArrayList(extractor);
+    protected final ObservableList<BudgetItem> adjustments = FXCollections.observableArrayList(extractor);
 
     public final BudgetItem netIncomeTarget = new BudgetItem("Net Income Target", new BigDecimal(BigInteger.ZERO));
     public final BudgetItem openingBalance = new BudgetItem("Opening Balance", new BigDecimal(BigInteger.ZERO));
