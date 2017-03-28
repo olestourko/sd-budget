@@ -15,6 +15,7 @@ import com.olestourko.sdbudget.core.models.Budget;
 import com.olestourko.sdbudget.desktop.controllers.MainController;
 import java.util.Calendar;
 import com.olestourko.sdbudget.desktop.dagger.BudgetInjector;
+import java.sql.*;
 import javafx.scene.control.CheckMenuItem;
 
 public class Sdbudget extends Application {
@@ -25,6 +26,9 @@ public class Sdbudget extends Application {
     public void start(Stage stage) throws Exception {
         final BudgetInjector budgetInjector = DaggerBudgetInjector.create();
         final Budget budget = budgetInjector.budget();
+
+        startDatabase();
+
         //Populate the month repository
         MonthRepository monthRepository = budgetInjector.monthRepository();
         for (int i = 0; i < 12; i++) {
@@ -98,6 +102,16 @@ public class Sdbudget extends Application {
                 mainController.contentContainer.getChildren().add(currentRoot);
             }
         });
+    }
+
+    private void startDatabase() throws ClassNotFoundException, SQLException {
+        Class.forName("org.h2.Driver");
+        Connection connection = DriverManager.getConnection("jdbc:h2:~/test", "sa", "");
+        ResultSet tables = connection.getMetaData().getTables(null, "PUBLIC", "%", null);
+        while (tables.next()) {
+            System.out.println(tables.getString(3));
+        }
+        connection.close();
     }
 
     /**
