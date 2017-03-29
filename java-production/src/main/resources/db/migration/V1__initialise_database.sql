@@ -1,0 +1,3 @@
+DROP SCHEMA sdbudget IF EXISTS;
+
+CREATE SCHEMA sdbudget;

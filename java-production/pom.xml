@@ -13,6 +13,8 @@
         <mainClass>com.olestourko.sdbudget.Sdbudget</mainClass>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <db.url>jdbc:h2:~/test</db.url>
+        <db.username>sa</db.username>
     </properties>
     
     <build>
@@ -134,8 +136,8 @@
                     <!-- JDBC connection parameters -->
                     <jdbc>
                         <driver>org.h2.Driver</driver>
-                        <url>jdbc:h2:~/test</url>
-                        <user>sa</user>
+                        <url>${db.url}</url>
+                        <user>${db.username}</user>
                         <password></password>
                     </jdbc>
 
@@ -154,6 +156,38 @@
                     </generator>
                 </configuration>
             </plugin>
+            
+            <!-- Flyway database migrations
+            https://blog.jooq.org/2014/06/25/flyway-and-jooq-for-unbeatable-sql-development-productivity/ -->
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>3.0</version>
+ 
+                <!-- Note that we're executing the Flyway
+                plugin in the "generate-sources" phase -->
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>migrate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+ 
+                <!-- Note that we need to prefix the db/migration
+                path with filesystem: to prevent Flyway
+                from looking for our migration scripts
+                only on the classpath -->
+                <configuration>
+                    <url>${db.url}</url>
+                    <user>${db.username}</user>
+                    <locations>
+                        <location>filesystem:src/main/resources/db/migration</location>
+                    </locations>
+                </configuration>
+            </plugin>
+            
         </plugins>
     </build>
     
