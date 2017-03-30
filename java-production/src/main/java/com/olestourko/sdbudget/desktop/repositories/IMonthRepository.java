@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.olestourko.sdbudget.core.repositories;
+package com.olestourko.sdbudget.desktop.repositories;
 
 import com.olestourko.sdbudget.desktop.models.Month;
 import java.util.Calendar;

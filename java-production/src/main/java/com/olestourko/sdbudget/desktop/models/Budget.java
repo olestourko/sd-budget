@@ -1,4 +1,4 @@
-package com.olestourko.sdbudget.core.models;
+package com.olestourko.sdbudget.desktop.models;
 
 import com.olestourko.sdbudget.desktop.models.Month;
 import javafx.beans.property.SimpleObjectProperty;

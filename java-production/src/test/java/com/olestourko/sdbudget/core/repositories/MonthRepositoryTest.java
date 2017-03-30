@@ -5,7 +5,7 @@
  */
 package com.olestourko.sdbudget.core.repositories;
 
-import com.olestourko.sdbudget.core.repositories.MonthRepository;
+import com.olestourko.sdbudget.desktop.repositories.MonthRepository;
 import com.olestourko.sdbudget.desktop.models.Month;
 import java.util.Calendar;
 import org.junit.After;

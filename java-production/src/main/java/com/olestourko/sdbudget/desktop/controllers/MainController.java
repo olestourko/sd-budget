@@ -1,7 +1,7 @@
 package com.olestourko.sdbudget.desktop.controllers;
 
-import com.olestourko.sdbudget.core.models.Budget;
-import com.olestourko.sdbudget.core.repositories.MonthRepository;
+import com.olestourko.sdbudget.desktop.models.Budget;
+import com.olestourko.sdbudget.desktop.repositories.MonthRepository;
 import com.olestourko.sdbudget.core.services.PeriodServices;
 import com.olestourko.sdbudget.desktop.models.Month;
 import java.net.URL;

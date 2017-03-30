@@ -1,5 +1,8 @@
 package com.olestourko.sdbudget;
 
+import com.olestourko.sdbudget.core.dagger.CoreInjector;
+import com.olestourko.sdbudget.core.dagger.DaggerCoreInjector;
+import com.olestourko.sdbudget.core.persistence.MonthPersistence;
 import com.olestourko.sdbudget.desktop.controllers.OneMonthController;
 import com.olestourko.sdbudget.desktop.controllers.ThreeMonthController;
 import com.olestourko.sdbudget.desktop.controllers.ScratchpadController;
@@ -10,12 +13,12 @@ import javafx.stage.Stage;
 import com.olestourko.sdbudget.desktop.models.Month;
 import javafx.scene.layout.AnchorPane;
 import com.olestourko.sdbudget.desktop.dagger.DaggerBudgetInjector;
-import com.olestourko.sdbudget.core.repositories.MonthRepository;
-import com.olestourko.sdbudget.core.models.Budget;
+import com.olestourko.sdbudget.desktop.repositories.MonthRepository;
+import com.olestourko.sdbudget.desktop.models.Budget;
 import com.olestourko.sdbudget.desktop.controllers.MainController;
 import java.util.Calendar;
 import com.olestourko.sdbudget.desktop.dagger.BudgetInjector;
-import java.sql.*;
+import java.util.ArrayList;
 import javafx.scene.control.CheckMenuItem;
 
 public class Sdbudget extends Application {
@@ -26,16 +29,33 @@ public class Sdbudget extends Application {
     public void start(Stage stage) throws Exception {
         final BudgetInjector budgetInjector = DaggerBudgetInjector.create();
         final Budget budget = budgetInjector.budget();
-
-        startDatabase();
+        final CoreInjector coreInjector = DaggerCoreInjector.create();
+        final MonthPersistence monthPersistence = coreInjector.monthPersistenceProvider().get();
 
         //Populate the month repository
         MonthRepository monthRepository = budgetInjector.monthRepository();
-        for (int i = 0; i < 12; i++) {
-            Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.MONTH, i);
-            monthRepository.putMonth(new Month(cal));
+        ArrayList<com.olestourko.sdbudget.core.models.Month> months = monthPersistence.getAllMonths();
+        if (months.size() == 0) {
+            for (int i = 0; i < 12; i++) {
+                Calendar cal = Calendar.getInstance();
+                cal.add(Calendar.MONTH, i);
+                Month desktopMonth = new Month(cal);
+                monthRepository.putMonth(desktopMonth);
+                com.olestourko.sdbudget.core.models.Month coreMonth = new com.olestourko.sdbudget.core.models.Month();
+                coreMonth.setNumber((short) desktopMonth.calendar.get(Calendar.MONTH));
+                coreMonth.setYear((short) desktopMonth.calendar.get(Calendar.YEAR));
+                monthPersistence.store(coreMonth);
+            }
+        } else {
+            for (com.olestourko.sdbudget.core.models.Month coreMonth : months) {
+                Calendar cal = Calendar.getInstance();
+                cal.set(Calendar.MONTH, coreMonth.getNumber());
+                cal.set(Calendar.YEAR, coreMonth.getYear());
+                Month desktopMonth = new Month(cal);
+                monthRepository.putMonth(desktopMonth);
+            }
         }
+
         budget.setCurrentMonth(monthRepository.getMonth(Calendar.getInstance()));
 
         OneMonthController oneMonthController = budgetInjector.oneMonthController().get();
@@ -102,16 +122,6 @@ public class Sdbudget extends Application {
                 mainController.contentContainer.getChildren().add(currentRoot);
             }
         });
-    }
-
-    private void startDatabase() throws ClassNotFoundException, SQLException {
-        Class.forName("org.h2.Driver");
-        Connection connection = DriverManager.getConnection("jdbc:h2:~/test", "sa", "");
-        ResultSet tables = connection.getMetaData().getTables(null, "PUBLIC", "%", null);
-        while (tables.next()) {
-            System.out.println(tables.getString(3));
-        }
-        connection.close();
     }
 
     /**

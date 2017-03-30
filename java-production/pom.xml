@@ -172,21 +172,16 @@
                         <goals>
                             <goal>migrate</goal>
                         </goals>
+                        <configuration>
+                            <url>${db.url}</url>
+                            <user>${db.username}</user>
+                            <locations>
+                                <location>filesystem:src/main/resources/db/migration</location>
+                            </locations>
+                        </configuration>
                     </execution>
                 </executions>
- 
-                <!-- Note that we need to prefix the db/migration
-                path with filesystem: to prevent Flyway
-                from looking for our migration scripts
-                only on the classpath -->
-                <configuration>
-                    <url>${db.url}</url>
-                    <user>${db.username}</user>
-                    <locations>
-                        <location>filesystem:src/main/resources/db/migration</location>
-                    </locations>
-                </configuration>
-            </plugin>
+             </plugin>
             
         </plugins>
     </build>
