@@ -5,6 +5,8 @@
  */
 package com.olestourko.sdbudget.core.repositories;
 
+import com.olestourko.sdbudget.desktop.dagger.BudgetInjector;
+import com.olestourko.sdbudget.desktop.dagger.DaggerBudgetInjector;
 import com.olestourko.sdbudget.desktop.repositories.MonthRepository;
 import com.olestourko.sdbudget.desktop.models.Month;
 import java.util.Calendar;
@@ -22,6 +24,7 @@ import static org.junit.Assert.*;
 public class MonthRepositoryTest {
 
     public MonthRepositoryTest() {
+
     }
 
     @BeforeClass
@@ -45,9 +48,10 @@ public class MonthRepositoryTest {
      */
     @Test
     public void testPutMonth() {
-        Month month = new Month(Calendar.getInstance());
+        BudgetInjector injector = DaggerBudgetInjector.create();
 
-        MonthRepository repository = new MonthRepository();
+        Month month = new Month(Calendar.getInstance());
+        MonthRepository repository = injector.monthRepository().get();
         repository.putMonth(month);
 
         Month result = repository.getMonth(month.calendar);
@@ -59,9 +63,10 @@ public class MonthRepositoryTest {
      */
     @Test
     public void testGetMonth() {
-        Month month = new Month(Calendar.getInstance());
+        BudgetInjector injector = DaggerBudgetInjector.create();
 
-        MonthRepository repository = new MonthRepository();
+        Month month = new Month(Calendar.getInstance());
+        MonthRepository repository = injector.monthRepository().get();
         repository.putMonth(month);
 
         Month result = repository.getMonth(month.calendar);
@@ -78,7 +83,8 @@ public class MonthRepositoryTest {
         previousCalendar.add(Calendar.MONTH, -1);
         Month previousMonth = new Month(previousCalendar);
 
-        MonthRepository repository = new MonthRepository();
+        BudgetInjector injector = DaggerBudgetInjector.create();
+        MonthRepository repository = injector.monthRepository().get();
         repository.putMonth(currentMonth);
         repository.putMonth(previousMonth);
 
@@ -96,7 +102,8 @@ public class MonthRepositoryTest {
         nextCalendar.add(Calendar.MONTH, 1);
         Month nextMonth = new Month(nextCalendar);
 
-        MonthRepository repository = new MonthRepository();
+        BudgetInjector injector = DaggerBudgetInjector.create();
+        MonthRepository repository = injector.monthRepository().get();
         repository.putMonth(currentMonth);
         repository.putMonth(nextMonth);
 

@@ -22,12 +22,6 @@ public class BudgetModule {
 
     @Provides
     @Singleton
-    MonthRepository provideMonthRepository() {
-        return new MonthRepository();
-    }
-
-    @Provides
-    @Singleton
     Budget provideBudget() {
         return new Budget();
     }

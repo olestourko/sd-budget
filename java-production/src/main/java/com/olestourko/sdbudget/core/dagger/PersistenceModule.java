@@ -1,6 +1,5 @@
 package com.olestourko.sdbudget.core.dagger;
 
-import com.olestourko.sdbudget.core.persistence.MonthPersistence;
 import dagger.Module;
 import dagger.Provides;
 import java.sql.Connection;

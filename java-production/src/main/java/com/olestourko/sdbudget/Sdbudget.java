@@ -33,7 +33,7 @@ public class Sdbudget extends Application {
         final MonthPersistence monthPersistence = coreInjector.monthPersistenceProvider().get();
 
         //Populate the month repository
-        MonthRepository monthRepository = budgetInjector.monthRepository();
+        MonthRepository monthRepository = budgetInjector.monthRepository().get();
         ArrayList<com.olestourko.sdbudget.core.models.Month> months = monthPersistence.getAllMonths();
         if (months.size() == 0) {
             for (int i = 0; i < 12; i++) {
@@ -41,19 +41,10 @@ public class Sdbudget extends Application {
                 cal.add(Calendar.MONTH, i);
                 Month desktopMonth = new Month(cal);
                 monthRepository.putMonth(desktopMonth);
-                com.olestourko.sdbudget.core.models.Month coreMonth = new com.olestourko.sdbudget.core.models.Month();
-                coreMonth.setNumber((short) desktopMonth.calendar.get(Calendar.MONTH));
-                coreMonth.setYear((short) desktopMonth.calendar.get(Calendar.YEAR));
-                monthPersistence.store(coreMonth);
             }
+            monthRepository.storeMonths();
         } else {
-            for (com.olestourko.sdbudget.core.models.Month coreMonth : months) {
-                Calendar cal = Calendar.getInstance();
-                cal.set(Calendar.MONTH, coreMonth.getNumber());
-                cal.set(Calendar.YEAR, coreMonth.getYear());
-                Month desktopMonth = new Month(cal);
-                monthRepository.putMonth(desktopMonth);
-            }
+            monthRepository.fetchMonths();
         }
 
         budget.setCurrentMonth(monthRepository.getMonth(Calendar.getInstance()));
