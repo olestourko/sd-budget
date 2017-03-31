@@ -1,12 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.olestourko.sdbudget.desktop.repositories;
 
+import com.olestourko.sdbudget.core.models.Month;
 import com.olestourko.sdbudget.core.persistence.MonthPersistence;
-import com.olestourko.sdbudget.desktop.models.Month;
+import com.olestourko.sdbudget.desktop.models.MonthViewModel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -21,7 +17,7 @@ import javax.inject.Singleton;
 @Singleton
 public class MonthRepository implements IMonthRepository {
 
-    private final HashMap<String, Month> months = new HashMap<String, Month>();
+    private final HashMap<String, MonthViewModel> months = new HashMap<String, MonthViewModel>();
     private final MonthPersistence monthPersistence;
 
     @Inject
@@ -30,22 +26,28 @@ public class MonthRepository implements IMonthRepository {
     }
 
     @Override
-    public void putMonth(Month month) {
+    public void putMonth(MonthViewModel month) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("M:yyyy");
         String stringDate = dateFormat.format(month.calendar.getTime());
+        if (month.getMonthCoreModel() == null) {
+            Month coreModel = new Month();
+            coreModel.setNumber((short) month.calendar.get(Calendar.MONTH));
+            coreModel.setYear((short) month.calendar.get(Calendar.YEAR));
+            month.setMonthCoreModel(coreModel);
+        }
         months.put(stringDate, month);
     }
 
     @Override
-    public Month getMonth(Calendar calendar) {
+    public MonthViewModel getMonth(Calendar calendar) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("M:yyyy");
         String stringDate = dateFormat.format(calendar.getTime());
-        Month month = months.get(stringDate);
+        MonthViewModel month = months.get(stringDate);
         return month;
     }
 
     @Override
-    public Month getPrevious(Month month) {
+    public MonthViewModel getPrevious(MonthViewModel month) {
         Calendar previousCalendar = Calendar.getInstance();
         previousCalendar.setTime(month.calendar.getTime());
         previousCalendar.add(Calendar.MONTH, -1);
@@ -53,7 +55,7 @@ public class MonthRepository implements IMonthRepository {
     }
 
     @Override
-    public Month getNext(Month month) {
+    public MonthViewModel getNext(MonthViewModel month) {
         Calendar nextCalendar = Calendar.getInstance();
         nextCalendar.setTime(month.calendar.getTime());
         nextCalendar.add(Calendar.MONTH, 1);
@@ -63,22 +65,20 @@ public class MonthRepository implements IMonthRepository {
     @Override
     public void fetchMonths() {
         ArrayList<com.olestourko.sdbudget.core.models.Month> months = monthPersistence.getAllMonths();
-        for (com.olestourko.sdbudget.core.models.Month coreMonth : months) {
+        for (Month coreModel : months) {
             Calendar cal = Calendar.getInstance();
-            cal.set(Calendar.MONTH, coreMonth.getNumber());
-            cal.set(Calendar.YEAR, coreMonth.getYear());
-            Month desktopMonth = new Month(cal);
-            putMonth(desktopMonth);
+            cal.set(Calendar.MONTH, coreModel.getNumber());
+            cal.set(Calendar.YEAR, coreModel.getYear());
+            MonthViewModel viewModel = new MonthViewModel(cal);
+            viewModel.setMonthCoreModel(coreModel);
+            putMonth(viewModel);
         }
     }
 
     @Override
     public void storeMonths() {
-        for (Month month : months.values()) {
-            com.olestourko.sdbudget.core.models.Month coreMonth = new com.olestourko.sdbudget.core.models.Month();
-            coreMonth.setNumber((short) month.calendar.get(Calendar.MONTH));
-            coreMonth.setYear((short) month.calendar.get(Calendar.YEAR));
-            monthPersistence.store(coreMonth);
+        for (MonthViewModel month : months.values()) {
+            monthPersistence.store(month.getMonthCoreModel());
         }
     }
 

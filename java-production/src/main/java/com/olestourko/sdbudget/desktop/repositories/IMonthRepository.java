@@ -5,7 +5,7 @@
  */
 package com.olestourko.sdbudget.desktop.repositories;
 
-import com.olestourko.sdbudget.desktop.models.Month;
+import com.olestourko.sdbudget.desktop.models.MonthViewModel;
 import java.util.Calendar;
 
 /**
@@ -14,13 +14,13 @@ import java.util.Calendar;
  */
 public interface IMonthRepository {
 
-    public void putMonth(Month month);
+    public void putMonth(MonthViewModel month);
     
-    public Month getMonth(Calendar calendar);
+    public MonthViewModel getMonth(Calendar calendar);
 
-    public Month getPrevious(Month month);
+    public MonthViewModel getPrevious(MonthViewModel month);
 
-    public Month getNext(Month month);
+    public MonthViewModel getNext(MonthViewModel month);
     
     public void fetchMonths();
     

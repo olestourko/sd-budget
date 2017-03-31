@@ -5,7 +5,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import com.olestourko.sdbudget.desktop.models.Month;
+import com.olestourko.sdbudget.desktop.models.MonthViewModel;
 import com.olestourko.sdbudget.desktop.repositories.MonthRepository;
 import com.olestourko.sdbudget.core.services.PeriodServices;
 import com.olestourko.sdbudget.desktop.models.Budget;
@@ -44,7 +44,7 @@ public class ThreeMonthController implements Initializable {
         monthControls.add((MonthControl) monthControlContainer.getChildren().get(2));
 
         this.budget.currentMonthProperty().addListener(month -> {
-            SimpleObjectProperty<Month> monthProperty = (SimpleObjectProperty<Month>) month;
+            SimpleObjectProperty<MonthViewModel> monthProperty = (SimpleObjectProperty<MonthViewModel>) month;
             this.setMonth(monthProperty.getValue());
         });
 
@@ -52,9 +52,9 @@ public class ThreeMonthController implements Initializable {
         EventHandler<ActionEvent> handleMonthChange = new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Month month = getMonth();
+                MonthViewModel month = getMonth();
                 do {
-                    Month previousMonth = monthRepository.getPrevious(month);
+                    MonthViewModel previousMonth = monthRepository.getPrevious(month);
                     // Calculate innter-month estimates
                     if (!month.getIsClosed()) {
                         if (previousMonth != null) {
@@ -109,11 +109,11 @@ public class ThreeMonthController implements Initializable {
         this.setMonth(budget.getCurrentMonth());
     }
 
-    private final Month getMonth() {
+    private final MonthViewModel getMonth() {
         return this.monthControls.get(0).getMonth();
     }
 
-    private final void setMonth(Month month) {
+    private final void setMonth(MonthViewModel month) {
         this.monthControls.get(0).setMonth(month);
         this.monthControls.get(1).setMonth(monthRepository.getNext(this.monthControls.get(0).getMonth()));
         this.monthControls.get(2).setMonth(monthRepository.getNext(this.monthControls.get(1).getMonth()));

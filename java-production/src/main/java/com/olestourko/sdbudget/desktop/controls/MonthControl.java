@@ -6,7 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import com.olestourko.sdbudget.desktop.models.Month;
+import com.olestourko.sdbudget.desktop.models.MonthViewModel;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -55,7 +55,7 @@ public class MonthControl extends AnchorPane {
     @FXML
     public CheckBox closeMonthCheckBox;
 
-    private final SimpleObjectProperty<Month> month = new SimpleObjectProperty<Month>();
+    private final SimpleObjectProperty<MonthViewModel> month = new SimpleObjectProperty<MonthViewModel>();
 
     private final ListChangeListener<BudgetItem> monthListChangeListener = new ListChangeListener<BudgetItem>() {
         @Override
@@ -169,7 +169,7 @@ public class MonthControl extends AnchorPane {
     }
 
     public void refreshTables() {
-        Month month = this.getMonth();
+        MonthViewModel month = this.getMonth();
         budgetTableRoot.getChildren().clear();
         revenuesRoot.getChildren().clear();
         revenuesRoot.getValue().setAmount(month.getTotalRevenues());
@@ -226,11 +226,11 @@ public class MonthControl extends AnchorPane {
     }
 
     // Month property
-    public Month getMonth() {
+    public MonthViewModel getMonth() {
         return this.month.get();
     }
 
-    public void setMonth(Month month) {
+    public void setMonth(MonthViewModel month) {
         if (this.month.getValue() != null) {
             this.month.getValue().getRevenues().removeListener(monthListChangeListener);
             this.month.getValue().getExpenses().removeListener(monthListChangeListener);
@@ -242,7 +242,7 @@ public class MonthControl extends AnchorPane {
         this.month.getValue().getAdjustments().addListener(monthListChangeListener);
     }
 
-    public SimpleObjectProperty<Month> monthProperty() {
+    public SimpleObjectProperty<MonthViewModel> monthProperty() {
         return this.month;
     }
 

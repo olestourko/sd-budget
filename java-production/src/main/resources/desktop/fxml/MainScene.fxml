@@ -12,6 +12,11 @@
                  AnchorPane.leftAnchor="0"
                  AnchorPane.rightAnchor="0">
             <menus>
+                <Menu text="File">
+                    <items>
+                        <MenuItem text="Save"/>
+                    </items>
+                </Menu>
                 <Menu text="View">
                     <items>
                         <CheckMenuItem text="3-Month View"/>

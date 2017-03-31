@@ -1,7 +1,7 @@
 package com.olestourko.sdbudget.desktop.controllers;
 
 import com.olestourko.sdbudget.desktop.models.BudgetItem;
-import com.olestourko.sdbudget.desktop.models.Month;
+import com.olestourko.sdbudget.desktop.models.MonthViewModel;
 import com.olestourko.sdbudget.desktop.repositories.MonthRepository;
 import com.olestourko.sdbudget.desktop.models.Budget;
 import java.math.BigDecimal;
@@ -133,7 +133,7 @@ public class ScratchpadController implements Initializable {
         budget.getCurrentMonth().addAdjustment(newItem);
     }
 
-    private void setMonth(Month month) {
+    private void setMonth(MonthViewModel month) {
         budget.setCurrentMonth(month);
         scratchPadTable.getItems().removeListener(listChangeListener);
         scratchPadTable.setItems(month.getAdjustments());

@@ -5,7 +5,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import com.olestourko.sdbudget.desktop.models.Month;
+import com.olestourko.sdbudget.desktop.models.MonthViewModel;
 import com.olestourko.sdbudget.desktop.repositories.MonthRepository;
 import com.olestourko.sdbudget.core.services.PeriodServices;
 import com.olestourko.sdbudget.desktop.models.Budget;
@@ -35,13 +35,13 @@ public class OneMonthController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.budget.currentMonthProperty().addListener(month -> {
-            SimpleObjectProperty<Month> monthProperty = (SimpleObjectProperty<Month>) month;
+            SimpleObjectProperty<MonthViewModel> monthProperty = (SimpleObjectProperty<MonthViewModel>) month;
             this.monthControl.setMonth(monthProperty.getValue());
         });
 
         monthControl.setOnMonthChange(event -> {
-            Month month = monthControl.getMonth();
-            Month previousMonth = monthRepository.getPrevious(month);
+            MonthViewModel month = monthControl.getMonth();
+            MonthViewModel previousMonth = monthRepository.getPrevious(month);
 
             // Calculate innter-month estimates
             if (!month.getIsClosed()) {

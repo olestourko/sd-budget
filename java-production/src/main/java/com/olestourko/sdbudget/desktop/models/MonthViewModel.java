@@ -7,6 +7,7 @@ package com.olestourko.sdbudget.desktop.models;
 
 import java.math.BigDecimal;
 import com.olestourko.sdbudget.desktop.models.BudgetItem;
+import com.olestourko.sdbudget.core.models.Month;
 import java.math.BigInteger;
 import java.util.Calendar;
 import javafx.beans.Observable;
@@ -19,7 +20,7 @@ import javafx.util.Callback;
  *
  * @author oles
  */
-public class Month implements IPeriod {
+public class MonthViewModel implements IPeriod {
 
     /*
     An extractor is used to detect changes within list items (instead of just detecting added/removed items from the observable list)
@@ -34,7 +35,9 @@ public class Month implements IPeriod {
             };
         }
     };
-
+    
+    private Month monthCoreModel;
+    
     protected final ObservableList<BudgetItem> revenues = FXCollections.observableArrayList(extractor);
     protected final ObservableList<BudgetItem> expenses = FXCollections.observableArrayList(extractor);
     protected final ObservableList<BudgetItem> adjustments = FXCollections.observableArrayList(extractor);
@@ -50,11 +53,19 @@ public class Month implements IPeriod {
     final public Calendar calendar;
 
     private final SimpleBooleanProperty isClosed = new SimpleBooleanProperty();
-
-    public Month(Calendar calendar) {
+   
+    public MonthViewModel(Calendar calendar) {
         this.calendar = calendar;
     }
-
+    
+    public Month getMonthCoreModel() {
+        return monthCoreModel;
+    }
+    
+    public void setMonthCoreModel(Month model) {
+        this.monthCoreModel = model;
+    }
+    
     @Override
     public BigDecimal getTotalRevenues() {
         return revenues.stream().map(BudgetItem::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);

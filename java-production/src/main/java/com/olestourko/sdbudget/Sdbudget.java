@@ -2,6 +2,7 @@ package com.olestourko.sdbudget;
 
 import com.olestourko.sdbudget.core.dagger.CoreInjector;
 import com.olestourko.sdbudget.core.dagger.DaggerCoreInjector;
+import com.olestourko.sdbudget.core.models.Month;
 import com.olestourko.sdbudget.core.persistence.MonthPersistence;
 import com.olestourko.sdbudget.desktop.controllers.OneMonthController;
 import com.olestourko.sdbudget.desktop.controllers.ThreeMonthController;
@@ -10,7 +11,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import com.olestourko.sdbudget.desktop.models.Month;
+import com.olestourko.sdbudget.desktop.models.MonthViewModel;
 import javafx.scene.layout.AnchorPane;
 import com.olestourko.sdbudget.desktop.dagger.DaggerBudgetInjector;
 import com.olestourko.sdbudget.desktop.repositories.MonthRepository;
@@ -34,12 +35,12 @@ public class Sdbudget extends Application {
 
         //Populate the month repository
         MonthRepository monthRepository = budgetInjector.monthRepository().get();
-        ArrayList<com.olestourko.sdbudget.core.models.Month> months = monthPersistence.getAllMonths();
+        ArrayList<Month> months = monthPersistence.getAllMonths();
         if (months.size() == 0) {
             for (int i = 0; i < 12; i++) {
                 Calendar cal = Calendar.getInstance();
                 cal.add(Calendar.MONTH, i);
-                Month desktopMonth = new Month(cal);
+                MonthViewModel desktopMonth = new MonthViewModel(cal);
                 monthRepository.putMonth(desktopMonth);
             }
             monthRepository.storeMonths();
@@ -76,9 +77,15 @@ public class Sdbudget extends Application {
         mainController.contentContainer.getChildren().addAll(currentRoot); // Set the month view
         Scene mainScene = new Scene(mainRoot);
         mainScene.getStylesheets().add("/desktop/styles/Styles.css");
-
+        
+        // Register handler for save menu item
         mainController.mainMenu.getMenus().get(0).getItems().get(0).setOnAction(event -> {
-            CheckMenuItem menu = (CheckMenuItem) mainController.mainMenu.getMenus().get(0).getItems().get(0);
+            budgetInjector.monthRepository().get().storeMonths();
+        });
+        
+        // Register handler for view switching menu item
+        mainController.mainMenu.getMenus().get(1).getItems().get(0).setOnAction(event -> {
+            CheckMenuItem menu = (CheckMenuItem) mainController.mainMenu.getMenus().get(1).getItems().get(0);
             if (menu.isSelected()) {
                 currentRoot = threeMonthRoot;
                 if (!mainController.contentContainer.getChildren().contains(scratchPadRoot)) {
