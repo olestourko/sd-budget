@@ -67,6 +67,7 @@ public class MonthRepository implements IMonthRepository {
         ArrayList<com.olestourko.sdbudget.core.models.Month> months = monthPersistence.getAllMonths();
         for (Month coreModel : months) {
             Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.DAY_OF_MONTH, 0);
             cal.set(Calendar.MONTH, coreModel.getNumber());
             cal.set(Calendar.YEAR, coreModel.getYear());
             MonthViewModel viewModel = new MonthViewModel(cal);

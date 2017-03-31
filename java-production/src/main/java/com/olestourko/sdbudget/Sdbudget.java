@@ -39,6 +39,7 @@ public class Sdbudget extends Application {
         if (months.size() == 0) {
             for (int i = 0; i < 12; i++) {
                 Calendar cal = Calendar.getInstance();
+                cal.set(Calendar.DAY_OF_MONTH, 0);
                 cal.add(Calendar.MONTH, i);
                 MonthViewModel desktopMonth = new MonthViewModel(cal);
                 monthRepository.putMonth(desktopMonth);
