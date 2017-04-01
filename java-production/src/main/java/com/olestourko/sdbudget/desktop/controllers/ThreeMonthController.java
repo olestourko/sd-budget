@@ -11,7 +11,7 @@ import com.olestourko.sdbudget.core.services.PeriodServices;
 import com.olestourko.sdbudget.desktop.models.Budget;
 import com.olestourko.sdbudget.core.services.ClosingResult;
 import com.olestourko.sdbudget.core.services.EstimateResult;
-import com.olestourko.sdbudget.desktop.models.BudgetItem;
+import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import javafx.beans.property.SimpleObjectProperty;
@@ -78,7 +78,7 @@ public class ThreeMonthController implements Initializable {
 
                         BigDecimal sum = BigDecimal.ZERO;
                         for (Object o : month.getAdjustments()) {
-                            BudgetItem item = (BudgetItem) o;
+                            BudgetItemViewModel item = (BudgetItemViewModel) o;
                             sum = sum.add(item.getAmount());
                         }
                     } // Calculate end of month totals

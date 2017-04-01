@@ -9,23 +9,23 @@ import javafx.collections.ObservableList;
  */
 public interface IPeriod {
 
-    public ObservableList<BudgetItem> getRevenues();
+    public ObservableList<BudgetItemViewModel> getRevenues();
 
-    public ObservableList<BudgetItem> getExpenses();
+    public ObservableList<BudgetItemViewModel> getExpenses();
 
-    public ObservableList<BudgetItem> getAdjustments();
+    public ObservableList<BudgetItemViewModel> getAdjustments();
 
-    public void addRevenue(BudgetItem item);
+    public void addRevenue(BudgetItemViewModel item);
     
-    public void addExpense(BudgetItem item);
+    public void addExpense(BudgetItemViewModel item);
     
-    public void addAdjustment(BudgetItem item);
+    public void addAdjustment(BudgetItemViewModel item);
     
-    public void removeRevenue(BudgetItem item);
+    public void removeRevenue(BudgetItemViewModel item);
     
-    public void removeExpense(BudgetItem item);
+    public void removeExpense(BudgetItemViewModel item);
     
-    public void removeAdjustment(BudgetItem item);
+    public void removeAdjustment(BudgetItemViewModel item);
     
     public BigDecimal getTotalRevenues();
 

@@ -1,7 +1,10 @@
 package com.olestourko.sdbudget.desktop.repositories;
 
+import com.olestourko.sdbudget.core.models.BudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
+import com.olestourko.sdbudget.core.persistence.BudgetItemPersistence;
 import com.olestourko.sdbudget.core.persistence.MonthPersistence;
+import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
 import com.olestourko.sdbudget.desktop.models.MonthViewModel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,17 +22,19 @@ public class MonthRepository implements IMonthRepository {
 
     private final HashMap<String, MonthViewModel> months = new HashMap<String, MonthViewModel>();
     private final MonthPersistence monthPersistence;
+    private final BudgetItemPersistence budgetItemPersistence;
 
     @Inject
-    public MonthRepository(MonthPersistence monthPersistence) {
+    public MonthRepository(MonthPersistence monthPersistence, BudgetItemPersistence budgetItemPersistence) {
         this.monthPersistence = monthPersistence;
+        this.budgetItemPersistence = budgetItemPersistence;
     }
 
     @Override
     public void putMonth(MonthViewModel month) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("M:yyyy");
         String stringDate = dateFormat.format(month.calendar.getTime());
-        if (month.getMonthCoreModel() == null) {
+        if (month.getModel() == null) {
             Month coreModel = new Month();
             coreModel.setNumber((short) month.calendar.get(Calendar.MONTH));
             coreModel.setYear((short) month.calendar.get(Calendar.YEAR));
@@ -71,15 +76,37 @@ public class MonthRepository implements IMonthRepository {
             cal.set(Calendar.MONTH, coreModel.getNumber());
             cal.set(Calendar.YEAR, coreModel.getYear());
             MonthViewModel viewModel = new MonthViewModel(cal);
+            for(BudgetItem budgetItem : coreModel.getRevenues()) {
+                BudgetItemViewModel budgetItemViewModel = new BudgetItemViewModel();
+                budgetItemViewModel.setModel(budgetItem);
+                budgetItemViewModel.setName(budgetItem.getName());
+                budgetItemViewModel.setAmount(budgetItem.getAmount());
+                viewModel.getRevenues().add(budgetItemViewModel);
+            }            
             viewModel.setMonthCoreModel(coreModel);
             putMonth(viewModel);
+            
+            
         }
     }
 
     @Override
     public void storeMonths() {
         for (MonthViewModel month : months.values()) {
-            monthPersistence.store(month.getMonthCoreModel());
+            monthPersistence.store(month.getModel());
+                        
+            // Store the BudgetItems in the month
+            for (BudgetItemViewModel budgetItemViewModel : month.getRevenues()) {
+                if(budgetItemViewModel.getModel() == null) {
+                    budgetItemViewModel.setModel(new BudgetItem());
+                }
+                
+                budgetItemViewModel.getModel().setName(budgetItemViewModel.getName());
+                budgetItemViewModel.getModel().setAmount(budgetItemViewModel.getAmount());
+                
+                budgetItemPersistence.store(budgetItemViewModel.getModel());
+                monthPersistence.associateRevenue(month.getModel(), budgetItemViewModel.getModel());
+            }
         }
     }
 

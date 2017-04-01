@@ -1,6 +1,6 @@
 package com.olestourko.sdbudget.desktop.controls;
 
-import com.olestourko.sdbudget.desktop.models.BudgetItem;
+import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
@@ -40,10 +40,10 @@ public class MonthControl extends AnchorPane {
     @FXML
     private TreeTableView budgetTable;
 
-    private final TreeItem<BudgetItem> budgetTableRoot = new TreeItem<>(new BudgetItem("Budget", BigDecimal.ZERO));
-    private final TreeItem<BudgetItem> revenuesRoot = new TreeItem<>(new BudgetItem("Revenues", BigDecimal.ZERO));
-    private final TreeItem<BudgetItem> expensesRoot = new TreeItem<>(new BudgetItem("Expenses", BigDecimal.ZERO));
-    private final TreeItem<BudgetItem> adjustmentsRoot = new TreeItem<>(new BudgetItem("Adjustments", BigDecimal.ZERO));
+    private final TreeItem<BudgetItemViewModel> budgetTableRoot = new TreeItem<>(new BudgetItemViewModel("Budget", BigDecimal.ZERO));
+    private final TreeItem<BudgetItemViewModel> revenuesRoot = new TreeItem<>(new BudgetItemViewModel("Revenues", BigDecimal.ZERO));
+    private final TreeItem<BudgetItemViewModel> expensesRoot = new TreeItem<>(new BudgetItemViewModel("Expenses", BigDecimal.ZERO));
+    private final TreeItem<BudgetItemViewModel> adjustmentsRoot = new TreeItem<>(new BudgetItemViewModel("Adjustments", BigDecimal.ZERO));
     @FXML
     private TableView totalsTable;
     @FXML
@@ -57,9 +57,9 @@ public class MonthControl extends AnchorPane {
 
     private final SimpleObjectProperty<MonthViewModel> month = new SimpleObjectProperty<MonthViewModel>();
 
-    private final ListChangeListener<BudgetItem> monthListChangeListener = new ListChangeListener<BudgetItem>() {
+    private final ListChangeListener<BudgetItemViewModel> monthListChangeListener = new ListChangeListener<BudgetItemViewModel>() {
         @Override
-        public void onChanged(ListChangeListener.Change<? extends BudgetItem> change) {
+        public void onChanged(ListChangeListener.Change<? extends BudgetItemViewModel> change) {
             revenuesRoot.getValue().setAmount(month.getValue().getTotalRevenues());
             expensesRoot.getValue().setAmount(month.getValue().getTotalExpenses());
             adjustmentsRoot.getValue().setAmount(month.getValue().getTotalAdjustments());
@@ -76,9 +76,9 @@ public class MonthControl extends AnchorPane {
             throw new RuntimeException(ex);
         }
 
-        nameColumn.setCellFactory(new Callback<TreeTableColumn<BudgetItem, String>, TreeTableCell<BudgetItem, String>>() {
+        nameColumn.setCellFactory(new Callback<TreeTableColumn<BudgetItemViewModel, String>, TreeTableCell<BudgetItemViewModel, String>>() {
             @Override
-            public TreeTableCell<BudgetItem, String> call(TreeTableColumn<BudgetItem, String> p) {
+            public TreeTableCell<BudgetItemViewModel, String> call(TreeTableColumn<BudgetItemViewModel, String> p) {
                 ButtonTreeTableCell cell = new ButtonTreeTableCell("+");
                 cell.setShowButtonCondition(new Callback<ButtonTreeTableCell, Boolean>() {
                     @Override
@@ -94,14 +94,14 @@ public class MonthControl extends AnchorPane {
                 });
 
                 cell.button.setOnAction(event -> {
-                    BudgetItem newBudgetItem = new BudgetItem("New Item", BigDecimal.ZERO);
-                    TreeItem<BudgetItem> treeItem = cell.getTreeTableRow().getTreeItem();
+                    BudgetItemViewModel newBudgetItem = new BudgetItemViewModel("New Item", BigDecimal.ZERO);
+                    TreeItem<BudgetItemViewModel> treeItem = cell.getTreeTableRow().getTreeItem();
                     if (treeItem.getValue() == revenuesRoot.getValue()) {
                         month.getValue().addRevenue(newBudgetItem);
                     } else if (treeItem.getValue() == expensesRoot.getValue()) {
                         month.getValue().addExpense(newBudgetItem);
                     }
-                    TreeItem<BudgetItem> newTreeItem = new TreeItem<BudgetItem>(newBudgetItem);
+                    TreeItem<BudgetItemViewModel> newTreeItem = new TreeItem<BudgetItemViewModel>(newBudgetItem);
                     treeItem.getChildren().add(newTreeItem);
                     treeItem.setExpanded(true);
                 });
@@ -109,15 +109,15 @@ public class MonthControl extends AnchorPane {
             }
         });
 
-        nameColumn.setCellValueFactory(new Callback<CellDataFeatures<BudgetItem, String>, ObservableValue<String>>() {
-            public ObservableValue<String> call(CellDataFeatures<BudgetItem, String> p) {
+        nameColumn.setCellValueFactory(new Callback<CellDataFeatures<BudgetItemViewModel, String>, ObservableValue<String>>() {
+            public ObservableValue<String> call(CellDataFeatures<BudgetItemViewModel, String> p) {
                 return p.getValue().getValue().nameProperty();
             }
         });
 
         // This draws the textfield when editing a table cell
-        amountColumn.setCellValueFactory(new Callback<CellDataFeatures<BudgetItem, BigDecimal>, ObservableValue<BigDecimal>>() {
-            public ObservableValue<BigDecimal> call(CellDataFeatures<BudgetItem, BigDecimal> p) {
+        amountColumn.setCellValueFactory(new Callback<CellDataFeatures<BudgetItemViewModel, BigDecimal>, ObservableValue<BigDecimal>>() {
+            public ObservableValue<BigDecimal> call(CellDataFeatures<BudgetItemViewModel, BigDecimal> p) {
                 // p.getValue() returns the TreeItem<Person> instance for a particular TreeTableView row,
                 // p.getValue().getValue() returns the Person instance inside the TreeItem<Person>
                 return p.getValue().getValue().amountProperty();
@@ -127,11 +127,11 @@ public class MonthControl extends AnchorPane {
         // This draws the textfield when editing a table cell
         amountColumn.setCellFactory(TextFieldTreeTableCell.forTreeTableColumn(new BigDecimalStringConverter()));
         // This is a callback for edits
-        amountColumn.setOnEditCommit(new EventHandler<TreeTableColumn.CellEditEvent<BudgetItem, BigDecimal>>() {
+        amountColumn.setOnEditCommit(new EventHandler<TreeTableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal>>() {
             @Override
-            public void handle(TreeTableColumn.CellEditEvent<BudgetItem, BigDecimal> t) {
+            public void handle(TreeTableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal> t) {
                 TreeItem treeItem = t.getTreeTablePosition().getTreeItem();
-                BudgetItem budgetItem = (BudgetItem) treeItem.getValue();
+                BudgetItemViewModel budgetItem = (BudgetItemViewModel) treeItem.getValue();
 //                BudgetItem budgetItem = (BudgetItem) t.getTableView().getItems().get(t.getTablePosition().getRow());
                 budgetItem.setAmount(t.getNewValue());
                 MonthControl.this.fireEvent(new ActionEvent());
@@ -149,11 +149,11 @@ public class MonthControl extends AnchorPane {
 
         // Set up the closing table
         TableColumn closingTableAmountColumn = (TableColumn) closingTable.getColumns().get(1);
-        closingTableAmountColumn.setCellFactory(TextFieldTableCell.<BudgetItem, BigDecimal>forTableColumn(new BigDecimalStringConverter()));
-        closingTableAmountColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<BudgetItem, BigDecimal>>() {
+        closingTableAmountColumn.setCellFactory(TextFieldTableCell.<BudgetItemViewModel, BigDecimal>forTableColumn(new BigDecimalStringConverter()));
+        closingTableAmountColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal>>() {
             @Override
-            public void handle(TableColumn.CellEditEvent<BudgetItem, BigDecimal> t) {
-                BudgetItem budgetItem = (BudgetItem) t.getTableView().getItems().get(t.getTablePosition().getRow());
+            public void handle(TableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal> t) {
+                BudgetItemViewModel budgetItem = (BudgetItemViewModel) t.getTableView().getItems().get(t.getTablePosition().getRow());
                 budgetItem.setAmount(t.getNewValue());
                 MonthControl.this.fireEvent(new ActionEvent());
             }
@@ -182,12 +182,12 @@ public class MonthControl extends AnchorPane {
         budgetTableRoot.getChildren().add(expensesRoot);
         budgetTableRoot.getChildren().add(adjustmentsRoot);
 
-        for (BudgetItem revenue : month.getRevenues()) {
-            revenuesRoot.getChildren().add(new TreeItem<BudgetItem>(revenue));
+        for (BudgetItemViewModel revenue : month.getRevenues()) {
+            revenuesRoot.getChildren().add(new TreeItem<BudgetItemViewModel>(revenue));
         }
 
-        for (BudgetItem expense : month.getExpenses()) {
-            expensesRoot.getChildren().add(new TreeItem<BudgetItem>(expense));
+        for (BudgetItemViewModel expense : month.getExpenses()) {
+            expensesRoot.getChildren().add(new TreeItem<BudgetItemViewModel>(expense));
         }
 
         budgetTableRoot.getChildren().add(new TreeItem<>(month.netIncomeTarget));

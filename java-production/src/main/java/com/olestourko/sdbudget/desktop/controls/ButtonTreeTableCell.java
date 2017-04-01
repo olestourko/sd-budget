@@ -1,12 +1,12 @@
 package com.olestourko.sdbudget.desktop.controls;
 
-import com.olestourko.sdbudget.desktop.models.BudgetItem;
+import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.TreeTableCell;
 import javafx.util.Callback;
 
-public class ButtonTreeTableCell extends TreeTableCell<BudgetItem, String> {
+public class ButtonTreeTableCell extends TreeTableCell<BudgetItemViewModel, String> {
 
     public final Button button = new Button();
     protected Callback<ButtonTreeTableCell, Boolean> callback;

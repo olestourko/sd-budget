@@ -1,5 +1,6 @@
 package com.olestourko.sdbudget.desktop.models;
 
+import com.olestourko.sdbudget.core.models.BudgetItem;
 import java.math.BigDecimal;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -8,20 +9,30 @@ import javafx.beans.property.SimpleObjectProperty;
  *
  * @author oles
  */
-public class BudgetItem {
+public class BudgetItemViewModel {
 
+    private BudgetItem model;
+    
     private final SimpleStringProperty name = new SimpleStringProperty();
     private final SimpleObjectProperty<BigDecimal> amount = new SimpleObjectProperty<BigDecimal>();
-
-    public BudgetItem() {
+    
+    public BudgetItemViewModel() {
         this("", new BigDecimal(0));
     }
 
-    public BudgetItem(String name, BigDecimal amount) {
+    public BudgetItemViewModel(String name, BigDecimal amount) {
         this.setName(name);
         this.setAmount(amount);
     }
 
+    public BudgetItem getModel() {
+        return model;
+    }
+    
+    public void setModel(BudgetItem model) {
+        this.model = model;
+    }
+    
     public String getName() {
         return this.name.get();
     }

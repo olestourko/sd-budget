@@ -6,7 +6,7 @@
 package com.olestourko.sdbudget.desktop.models;
 
 import java.math.BigDecimal;
-import com.olestourko.sdbudget.desktop.models.BudgetItem;
+import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
 import com.olestourko.sdbudget.core.models.Month;
 import java.math.BigInteger;
 import java.util.Calendar;
@@ -27,28 +27,28 @@ public class MonthViewModel implements IPeriod {
     https://gist.github.com/andytill/3116203
     http://docs.oracle.com/javase/8/javafx/api/javafx/collections/FXCollections.html#observableArrayList-javafx.util.Callback-
      */
-    private final Callback<BudgetItem, Observable[]> extractor = new Callback<BudgetItem, Observable[]>() {
+    private final Callback<BudgetItemViewModel, Observable[]> extractor = new Callback<BudgetItemViewModel, Observable[]>() {
         @Override
-        public Observable[] call(BudgetItem item) {
+        public Observable[] call(BudgetItemViewModel item) {
             return new Observable[]{
                 item.nameProperty(), item.amountProperty()
             };
         }
     };
     
-    private Month monthCoreModel;
+    private Month model;
     
-    protected final ObservableList<BudgetItem> revenues = FXCollections.observableArrayList(extractor);
-    protected final ObservableList<BudgetItem> expenses = FXCollections.observableArrayList(extractor);
-    protected final ObservableList<BudgetItem> adjustments = FXCollections.observableArrayList(extractor);
+    protected final ObservableList<BudgetItemViewModel> revenues = FXCollections.observableArrayList(extractor);
+    protected final ObservableList<BudgetItemViewModel> expenses = FXCollections.observableArrayList(extractor);
+    protected final ObservableList<BudgetItemViewModel> adjustments = FXCollections.observableArrayList(extractor);
 
-    public final BudgetItem netIncomeTarget = new BudgetItem("Net Income Target", new BigDecimal(BigInteger.ZERO));
-    public final BudgetItem openingBalance = new BudgetItem("Opening Balance", new BigDecimal(BigInteger.ZERO));
-    public final BudgetItem openingSurplus = new BudgetItem("Carried Surplus", new BigDecimal(BigInteger.ZERO));
-    public final BudgetItem closingBalanceTarget = new BudgetItem("Closing Balance Target", new BigDecimal(BigInteger.ZERO));
-    public final BudgetItem estimatedClosingBalance = new BudgetItem("Closing Balance (Estimated)", new BigDecimal(BigInteger.ZERO));
-    public final BudgetItem totalSurplus = new BudgetItem("Total Surplus", new BigDecimal(BigInteger.ZERO));
-    public final BudgetItem closingBalance = new BudgetItem("Closing Balance", BigDecimal.ZERO);
+    public final BudgetItemViewModel netIncomeTarget = new BudgetItemViewModel("Net Income Target", new BigDecimal(BigInteger.ZERO));
+    public final BudgetItemViewModel openingBalance = new BudgetItemViewModel("Opening Balance", new BigDecimal(BigInteger.ZERO));
+    public final BudgetItemViewModel openingSurplus = new BudgetItemViewModel("Carried Surplus", new BigDecimal(BigInteger.ZERO));
+    public final BudgetItemViewModel closingBalanceTarget = new BudgetItemViewModel("Closing Balance Target", new BigDecimal(BigInteger.ZERO));
+    public final BudgetItemViewModel estimatedClosingBalance = new BudgetItemViewModel("Closing Balance (Estimated)", new BigDecimal(BigInteger.ZERO));
+    public final BudgetItemViewModel totalSurplus = new BudgetItemViewModel("Total Surplus", new BigDecimal(BigInteger.ZERO));
+    public final BudgetItemViewModel closingBalance = new BudgetItemViewModel("Closing Balance", BigDecimal.ZERO);
 
     final public Calendar calendar;
 
@@ -58,27 +58,27 @@ public class MonthViewModel implements IPeriod {
         this.calendar = calendar;
     }
     
-    public Month getMonthCoreModel() {
-        return monthCoreModel;
+    public Month getModel() {
+        return model;
     }
     
     public void setMonthCoreModel(Month model) {
-        this.monthCoreModel = model;
+        this.model = model;
     }
     
     @Override
     public BigDecimal getTotalRevenues() {
-        return revenues.stream().map(BudgetItem::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+        return revenues.stream().map(BudgetItemViewModel::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     @Override
     public BigDecimal getTotalExpenses() {
-        return expenses.stream().map(BudgetItem::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+        return expenses.stream().map(BudgetItemViewModel::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     @Override
     public BigDecimal getTotalAdjustments() {
-        return adjustments.stream().map(BudgetItem::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+        return adjustments.stream().map(BudgetItemViewModel::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     @Override
@@ -92,47 +92,47 @@ public class MonthViewModel implements IPeriod {
     }
 
     @Override
-    public ObservableList<BudgetItem> getRevenues() {
+    public ObservableList<BudgetItemViewModel> getRevenues() {
         return revenues;
     }
 
     @Override
-    public ObservableList<BudgetItem> getExpenses() {
+    public ObservableList<BudgetItemViewModel> getExpenses() {
         return expenses;
     }
 
     @Override
-    public ObservableList<BudgetItem> getAdjustments() {
+    public ObservableList<BudgetItemViewModel> getAdjustments() {
         return adjustments;
     }
 
     @Override
-    public void removeRevenue(BudgetItem item) {
+    public void removeRevenue(BudgetItemViewModel item) {
         revenues.remove(item);
     }
 
     @Override
-    public void removeExpense(BudgetItem item) {
+    public void removeExpense(BudgetItemViewModel item) {
         expenses.remove(item);
     }
 
     @Override
-    public void removeAdjustment(BudgetItem item) {
+    public void removeAdjustment(BudgetItemViewModel item) {
         adjustments.remove(item);
     }
 
     @Override
-    public void addRevenue(BudgetItem item) {
+    public void addRevenue(BudgetItemViewModel item) {
         revenues.add(item);
     }
 
     @Override
-    public void addExpense(BudgetItem item) {
+    public void addExpense(BudgetItemViewModel item) {
         expenses.add(item);
     }
 
     @Override
-    public void addAdjustment(BudgetItem item) {
+    public void addAdjustment(BudgetItemViewModel item) {
         adjustments.add(item);
     }
 

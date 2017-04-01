@@ -1,6 +1,6 @@
 package com.olestourko.sdbudget.desktop.controllers;
 
-import com.olestourko.sdbudget.desktop.models.BudgetItem;
+import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
 import com.olestourko.sdbudget.desktop.models.MonthViewModel;
 import com.olestourko.sdbudget.desktop.repositories.MonthRepository;
 import com.olestourko.sdbudget.desktop.models.Budget;
@@ -46,12 +46,12 @@ public class ScratchpadController implements Initializable {
     private TextField amountField;
 
     final private MonthRepository monthRepository;
-    final private BudgetItem totalAdjustments = new BudgetItem("Total Adjustments", BigDecimal.ZERO);
+    final private BudgetItemViewModel totalAdjustments = new BudgetItemViewModel("Total Adjustments", BigDecimal.ZERO);
     final private Budget budget;
 
-    final private ListChangeListener<BudgetItem> listChangeListener = new ListChangeListener<BudgetItem>() {
+    final private ListChangeListener<BudgetItemViewModel> listChangeListener = new ListChangeListener<BudgetItemViewModel>() {
         @Override
-        public void onChanged(Change<? extends BudgetItem> change) {
+        public void onChanged(Change<? extends BudgetItemViewModel> change) {
             totalAdjustments.setAmount(budget.getCurrentMonth().getTotalAdjustments());
         }
     };
@@ -75,11 +75,9 @@ public class ScratchpadController implements Initializable {
             this.setMonth(budget.getCurrentMonth());
         });
 
-        nameColumn.setCellValueFactory(
-                new PropertyValueFactory<BudgetItem, String>("name")
+        nameColumn.setCellValueFactory(new PropertyValueFactory<BudgetItemViewModel, String>("name")
         );
-        amountColumn.setCellValueFactory(
-                new PropertyValueFactory<BudgetItem, Double>("amount")
+        amountColumn.setCellValueFactory(new PropertyValueFactory<BudgetItemViewModel, Double>("amount")
         );
 
         //Add the "Adjustment Totals" item
@@ -91,11 +89,11 @@ public class ScratchpadController implements Initializable {
         });
 
         //Allow editing of adjustments, and update "Total Adjustments" row whenever they change.
-        amountColumn.setCellFactory(TextFieldTableCell.<BudgetItem, BigDecimal>forTableColumn(new BigDecimalStringConverter()));
-        amountColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<BudgetItem, BigDecimal>>() {
+        amountColumn.setCellFactory(TextFieldTableCell.<BudgetItemViewModel, BigDecimal>forTableColumn(new BigDecimalStringConverter()));
+        amountColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal>>() {
             @Override
-            public void handle(TableColumn.CellEditEvent<BudgetItem, BigDecimal> t) {
-                BudgetItem budgetItem = (BudgetItem) t.getTableView().getItems().get(t.getTablePosition().getRow());
+            public void handle(TableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal> t) {
+                BudgetItemViewModel budgetItem = (BudgetItemViewModel) t.getTableView().getItems().get(t.getTablePosition().getRow());
                 budgetItem.setAmount(t.getNewValue());
                 totalAdjustments.setAmount(budget.getCurrentMonth().getTotalAdjustments());
             }
@@ -113,7 +111,7 @@ public class ScratchpadController implements Initializable {
             @Override
             public void handle(KeyEvent event) {
                 if (event.getCode().equals(KeyCode.DELETE)) {
-                    BudgetItem selectedItem = (BudgetItem) scratchPadTable.getSelectionModel().getSelectedItem();
+                    BudgetItemViewModel selectedItem = (BudgetItemViewModel) scratchPadTable.getSelectionModel().getSelectedItem();
                     if (selectedItem == totalAdjustments) {
                         return;
                     }
@@ -127,7 +125,7 @@ public class ScratchpadController implements Initializable {
     public void handleAddTransactionButtonAction(ActionEvent event) {
         String name = nameField.getText();
         BigDecimal amount = new BigDecimal(amountField.getText());
-        BudgetItem newItem = new BudgetItem(name, amount);
+        BudgetItemViewModel newItem = new BudgetItemViewModel(name, amount);
         nameField.setText("");
         amountField.setText("");
         budget.getCurrentMonth().addAdjustment(newItem);
