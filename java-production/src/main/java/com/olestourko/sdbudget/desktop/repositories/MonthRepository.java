@@ -69,24 +69,40 @@ public class MonthRepository implements IMonthRepository {
 
     @Override
     public void fetchMonths() {
-        ArrayList<com.olestourko.sdbudget.core.models.Month> months = monthPersistence.getAllMonths();
+        ArrayList<Month> months = monthPersistence.getAllMonths();
         for (Month coreModel : months) {
             Calendar cal = Calendar.getInstance();
             cal.set(Calendar.DAY_OF_MONTH, 0);
             cal.set(Calendar.MONTH, coreModel.getNumber());
             cal.set(Calendar.YEAR, coreModel.getYear());
             MonthViewModel viewModel = new MonthViewModel(cal);
-            for(BudgetItem budgetItem : coreModel.getRevenues()) {
+            // Map Revenues
+            for (BudgetItem budgetItem : coreModel.getRevenues()) {
                 BudgetItemViewModel budgetItemViewModel = new BudgetItemViewModel();
                 budgetItemViewModel.setModel(budgetItem);
                 budgetItemViewModel.setName(budgetItem.getName());
                 budgetItemViewModel.setAmount(budgetItem.getAmount());
                 viewModel.getRevenues().add(budgetItemViewModel);
-            }            
+            }
+            // Map Expenses
+            for (BudgetItem budgetItem : coreModel.getExpenses()) {
+                BudgetItemViewModel budgetItemViewModel = new BudgetItemViewModel();
+                budgetItemViewModel.setModel(budgetItem);
+                budgetItemViewModel.setName(budgetItem.getName());
+                budgetItemViewModel.setAmount(budgetItem.getAmount());
+                viewModel.getExpenses().add(budgetItemViewModel);
+            }
+            // Map Adjustments
+            for (BudgetItem budgetItem : coreModel.getAdjustments()) {
+                BudgetItemViewModel budgetItemViewModel = new BudgetItemViewModel();
+                budgetItemViewModel.setModel(budgetItem);
+                budgetItemViewModel.setName(budgetItem.getName());
+                budgetItemViewModel.setAmount(budgetItem.getAmount());
+                viewModel.getAdjustments().add(budgetItemViewModel);
+            }
+
             viewModel.setMonthCoreModel(coreModel);
             putMonth(viewModel);
-            
-            
         }
     }
 
@@ -94,18 +110,44 @@ public class MonthRepository implements IMonthRepository {
     public void storeMonths() {
         for (MonthViewModel month : months.values()) {
             monthPersistence.store(month.getModel());
-                        
-            // Store the BudgetItems in the month
+
+            // Store the associated Revenues
             for (BudgetItemViewModel budgetItemViewModel : month.getRevenues()) {
-                if(budgetItemViewModel.getModel() == null) {
+                if (budgetItemViewModel.getModel() == null) {
                     budgetItemViewModel.setModel(new BudgetItem());
                 }
-                
+
                 budgetItemViewModel.getModel().setName(budgetItemViewModel.getName());
                 budgetItemViewModel.getModel().setAmount(budgetItemViewModel.getAmount());
-                
+
                 budgetItemPersistence.store(budgetItemViewModel.getModel());
                 monthPersistence.associateRevenue(month.getModel(), budgetItemViewModel.getModel());
+            }
+
+            // Store the associated Expenses
+            for (BudgetItemViewModel budgetItemViewModel : month.getExpenses()) {
+                if (budgetItemViewModel.getModel() == null) {
+                    budgetItemViewModel.setModel(new BudgetItem());
+                }
+
+                budgetItemViewModel.getModel().setName(budgetItemViewModel.getName());
+                budgetItemViewModel.getModel().setAmount(budgetItemViewModel.getAmount());
+
+                budgetItemPersistence.store(budgetItemViewModel.getModel());
+                monthPersistence.associateExpense(month.getModel(), budgetItemViewModel.getModel());
+            }
+
+            // Store the associated Adjustments
+            for (BudgetItemViewModel budgetItemViewModel : month.getAdjustments()) {
+                if (budgetItemViewModel.getModel() == null) {
+                    budgetItemViewModel.setModel(new BudgetItem());
+                }
+
+                budgetItemViewModel.getModel().setName(budgetItemViewModel.getName());
+                budgetItemViewModel.getModel().setAmount(budgetItemViewModel.getAmount());
+
+                budgetItemPersistence.store(budgetItemViewModel.getModel());
+                monthPersistence.associateAdjustment(month.getModel(), budgetItemViewModel.getModel());
             }
         }
     }

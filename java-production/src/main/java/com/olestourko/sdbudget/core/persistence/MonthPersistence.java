@@ -8,6 +8,8 @@ package com.olestourko.sdbudget.core.persistence;
 import com.olestourko.sdbudget.core.persistence.relations.MonthRevenuesRelation;
 import com.olestourko.sdbudget.core.models.BudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
+import com.olestourko.sdbudget.core.persistence.relations.MonthAdjustmentsRelation;
+import com.olestourko.sdbudget.core.persistence.relations.MonthExpensesRelation;
 import java.util.ArrayList;
 import javax.inject.Inject;
 import org.jooq.DSLContext;
@@ -16,7 +18,6 @@ import org.jooq.Result;
 import static org.jooq.util.maven.sdbudget.Tables.*;
 import org.jooq.util.maven.sdbudget.tables.records.BudgetItemRecord;
 import org.jooq.util.maven.sdbudget.tables.records.MonthRecord;
-import org.jooq.util.maven.sdbudget.tables.records.MonthRevenuesRecord;
 
 /**
  *
@@ -94,6 +95,8 @@ public class MonthPersistence implements IPersistance<Month> {
         // Fetch associated revenues
         for (Month month : months) {
             fetchRevenues(month);
+            fetchExpenses(month);
+            fetchAdjustments(month);
         }
 
         return months;
@@ -116,4 +119,40 @@ public class MonthPersistence implements IPersistance<Month> {
             month.getRevenues().add(budgetItem);
         }
     }
+
+    public void associateExpense(Month month, BudgetItem budgetItem) {
+        MonthExpensesRelation relation = new MonthExpensesRelation(createDSLContext);
+        relation.associate(month, budgetItem);
+    }
+
+    public void fetchExpenses(Month month) {
+        MonthExpensesRelation relation = new MonthExpensesRelation(createDSLContext);
+        Result<BudgetItemRecord> records = relation.load(month);
+
+        for (BudgetItemRecord record : records) {
+            BudgetItem budgetItem = new BudgetItem();
+            budgetItem.setId(record.getId());
+            budgetItem.setName(record.getName());
+            budgetItem.setAmount(record.getAmount());
+            month.getExpenses().add(budgetItem);
+        }
+    }
+    
+    public void associateAdjustment(Month month, BudgetItem budgetItem) {
+        MonthAdjustmentsRelation relation = new MonthAdjustmentsRelation(createDSLContext);
+        relation.associate(month, budgetItem);
+    }
+
+    public void fetchAdjustments(Month month) {
+        MonthAdjustmentsRelation relation = new MonthAdjustmentsRelation(createDSLContext);
+        Result<BudgetItemRecord> records = relation.load(month);
+
+        for (BudgetItemRecord record : records) {
+            BudgetItem budgetItem = new BudgetItem();
+            budgetItem.setId(record.getId());
+            budgetItem.setName(record.getName());
+            budgetItem.setAmount(record.getAmount());
+            month.getAdjustments().add(budgetItem);
+        }
+    }    
 }
