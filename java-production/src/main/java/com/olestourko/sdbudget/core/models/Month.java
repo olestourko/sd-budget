@@ -7,22 +7,13 @@ import java.util.ArrayList;
  *
  * @author oles
  */
-public class Month implements Serializable {
+public class Month extends Model implements Serializable {
 
-    private int id;
     private short number;
     private short year;
     private ArrayList<BudgetItem> revenues = new ArrayList<BudgetItem>();
     private ArrayList<BudgetItem> expenses = new ArrayList<BudgetItem>();
     private ArrayList<BudgetItem> adjustments = new ArrayList<BudgetItem>();
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public short getNumber() {
         return number;

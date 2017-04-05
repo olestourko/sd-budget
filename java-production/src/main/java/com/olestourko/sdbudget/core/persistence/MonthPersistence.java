@@ -5,6 +5,7 @@
  */
 package com.olestourko.sdbudget.core.persistence;
 
+import com.olestourko.sdbudget.core.persistence.relations.MonthRevenuesRelation;
 import com.olestourko.sdbudget.core.models.BudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
 import java.util.ArrayList;
@@ -98,20 +99,9 @@ public class MonthPersistence implements IPersistance<Month> {
         return months;
     }
 
-    // Associations
     public void associateRevenue(Month month, BudgetItem budgetItem) {
-        Record testRecord = createDSLContext.select()
-                .from(MONTH_REVENUES)
-                .where(MONTH_REVENUES.MONTH_ID.equal(month.getId()))
-                .and(MONTH_REVENUES.BUDGET_ITEM_ID.equal(budgetItem.getId()))
-                .fetchOne();
-        
-        if(testRecord == null || testRecord.size() == 0) {
-            MonthRevenuesRecord record = createDSLContext.newRecord(MONTH_REVENUES);
-            record.set(MONTH_REVENUES.MONTH_ID, month.getId());
-            record.set(MONTH_REVENUES.BUDGET_ITEM_ID, budgetItem.getId());
-            record.store();
-        }
+        MonthRevenuesRelation relation = new MonthRevenuesRelation(createDSLContext);
+        relation.associate(month, budgetItem);
     }
 
     public void fetchRevenues(Month month) {
