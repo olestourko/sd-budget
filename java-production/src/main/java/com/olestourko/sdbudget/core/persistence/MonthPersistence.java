@@ -92,10 +92,10 @@ public class MonthPersistence implements IPersistance<Month> {
         }
 
         // Fetch associated revenues
-        for(Month month : months) {
+        for (Month month : months) {
             fetchRevenues(month);
         }
-        
+
         return months;
     }
 
@@ -105,15 +105,10 @@ public class MonthPersistence implements IPersistance<Month> {
     }
 
     public void fetchRevenues(Month month) {
-        Result<BudgetItemRecord> records = createDSLContext.select()
-                .from(BUDGET_ITEM)
-                .innerJoin(MONTH_REVENUES)
-                .on(MONTH_REVENUES.MONTH_ID.equal(month.getId()))
-                .and(MONTH_REVENUES.BUDGET_ITEM_ID.equal(BUDGET_ITEM.ID))
-                .fetch()
-                .into(BUDGET_ITEM);
+        MonthRevenuesRelation relation = new MonthRevenuesRelation(createDSLContext);
+        Result<BudgetItemRecord> records = relation.load(month);
 
-        for(BudgetItemRecord record : records) {
+        for (BudgetItemRecord record : records) {
             BudgetItem budgetItem = new BudgetItem();
             budgetItem.setId(record.getId());
             budgetItem.setName(record.getName());
