@@ -100,6 +100,19 @@ public class MonthRepository implements IMonthRepository {
                 budgetItemViewModel.setAmount(budgetItem.getAmount());
                 viewModel.getAdjustments().add(budgetItemViewModel);
             }
+            // Map Net Income Target
+            if (coreModel.getNetIncomeTarget() != null) {
+                viewModel.netIncomeTarget.setModel(coreModel.getNetIncomeTarget());
+                viewModel.netIncomeTarget.setName(coreModel.getNetIncomeTarget().getName());
+                viewModel.netIncomeTarget.setAmount(coreModel.getNetIncomeTarget().getAmount());
+            }
+
+            // Map Opening Balance
+            if (coreModel.getOpeningBalance() != null) {
+                viewModel.openingBalance.setModel(coreModel.getOpeningBalance());
+                viewModel.openingBalance.setName(coreModel.getOpeningBalance().getName());
+                viewModel.openingBalance.setAmount(coreModel.getOpeningBalance().getAmount());
+            }
 
             viewModel.setMonthCoreModel(coreModel);
             putMonth(viewModel);
@@ -149,6 +162,26 @@ public class MonthRepository implements IMonthRepository {
                 budgetItemPersistence.store(budgetItemViewModel.getModel());
                 monthPersistence.associateAdjustment(month.getModel(), budgetItemViewModel.getModel());
             }
+
+            //Store the associated Net Income Target
+            BudgetItemViewModel netIncomeTargetViewModel = month.netIncomeTarget;
+            if (netIncomeTargetViewModel.getModel() == null) {
+                netIncomeTargetViewModel.setModel(new BudgetItem());
+            }
+            netIncomeTargetViewModel.getModel().setName(netIncomeTargetViewModel.getName());
+            netIncomeTargetViewModel.getModel().setAmount(netIncomeTargetViewModel.getAmount());
+            budgetItemPersistence.store(netIncomeTargetViewModel.getModel());
+            monthPersistence.associateNetIncomeTarget(month.getModel(), netIncomeTargetViewModel.getModel());
+            
+            //Store the associated Opening Balance
+            BudgetItemViewModel openingBalanceViewModel = month.openingBalance;
+            if (openingBalanceViewModel.getModel() == null) {
+                openingBalanceViewModel.setModel(new BudgetItem());
+            }
+            openingBalanceViewModel.getModel().setName(openingBalanceViewModel.getName());
+            openingBalanceViewModel.getModel().setAmount(openingBalanceViewModel.getAmount());
+            budgetItemPersistence.store(openingBalanceViewModel.getModel());
+            monthPersistence.associateOpeningBalance(month.getModel(), openingBalanceViewModel.getModel());
         }
     }
 

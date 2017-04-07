@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.olestourko.sdbudget.core.persistence;
 
 import com.olestourko.sdbudget.core.persistence.relations.MonthRevenuesRelation;
@@ -10,6 +5,8 @@ import com.olestourko.sdbudget.core.models.BudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
 import com.olestourko.sdbudget.core.persistence.relations.MonthAdjustmentsRelation;
 import com.olestourko.sdbudget.core.persistence.relations.MonthExpensesRelation;
+import com.olestourko.sdbudget.core.persistence.relations.MonthNetIncomeTargetsRelation;
+import com.olestourko.sdbudget.core.persistence.relations.MonthOpeningBalancesRelation;
 import java.util.ArrayList;
 import javax.inject.Inject;
 import org.jooq.DSLContext;
@@ -97,6 +94,8 @@ public class MonthPersistence implements IPersistance<Month> {
             fetchRevenues(month);
             fetchExpenses(month);
             fetchAdjustments(month);
+            fetchNetIncomeTarget(month);
+            fetchOpeningBalance(month);
         }
 
         return months;
@@ -137,7 +136,7 @@ public class MonthPersistence implements IPersistance<Month> {
             month.getExpenses().add(budgetItem);
         }
     }
-    
+
     public void associateAdjustment(Month month, BudgetItem budgetItem) {
         MonthAdjustmentsRelation relation = new MonthAdjustmentsRelation(createDSLContext);
         relation.associate(month, budgetItem);
@@ -154,5 +153,43 @@ public class MonthPersistence implements IPersistance<Month> {
             budgetItem.setAmount(record.getAmount());
             month.getAdjustments().add(budgetItem);
         }
-    }    
+    }
+
+    public void associateNetIncomeTarget(Month month, BudgetItem budgetItem) {
+        MonthNetIncomeTargetsRelation relation = new MonthNetIncomeTargetsRelation(createDSLContext);
+        relation.associate(month, budgetItem);
+    }
+
+    public void fetchNetIncomeTarget(Month month) {
+        MonthNetIncomeTargetsRelation relation = new MonthNetIncomeTargetsRelation(createDSLContext);
+        Result<BudgetItemRecord> records = relation.load(month);
+
+        if (records.size() > 0) {
+            BudgetItemRecord record = records.get(0);
+            BudgetItem budgetItem = new BudgetItem();
+            budgetItem.setId(record.getId());
+            budgetItem.setName(record.getName());
+            budgetItem.setAmount(record.getAmount());
+            month.setNetIncomeTarget(budgetItem);
+        }
+    }
+
+    public void associateOpeningBalance(Month month, BudgetItem budgetItem) {
+        MonthOpeningBalancesRelation relation = new MonthOpeningBalancesRelation(createDSLContext);
+        relation.associate(month, budgetItem);
+    }
+
+    public void fetchOpeningBalance(Month month) {
+        MonthOpeningBalancesRelation relation = new MonthOpeningBalancesRelation(createDSLContext);
+        Result<BudgetItemRecord> records = relation.load(month);
+
+        if (records.size() > 0) {
+            BudgetItemRecord record = records.get(0);
+            BudgetItem budgetItem = new BudgetItem();
+            budgetItem.setId(record.getId());
+            budgetItem.setName(record.getName());
+            budgetItem.setAmount(record.getAmount());
+            month.setOpeningBalance(budgetItem);
+        }
+    }
 }
