@@ -115,6 +115,20 @@ public class MonthControl extends AnchorPane {
             }
         });
 
+        nameColumn.setCellFactory(TextFieldTreeTableCell.forTreeTableColumn());
+        nameColumn.setOnEditCommit(new EventHandler<TreeTableColumn.CellEditEvent<BudgetItemViewModel, String>>() {
+            @Override
+            public void handle(TreeTableColumn.CellEditEvent<BudgetItemViewModel, String> t) {
+                TreeItem treeItem = t.getTreeTablePosition().getTreeItem();
+                if (treeItem.getChildren().size() == 0) {
+                    BudgetItemViewModel budgetItem = (BudgetItemViewModel) treeItem.getValue();
+                    budgetItem.setName(t.getNewValue());
+                    MonthControl.this.fireEvent(new ActionEvent());
+                }
+            }
+
+        });
+
         // This draws the textfield when editing a table cell
         amountColumn.setCellValueFactory(new Callback<CellDataFeatures<BudgetItemViewModel, BigDecimal>, ObservableValue<BigDecimal>>() {
             public ObservableValue<BigDecimal> call(CellDataFeatures<BudgetItemViewModel, BigDecimal> p) {
@@ -124,17 +138,17 @@ public class MonthControl extends AnchorPane {
             }
         });
 
-        // This draws the textfield when editing a table cell
         amountColumn.setCellFactory(TextFieldTreeTableCell.forTreeTableColumn(new BigDecimalStringConverter()));
-        // This is a callback for edits
         amountColumn.setOnEditCommit(new EventHandler<TreeTableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal>>() {
             @Override
             public void handle(TreeTableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal> t) {
                 TreeItem treeItem = t.getTreeTablePosition().getTreeItem();
-                BudgetItemViewModel budgetItem = (BudgetItemViewModel) treeItem.getValue();
+                if (treeItem.getChildren().size() == 0) {
+                    BudgetItemViewModel budgetItem = (BudgetItemViewModel) treeItem.getValue();
 //                BudgetItem budgetItem = (BudgetItem) t.getTableView().getItems().get(t.getTablePosition().getRow());
-                budgetItem.setAmount(t.getNewValue());
-                MonthControl.this.fireEvent(new ActionEvent());
+                    budgetItem.setAmount(t.getNewValue());
+                    MonthControl.this.fireEvent(new ActionEvent());
+                }
             }
         });
 
