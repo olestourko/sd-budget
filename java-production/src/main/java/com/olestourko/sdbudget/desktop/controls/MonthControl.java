@@ -27,6 +27,8 @@ import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn.CellDataFeatures;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
 
 /**
@@ -115,7 +117,7 @@ public class MonthControl extends AnchorPane {
             }
         });
 
-        nameColumn.setCellFactory(TextFieldTreeTableCell.forTreeTableColumn());
+//        nameColumn.setCellFactory(TextFieldTreeTableCell.forTreeTableColumn());
         nameColumn.setOnEditCommit(new EventHandler<TreeTableColumn.CellEditEvent<BudgetItemViewModel, String>>() {
             @Override
             public void handle(TreeTableColumn.CellEditEvent<BudgetItemViewModel, String> t) {
@@ -180,6 +182,24 @@ public class MonthControl extends AnchorPane {
         });
 
         updateTableStyles();
+
+        // Remove item when DELETE key is pressed
+        budgetTable.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode().equals(KeyCode.DELETE)) {
+                    TreeItem treeItem = (TreeItem) budgetTable.getSelectionModel().getSelectedItem();
+                    BudgetItemViewModel selectedItem = (BudgetItemViewModel) treeItem.getValue();
+                    MonthViewModel month = MonthControl.this.month.get();
+                    if (month.getRevenues().contains(selectedItem)) {
+                        month.removeRevenue(selectedItem);
+                    } else if (month.getExpenses().contains(selectedItem)) {
+                        month.removeExpense(selectedItem);
+                    }
+                    MonthControl.this.refreshTables();
+                }
+            }
+        });
     }
 
     public void refreshTables() {

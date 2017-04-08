@@ -16,7 +16,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
 import javafx.event.EventHandler;
 import javafx.scene.control.TableColumn;
@@ -119,7 +118,6 @@ public class ScratchpadController implements Initializable {
                 }
             }
         });
-
     }
 
     public void handleAddTransactionButtonAction(ActionEvent event) {
