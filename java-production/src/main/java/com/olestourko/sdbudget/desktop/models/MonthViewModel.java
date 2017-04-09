@@ -62,7 +62,7 @@ public class MonthViewModel implements IPeriod {
         return model;
     }
     
-    public void setMonthCoreModel(Month model) {
+    public void setModel(Month model) {
         this.model = model;
     }
     

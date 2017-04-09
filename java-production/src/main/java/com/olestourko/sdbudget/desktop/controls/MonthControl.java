@@ -1,5 +1,6 @@
 package com.olestourko.sdbudget.desktop.controls;
 
+import com.olestourko.sdbudget.core.models.BudgetItem;
 import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -97,6 +98,7 @@ public class MonthControl extends AnchorPane {
 
                 cell.button.setOnAction(event -> {
                     BudgetItemViewModel newBudgetItem = new BudgetItemViewModel("New Item", BigDecimal.ZERO);
+                    newBudgetItem.setModel(new BudgetItem());
                     TreeItem<BudgetItemViewModel> treeItem = cell.getTreeTableRow().getTreeItem();
                     if (treeItem.getValue() == revenuesRoot.getValue()) {
                         month.getValue().addRevenue(newBudgetItem);
