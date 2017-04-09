@@ -8,3 +8,6 @@
 #### Dagger 2 (Dependency Injection)
 - [Official Docs](https://google.github.io/dagger/users-guide)
 - [Codepath Guide](https://guides.codepath.com/android/Dependency-Injection-with-Dagger-2#overview)
+
+#### MapStruct
+- [Offical Docs](http://mapstruct.org/documentation/dev/reference/html/)

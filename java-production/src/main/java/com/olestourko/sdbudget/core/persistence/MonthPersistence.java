@@ -1,5 +1,7 @@
 package com.olestourko.sdbudget.core.persistence;
 
+import com.olestourko.sdbudget.core.mappers.BudgetItemMapper;
+import com.olestourko.sdbudget.core.mappers.MonthMapper;
 import com.olestourko.sdbudget.core.persistence.relations.MonthRevenuesRelation;
 import com.olestourko.sdbudget.core.models.BudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
@@ -15,6 +17,7 @@ import org.jooq.Result;
 import static org.jooq.util.maven.sdbudget.Tables.*;
 import org.jooq.util.maven.sdbudget.tables.records.BudgetItemRecord;
 import org.jooq.util.maven.sdbudget.tables.records.MonthRecord;
+import org.mapstruct.factory.Mappers;
 
 /**
  *
@@ -23,10 +26,14 @@ import org.jooq.util.maven.sdbudget.tables.records.MonthRecord;
 public class MonthPersistence implements IPersistance<Month> {
 
     private final DSLContext createDSLContext;
+    private final MonthMapper monthMapper;
+    private final BudgetItemMapper budgetItemMapper;
 
     @Inject
     public MonthPersistence(DSLContext createDSLContext) {
         this.createDSLContext = createDSLContext;
+        this.monthMapper = Mappers.getMapper(MonthMapper.class);
+        this.budgetItemMapper = Mappers.getMapper(BudgetItemMapper.class);
     }
 
     @Override
@@ -42,10 +49,7 @@ public class MonthPersistence implements IPersistance<Month> {
     public Month find(int id) {
         MonthRecord record = createDSLContext.fetchOne(MONTH, MONTH.ID.eq(id));
         if (record != null) {
-            Month month = new Month();
-            month.setId(record.getId());
-            month.setNumber(record.getNumber());
-            month.setYear(record.getYear());
+            Month month = this.monthMapper.mapMonthRecordToMonth(record);
             return month;
         }
 
@@ -82,10 +86,7 @@ public class MonthPersistence implements IPersistance<Month> {
         ArrayList<Month> months = new ArrayList<Month>();
         for (Record record : records) {
             MonthRecord monthRecord = (MonthRecord) record;
-            Month month = new Month();
-            month.setId(monthRecord.getId());
-            month.setNumber(monthRecord.getNumber());
-            month.setYear(monthRecord.getYear());
+            Month month = this.monthMapper.mapMonthRecordToMonth(monthRecord);
             months.add(month);
         }
 
@@ -111,10 +112,7 @@ public class MonthPersistence implements IPersistance<Month> {
         Result<BudgetItemRecord> records = relation.load(month);
 
         for (BudgetItemRecord record : records) {
-            BudgetItem budgetItem = new BudgetItem();
-            budgetItem.setId(record.getId());
-            budgetItem.setName(record.getName());
-            budgetItem.setAmount(record.getAmount());
+            BudgetItem budgetItem = budgetItemMapper.mapBudgetItemRecordToBudgetItem(record);
             month.getRevenues().add(budgetItem);
         }
     }
@@ -129,10 +127,7 @@ public class MonthPersistence implements IPersistance<Month> {
         Result<BudgetItemRecord> records = relation.load(month);
 
         for (BudgetItemRecord record : records) {
-            BudgetItem budgetItem = new BudgetItem();
-            budgetItem.setId(record.getId());
-            budgetItem.setName(record.getName());
-            budgetItem.setAmount(record.getAmount());
+            BudgetItem budgetItem = budgetItemMapper.mapBudgetItemRecordToBudgetItem(record);
             month.getExpenses().add(budgetItem);
         }
     }
@@ -147,10 +142,7 @@ public class MonthPersistence implements IPersistance<Month> {
         Result<BudgetItemRecord> records = relation.load(month);
 
         for (BudgetItemRecord record : records) {
-            BudgetItem budgetItem = new BudgetItem();
-            budgetItem.setId(record.getId());
-            budgetItem.setName(record.getName());
-            budgetItem.setAmount(record.getAmount());
+            BudgetItem budgetItem = budgetItemMapper.mapBudgetItemRecordToBudgetItem(record);
             month.getAdjustments().add(budgetItem);
         }
     }
@@ -166,10 +158,7 @@ public class MonthPersistence implements IPersistance<Month> {
 
         if (records.size() > 0) {
             BudgetItemRecord record = records.get(0);
-            BudgetItem budgetItem = new BudgetItem();
-            budgetItem.setId(record.getId());
-            budgetItem.setName(record.getName());
-            budgetItem.setAmount(record.getAmount());
+            BudgetItem budgetItem = budgetItemMapper.mapBudgetItemRecordToBudgetItem(record);
             month.setNetIncomeTarget(budgetItem);
         }
     }
@@ -185,10 +174,7 @@ public class MonthPersistence implements IPersistance<Month> {
 
         if (records.size() > 0) {
             BudgetItemRecord record = records.get(0);
-            BudgetItem budgetItem = new BudgetItem();
-            budgetItem.setId(record.getId());
-            budgetItem.setName(record.getName());
-            budgetItem.setAmount(record.getAmount());
+            BudgetItem budgetItem = budgetItemMapper.mapBudgetItemRecordToBudgetItem(record);
             month.setOpeningBalance(budgetItem);
         }
     }
