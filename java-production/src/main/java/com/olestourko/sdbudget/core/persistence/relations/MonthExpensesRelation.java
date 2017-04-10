@@ -1,11 +1,13 @@
 package com.olestourko.sdbudget.core.persistence.relations;
 
+import com.olestourko.sdbudget.core.models.BudgetItem;
+import com.olestourko.sdbudget.core.models.Month;
 import org.jooq.DSLContext;
 import static org.jooq.util.maven.sdbudget.Tables.*;
 import org.jooq.util.maven.sdbudget.tables.records.BudgetItemRecord;
 import org.jooq.util.maven.sdbudget.tables.records.MonthExpensesRecord;
 
-public class MonthExpensesRelation extends Relation<MonthExpensesRecord, BudgetItemRecord> {
+public class MonthExpensesRelation extends Relation<Month, BudgetItem, MonthExpensesRecord, BudgetItemRecord> {
 
     public MonthExpensesRelation(DSLContext context) {
         super(context);
@@ -15,5 +17,14 @@ public class MonthExpensesRelation extends Relation<MonthExpensesRecord, BudgetI
         this.relationTableFieldTo = MONTH_EXPENSES.BUDGET_ITEM_ID;
         this.toTableId = BUDGET_ITEM.ID;
     }
+    
+    @Override
+    protected Integer getFromRecordID(MonthExpensesRecord record) {
+        return record.getId();
+    }
 
+    @Override
+    protected Integer getToRecordID(BudgetItemRecord record) {
+        return record.getId();
+    }
 }

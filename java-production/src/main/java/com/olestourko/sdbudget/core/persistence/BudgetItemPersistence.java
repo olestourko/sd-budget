@@ -27,44 +27,41 @@ public class BudgetItemPersistence implements IPersistance<BudgetItem> {
     public BudgetItem create() {
         BudgetItemRecord record = createDSLContext.newRecord(BUDGET_ITEM);
         record.store();
-        BudgetItem budgetItem = new BudgetItem();
-        budgetItem.setId(record.getId());
-        return budgetItem;
+        return budgetItemMapper.mapBudgetItemRecordToBudgetItem(record);
     }
 
     @Override
     public BudgetItem find(int id) {
         BudgetItemRecord record = createDSLContext.fetchOne(BUDGET_ITEM, BUDGET_ITEM.ID.eq(id));
         if (record != null) {
-            BudgetItem budgetItem = this.budgetItemMapper.mapBudgetItemRecordToBudgetItem(record);
-            return budgetItem;
+            return this.budgetItemMapper.mapBudgetItemRecordToBudgetItem(record);
         }
 
         return null;
     }
 
     @Override
-    public void store(BudgetItem model) {
+    public BudgetItem store(BudgetItem model) {
         BudgetItemRecord record = createDSLContext.fetchOne(BUDGET_ITEM, BUDGET_ITEM.ID.eq(model.getId()));
         if (record == null) {
             record = createDSLContext.newRecord(BUDGET_ITEM);
         }
 
-        if (model.getId() != 0) {
-            record.setId(model.getId());
-        }
-
-        record.setName(model.getName());
-        record.setAmount(model.getAmount());
+        budgetItemMapper.updateBudgetItemRecordFromBudgetItem(model, record);
         record.store();
 
         if (model.getId() == 0) {
             model.setId(record.getId());
         }
+
+        return model;
     }
 
     @Override
     public void delete(BudgetItem model) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        BudgetItemRecord record = createDSLContext.fetchOne(BUDGET_ITEM, BUDGET_ITEM.ID.eq(model.getId()));
+        if (record != null) {
+            record.delete();
+        }
     }
 }

@@ -36,7 +36,7 @@ public class MonthViewModel implements IPeriod {
         }
     };
     
-    private Month model;
+    private Month model = new Month();
     
     protected final ObservableList<BudgetItemViewModel> revenues = FXCollections.observableArrayList(extractor);
     protected final ObservableList<BudgetItemViewModel> expenses = FXCollections.observableArrayList(extractor);

@@ -21,17 +21,13 @@ public interface MonthMapper {
     })
     Month mapMonthRecordToMonth(MonthRecord monthRecord);
 
-    @Mappings({
-        @Mapping(source = "id", target = "id"),
-        @Mapping(source = "number", target = "number"),
-        @Mapping(source = "year", target = "year")
-    })
-    MonthRecord mapMonthToMonthRecord(Month month);
+    default MonthRecord updateMonthRecordFromMonth(Month month, @MappingTarget MonthRecord monthRecord) {
+        if (month.getId() != 0) {
+            monthRecord.setId(month.getId());
+        }
+        monthRecord.setNumber(month.getNumber());
+        monthRecord.setYear(month.getYear());
 
-    @Mappings({
-        @Mapping(source = "id", target = "id"),
-        @Mapping(source = "number", target = "number"),
-        @Mapping(source = "year", target = "year")
-    })    
-    MonthRecord updateMonthRecordFromMonth(Month month, @MappingTarget MonthRecord monthRecord);
+        return monthRecord;
+    }
 }

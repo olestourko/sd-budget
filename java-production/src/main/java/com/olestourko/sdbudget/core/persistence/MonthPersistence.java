@@ -10,6 +10,7 @@ import com.olestourko.sdbudget.core.persistence.relations.MonthExpensesRelation;
 import com.olestourko.sdbudget.core.persistence.relations.MonthNetIncomeTargetsRelation;
 import com.olestourko.sdbudget.core.persistence.relations.MonthOpeningBalancesRelation;
 import java.util.ArrayList;
+import java.util.HashMap;
 import javax.inject.Inject;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -40,40 +41,34 @@ public class MonthPersistence implements IPersistance<Month> {
     public Month create() {
         MonthRecord record = createDSLContext.newRecord(MONTH);
         record.store();
-        Month month = new Month();
-        month.setId(record.getId());
-        return month;
+        return monthMapper.mapMonthRecordToMonth(record);
     }
 
     @Override
     public Month find(int id) {
         MonthRecord record = createDSLContext.fetchOne(MONTH, MONTH.ID.eq(id));
         if (record != null) {
-            Month month = this.monthMapper.mapMonthRecordToMonth(record);
-            return month;
+            return this.monthMapper.mapMonthRecordToMonth(record);
         }
 
         return null;
     }
 
     @Override
-    public void store(Month model) {
+    public Month store(Month model) {
         MonthRecord record = createDSLContext.fetchOne(MONTH, MONTH.ID.eq(model.getId()));
         if (record == null) {
             record = createDSLContext.newRecord(MONTH);
         }
 
-        if (model.getId() != 0) {
-            record.setId(model.getId());
-        }
-
-        record.setNumber(model.getNumber());
-        record.setYear(model.getYear());
+        monthMapper.updateMonthRecordFromMonth(model, record);
         record.store();
 
         if (model.getId() == 0) {
             model.setId(record.getId());
         }
+
+        return model;
     }
 
     @Override
@@ -92,11 +87,11 @@ public class MonthPersistence implements IPersistance<Month> {
 
         // Fetch associated revenues
         for (Month month : months) {
-            fetchRevenues(month);
-            fetchExpenses(month);
-            fetchAdjustments(month);
-            fetchNetIncomeTarget(month);
-            fetchOpeningBalance(month);
+            syncRevenuesFromDB(month);
+            syncExpensesFromDB(month);
+            syncAdjustmentsFromDB(month);
+            syncNetIncomeTargetFromDB(month);
+            syncOpeningBalanceFromDB(month);
         }
 
         return months;
@@ -107,14 +102,22 @@ public class MonthPersistence implements IPersistance<Month> {
         relation.associate(month, budgetItem);
     }
 
-    public void fetchRevenues(Month month) {
+    public void syncRevenuesFromDB(Month month) {
         MonthRevenuesRelation relation = new MonthRevenuesRelation(createDSLContext);
         Result<BudgetItemRecord> records = relation.load(month);
-
         for (BudgetItemRecord record : records) {
             BudgetItem budgetItem = budgetItemMapper.mapBudgetItemRecordToBudgetItem(record);
             month.getRevenues().add(budgetItem);
         }
+    }
+
+    public void syncRevenuesToDB(Month month) {
+        MonthRevenuesRelation relation = new MonthRevenuesRelation(createDSLContext);
+        HashMap<Integer, BudgetItem> newRevenues = new HashMap<Integer, BudgetItem>();
+        for (BudgetItem revenue : month.getRevenues()) {
+            newRevenues.put(revenue.getId(), revenue);
+        }
+        relation.syncToDB(month, newRevenues);
     }
 
     public void associateExpense(Month month, BudgetItem budgetItem) {
@@ -122,7 +125,7 @@ public class MonthPersistence implements IPersistance<Month> {
         relation.associate(month, budgetItem);
     }
 
-    public void fetchExpenses(Month month) {
+    public void syncExpensesFromDB(Month month) {
         MonthExpensesRelation relation = new MonthExpensesRelation(createDSLContext);
         Result<BudgetItemRecord> records = relation.load(month);
 
@@ -132,12 +135,21 @@ public class MonthPersistence implements IPersistance<Month> {
         }
     }
 
+    public void syncExpensesToDB(Month month) {
+        MonthExpensesRelation relation = new MonthExpensesRelation(createDSLContext);
+        HashMap<Integer, BudgetItem> newExpenses = new HashMap<Integer, BudgetItem>();
+        for (BudgetItem expense : month.getExpenses()) {
+            newExpenses.put(expense.getId(), expense);
+        }
+        relation.syncToDB(month, newExpenses);
+    }
+
     public void associateAdjustment(Month month, BudgetItem budgetItem) {
         MonthAdjustmentsRelation relation = new MonthAdjustmentsRelation(createDSLContext);
         relation.associate(month, budgetItem);
     }
 
-    public void fetchAdjustments(Month month) {
+    public void syncAdjustmentsFromDB(Month month) {
         MonthAdjustmentsRelation relation = new MonthAdjustmentsRelation(createDSLContext);
         Result<BudgetItemRecord> records = relation.load(month);
 
@@ -147,12 +159,21 @@ public class MonthPersistence implements IPersistance<Month> {
         }
     }
 
+    public void syncAdjustmentsToDB(Month month) {
+        MonthAdjustmentsRelation relation = new MonthAdjustmentsRelation(createDSLContext);
+        HashMap<Integer, BudgetItem> newAdjustments = new HashMap<Integer, BudgetItem>();
+        for (BudgetItem adjustment : month.getAdjustments()) {
+            newAdjustments.put(adjustment.getId(), adjustment);
+        }
+        relation.syncToDB(month, newAdjustments);
+    }
+    
     public void associateNetIncomeTarget(Month month, BudgetItem budgetItem) {
         MonthNetIncomeTargetsRelation relation = new MonthNetIncomeTargetsRelation(createDSLContext);
         relation.associate(month, budgetItem);
     }
 
-    public void fetchNetIncomeTarget(Month month) {
+    public void syncNetIncomeTargetFromDB(Month month) {
         MonthNetIncomeTargetsRelation relation = new MonthNetIncomeTargetsRelation(createDSLContext);
         Result<BudgetItemRecord> records = relation.load(month);
 
@@ -168,7 +189,7 @@ public class MonthPersistence implements IPersistance<Month> {
         relation.associate(month, budgetItem);
     }
 
-    public void fetchOpeningBalance(Month month) {
+    public void syncOpeningBalanceFromDB(Month month) {
         MonthOpeningBalancesRelation relation = new MonthOpeningBalancesRelation(createDSLContext);
         Result<BudgetItemRecord> records = relation.load(month);
 

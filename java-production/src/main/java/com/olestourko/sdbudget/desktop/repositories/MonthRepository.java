@@ -79,69 +79,51 @@ public class MonthRepository implements IMonthRepository {
         ArrayList<Month> months = monthPersistence.getAllMonths();
         for (Month month : months) {
             MonthViewModel viewModel = monthMapper.mapMonthToMonthViewModel(month);
-
-            // Map Revenues
-            for (BudgetItem budgetItem : month.getRevenues()) {
-                viewModel.getRevenues().add(budgetItemMapper.mapBudgetItemToBudgetItemViewModel(budgetItem));
-            }
-            // Map Expenses
-            for (BudgetItem budgetItem : month.getExpenses()) {
-                viewModel.getExpenses().add(budgetItemMapper.mapBudgetItemToBudgetItemViewModel(budgetItem));
-            }
-            // Map Adjustments
-            for (BudgetItem budgetItem : month.getAdjustments()) {
-                viewModel.getAdjustments().add(budgetItemMapper.mapBudgetItemToBudgetItemViewModel(budgetItem));
-            }
-            // Map Net Income Target
-            if (month.getNetIncomeTarget() != null) {
-                budgetItemMapper.updateBudgetItemViewModelFromBudgetItem(viewModel.netIncomeTarget, month.getNetIncomeTarget());
-            }
-
-            // Map Opening Balance
-            if (month.getOpeningBalance() != null) {
-                budgetItemMapper.updateBudgetItemViewModelFromBudgetItem(viewModel.openingBalance, month.getOpeningBalance());
-            }
             putMonth(viewModel);
         }
     }
 
     @Override
     public void storeMonths() {
-        for (MonthViewModel month : months.values()) {
-            monthPersistence.store(month.getModel());
+        for (MonthViewModel monthViewModel : months.values()) {
+            monthMapper.updateMonthFromMonthViewModel(monthViewModel, monthViewModel.getModel());
+            monthPersistence.store(monthViewModel.getModel());
 
             // Store the associated Revenues
-            for (BudgetItemViewModel budgetItemViewModel : month.getRevenues()) {
+            for (BudgetItemViewModel budgetItemViewModel : monthViewModel.getRevenues()) {
                 budgetItemMapper.updateBudgetItemFromBudgetItemViewModel(budgetItemViewModel.getModel(), budgetItemViewModel);
-                budgetItemPersistence.store(budgetItemViewModel.getModel());
-                monthPersistence.associateRevenue(month.getModel(), budgetItemViewModel.getModel());
+                BudgetItem budgetItem = budgetItemPersistence.store(budgetItemViewModel.getModel());
+                monthViewModel.getModel().getRevenues().add(budgetItem);
             }
+            monthPersistence.syncRevenuesToDB(monthViewModel.getModel());
 
             // Store the associated Expenses
-            for (BudgetItemViewModel budgetItemViewModel : month.getExpenses()) {
+            for (BudgetItemViewModel budgetItemViewModel : monthViewModel.getExpenses()) {
                 budgetItemMapper.updateBudgetItemFromBudgetItemViewModel(budgetItemViewModel.getModel(), budgetItemViewModel);
-                budgetItemPersistence.store(budgetItemViewModel.getModel());
-                monthPersistence.associateExpense(month.getModel(), budgetItemViewModel.getModel());
+                BudgetItem budgetItem = budgetItemPersistence.store(budgetItemViewModel.getModel());
+                monthViewModel.getModel().getExpenses().add(budgetItem);
             }
+            monthPersistence.syncExpensesToDB(monthViewModel.getModel());
 
             // Store the associated Adjustments
-            for (BudgetItemViewModel budgetItemViewModel : month.getAdjustments()) {
+            for (BudgetItemViewModel budgetItemViewModel : monthViewModel.getAdjustments()) {
                 budgetItemMapper.updateBudgetItemFromBudgetItemViewModel(budgetItemViewModel.getModel(), budgetItemViewModel);
-                budgetItemPersistence.store(budgetItemViewModel.getModel());
-                monthPersistence.associateAdjustment(month.getModel(), budgetItemViewModel.getModel());
+                BudgetItem budgetItem = budgetItemPersistence.store(budgetItemViewModel.getModel());
+                monthViewModel.getModel().getAdjustments().add(budgetItem);
             }
+            monthPersistence.syncAdjustmentsToDB(monthViewModel.getModel());
 
             //Store the associated Net Income Target
-            BudgetItemViewModel netIncomeTargetViewModel = month.netIncomeTarget;
+            BudgetItemViewModel netIncomeTargetViewModel = monthViewModel.netIncomeTarget;
             budgetItemMapper.updateBudgetItemFromBudgetItemViewModel(netIncomeTargetViewModel.getModel(), netIncomeTargetViewModel);
             budgetItemPersistence.store(netIncomeTargetViewModel.getModel());
-            monthPersistence.associateNetIncomeTarget(month.getModel(), netIncomeTargetViewModel.getModel());
+            monthPersistence.associateNetIncomeTarget(monthViewModel.getModel(), netIncomeTargetViewModel.getModel());
 
             //Store the associated Opening Balance
-            BudgetItemViewModel openingBalanceViewModel = month.openingBalance;
+            BudgetItemViewModel openingBalanceViewModel = monthViewModel.openingBalance;
             budgetItemMapper.updateBudgetItemFromBudgetItemViewModel(openingBalanceViewModel.getModel(), openingBalanceViewModel);
             budgetItemPersistence.store(openingBalanceViewModel.getModel());
-            monthPersistence.associateOpeningBalance(month.getModel(), openingBalanceViewModel.getModel());
+            monthPersistence.associateOpeningBalance(monthViewModel.getModel(), openingBalanceViewModel.getModel());
         }
     }
 

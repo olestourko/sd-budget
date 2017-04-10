@@ -4,6 +4,7 @@ import com.olestourko.sdbudget.core.models.BudgetItem;
 import org.jooq.util.maven.sdbudget.tables.records.BudgetItemRecord;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.Mappings;
 
 /**
@@ -20,10 +21,12 @@ public interface BudgetItemMapper {
     })
     BudgetItem mapBudgetItemRecordToBudgetItem(BudgetItemRecord budgetItemRecord);
 
-    @Mappings({
-        @Mapping(source = "id", target = "id"),
-        @Mapping(source = "name", target = "name"),
-        @Mapping(source = "amount", target = "amount")
-    })
-    BudgetItemRecord mapBudgetItemToBudgetItemRecord(BudgetItem budgetItem);
+    default BudgetItemRecord updateBudgetItemRecordFromBudgetItem(BudgetItem budgetItem, @MappingTarget BudgetItemRecord budgetItemRecord) {
+        if (budgetItem.getId() != 0) {
+            budgetItemRecord.setId(budgetItem.getId());
+        }
+        budgetItemRecord.setName(budgetItem.getName());
+        budgetItemRecord.setAmount(budgetItem.getAmount());
+        return budgetItemRecord;
+    }
 }

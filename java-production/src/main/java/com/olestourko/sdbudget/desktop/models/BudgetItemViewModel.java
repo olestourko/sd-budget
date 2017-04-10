@@ -11,7 +11,7 @@ import javafx.beans.property.SimpleObjectProperty;
  */
 public class BudgetItemViewModel {
 
-    private BudgetItem model;
+    private BudgetItem model = new BudgetItem();
     
     private final SimpleStringProperty name = new SimpleStringProperty();
     private final SimpleObjectProperty<BigDecimal> amount = new SimpleObjectProperty<BigDecimal>();
