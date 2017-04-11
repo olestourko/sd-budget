@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ObjectPropertyBase;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -31,6 +32,7 @@ import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
+import javafx.util.StringConverter;
 
 /**
  *
@@ -142,7 +144,16 @@ public class MonthControl extends AnchorPane {
             }
         });
 
-        amountColumn.setCellFactory(TextFieldTreeTableCell.forTreeTableColumn(new BigDecimalStringConverter()));
+        amountColumn.setCellFactory(new Callback<TreeTableColumn<BudgetItemViewModel, BigDecimal>, TreeTableCell<BudgetItemViewModel, BigDecimal>>() {
+            StringConverter<BigDecimal> converter;
+
+            @Override
+            public TreeTableCell<BudgetItemViewModel, BigDecimal> call(TreeTableColumn<BudgetItemViewModel, BigDecimal> param) {
+                CurrencyTreeTableCell cell = new CurrencyTreeTableCell("$");
+                return cell;
+            }
+        });
+
         amountColumn.setOnEditCommit(new EventHandler<TreeTableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal>>() {
             @Override
             public void handle(TreeTableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal> t) {
