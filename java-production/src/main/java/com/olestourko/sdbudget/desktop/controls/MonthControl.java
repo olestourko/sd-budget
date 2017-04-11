@@ -23,6 +23,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.util.converter.BigDecimalStringConverter;
 import javafx.event.ActionEvent;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableCell;
@@ -176,9 +177,30 @@ public class MonthControl extends AnchorPane {
             refreshTables();
         });
 
+        // Totals table
+        TableColumn totalsTableAmountColumn = (TableColumn) totalsTable.getColumns().get(1);
+        totalsTableAmountColumn.setCellFactory(new Callback<TableColumn<BudgetItemViewModel, BigDecimal>, TableCell<BudgetItemViewModel, BigDecimal>>() {
+            StringConverter<BigDecimal> converter;
+
+            @Override
+            public TableCell<BudgetItemViewModel, BigDecimal> call(TableColumn<BudgetItemViewModel, BigDecimal> param) {
+                CurrencyTableCell cell = new CurrencyTableCell("$");
+                return cell;
+            }
+        });
+
         // Set up the closing table
         TableColumn closingTableAmountColumn = (TableColumn) closingTable.getColumns().get(1);
-        closingTableAmountColumn.setCellFactory(TextFieldTableCell.<BudgetItemViewModel, BigDecimal>forTableColumn(new BigDecimalStringConverter()));
+        closingTableAmountColumn.setCellFactory(new Callback<TableColumn<BudgetItemViewModel, BigDecimal>, TableCell<BudgetItemViewModel, BigDecimal>>() {
+            StringConverter<BigDecimal> converter;
+
+            @Override
+            public TableCell<BudgetItemViewModel, BigDecimal> call(TableColumn<BudgetItemViewModel, BigDecimal> param) {
+                CurrencyTableCell cell = new CurrencyTableCell("$");
+                return cell;
+            }
+        });
+
         closingTableAmountColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal>>() {
             @Override
             public void handle(TableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal> t) {

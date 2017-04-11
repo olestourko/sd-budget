@@ -3,20 +3,20 @@ package com.olestourko.sdbudget.desktop.controls;
 import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
 import java.math.BigDecimal;
 import javafx.scene.control.Label;
-import javafx.scene.control.cell.TextFieldTreeTableCell;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.Callback;
 import javafx.util.converter.BigDecimalStringConverter;
 
-public class CurrencyTreeTableCell extends TextFieldTreeTableCell<BudgetItemViewModel, BigDecimal> {
+public class CurrencyTableCell extends TextFieldTableCell<BudgetItemViewModel, BigDecimal> {
 
     public final Label label = new Label();
-    protected Callback<CurrencyTreeTableCell, Boolean> callback;
+    protected Callback<CurrencyTableCell, Boolean> callback;
 
-    public CurrencyTreeTableCell() {
+    public CurrencyTableCell() {
         super(new BigDecimalStringConverter());
     }
 
-    public CurrencyTreeTableCell(String currencySymbol) {
+    public CurrencyTableCell(String currencySymbol) {
         super(new BigDecimalStringConverter());
         label.setText(currencySymbol);
     }

@@ -14,6 +14,10 @@
     -fx-pref-width: 120;
 }
 
+.tree-table-view .tree-table-cell {
+    /*-fx-background-color: #fdf6e3;*/
+}
+
 .tree-table-view.disabled .tree-table-cell,
 .table-view.disabled .table-cell {
     -fx-text-fill: darkgray;
