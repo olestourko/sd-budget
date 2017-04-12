@@ -1,5 +1,32 @@
+/*
+* Color Scheme:
+* http://ethanschoonover.com/solarized
+*/
+
+.root {
+    -fx-background-color: #fdf6e3;
+}
+
+.label {
+    -fx-text-fill: #657b83;
+}
+
 .button {
-    -fx-font-weight: bold;
+    -fx-background-color: none;
+    -fx-border-color: #b58900;
+    -fx-text-fill: #b58900;
+}
+.button:hover {
+    -fx-underline: true;
+}
+
+.check-box {
+    -fx-text-fill: #657b83;
+}
+.check-box .box {
+    -fx-border-color: #657b83;
+    -fx-background-color: none;
+    -fx-border-radius: 0;
 }
 
 .text-field-tree-table-cell > *,
@@ -10,12 +37,46 @@
     -fx-background-radius: 0;
 }
 
-.input-field {
-    -fx-pref-width: 120;
+/*Basic Table Styles*/
+.tree-table-view .column-header-background,
+.tree-table-view .column-header-background .table-column,
+.tree-table-view .column-header-background .filler {
+    -fx-background-color: #eee8d5;
+}
+.tree-table-view .column-header-background .table-column .label {
+    -fx-alignment: CENTER_LEFT;
 }
 
-.tree-table-view .tree-table-cell {
-    /*-fx-background-color: #fdf6e3;*/
+.table-view .column-header-background {
+    -fx-max-height: 0;
+    -fx-pref-height: 0;
+    -fx-min-height: 0;
+}
+
+.tree-table-cell,
+.table-cell {
+    -fx-background-color: #fdf6e3;
+    -fx-text-fill: #657b83;
+}
+
+.tree-table-row-cell:selected .tree-table-cell,
+.table-row-cell:selected .table-cell {
+    -fx-background-color: #eee8d5;
+}
+
+.table-view,
+.tree-table-view {
+    -fx-background-color: #fdf6e3;
+    -fx-border-color: #657b83;
+    -fx-border-width: 1;
+}
+
+.table-column {
+    -fx-background-color: #fdf6e3;
+}
+
+.input-field {
+    -fx-pref-width: 120;
 }
 
 .tree-table-view.disabled .tree-table-cell,

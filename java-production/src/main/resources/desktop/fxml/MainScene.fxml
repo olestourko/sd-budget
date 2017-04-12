@@ -30,12 +30,12 @@
                     AnchorPane.topAnchor="30"
                     AnchorPane.bottomAnchor="30">
         </AnchorPane>
-        <HBox spacing="5.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0">
+        <HBox spacing="5.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0">
             <children>
                 <Button id="previousMonthButton" fx:id="previousMonthButton" mnemonicParsing="false" text="Previous Month" />
                 <Button id="nextMonthButton" fx:id="nextMonthButton" mnemonicParsing="false" text="Next Month" />
             </children>
         </HBox>
-        <Button fx:id="scratchpadViewButton" text="Scratchpad" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0" />
+        <Button fx:id="scratchpadViewButton" text="Scratchpad" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0" />
     </children>
 </AnchorPane>
