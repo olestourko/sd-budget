@@ -13,14 +13,12 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ObjectPropertyBase;
-import javafx.beans.property.ReadOnlyStringWrapper;
+
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
-import javafx.util.converter.BigDecimalStringConverter;
 import javafx.event.ActionEvent;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableCell;
@@ -29,7 +27,7 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn.CellDataFeatures;
 import javafx.scene.control.TreeTableView;
-import javafx.scene.control.cell.TextFieldTreeTableCell;
+
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
@@ -81,8 +79,8 @@ public class MonthControl extends AnchorPane {
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
-
-        nameColumn.setCellFactory(new Callback<TreeTableColumn<BudgetItemViewModel, String>, TreeTableCell<BudgetItemViewModel, String>>() {
+        
+        nameColumn.setCellFactory(new Callback<TreeTableColumn<BudgetItemViewModel, String>, TreeTableCell<BudgetItemViewModel, String>>() {           
             @Override
             public TreeTableCell<BudgetItemViewModel, String> call(TreeTableColumn<BudgetItemViewModel, String> p) {
                 ButtonTreeTableCell cell = new ButtonTreeTableCell("+");
@@ -112,17 +110,18 @@ public class MonthControl extends AnchorPane {
                     treeItem.getChildren().add(newTreeItem);
                     treeItem.setExpanded(true);
                 });
+//                cell.setEditable(treeItem == revenuesRoot || treeItem == expensesRoot);
+                
                 return cell;
             }
         });
 
         nameColumn.setCellValueFactory(new Callback<CellDataFeatures<BudgetItemViewModel, String>, ObservableValue<String>>() {
-            public ObservableValue<String> call(CellDataFeatures<BudgetItemViewModel, String> p) {
+            public ObservableValue<String> call(CellDataFeatures<BudgetItemViewModel, String> p) {                
                 return p.getValue().getValue().nameProperty();
             }
         });
 
-//        nameColumn.setCellFactory(TextFieldTreeTableCell.forTreeTableColumn());
         nameColumn.setOnEditCommit(new EventHandler<TreeTableColumn.CellEditEvent<BudgetItemViewModel, String>>() {
             @Override
             public void handle(TreeTableColumn.CellEditEvent<BudgetItemViewModel, String> t) {

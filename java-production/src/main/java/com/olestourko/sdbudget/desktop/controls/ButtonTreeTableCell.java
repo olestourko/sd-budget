@@ -3,20 +3,21 @@ package com.olestourko.sdbudget.desktop.controls;
 import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
-import javafx.scene.control.TreeTableCell;
+import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.util.Callback;
+import javafx.util.converter.DefaultStringConverter;
 
-public class ButtonTreeTableCell extends TreeTableCell<BudgetItemViewModel, String> {
+public class ButtonTreeTableCell extends TextFieldTreeTableCell<BudgetItemViewModel, String> {
 
     public final Button button = new Button();
     protected Callback<ButtonTreeTableCell, Boolean> callback;
 
     public ButtonTreeTableCell() {
-        super();
+        super(new DefaultStringConverter());
     }
 
     public ButtonTreeTableCell(String buttonText) {
-        super();
+        super(new DefaultStringConverter());
         button.setText(buttonText);
         button.setPadding(new Insets(0, 2, 0, 2));
     }

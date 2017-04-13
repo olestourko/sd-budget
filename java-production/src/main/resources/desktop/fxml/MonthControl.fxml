@@ -18,8 +18,8 @@
                     <TreeTableView fx:id="budgetTable" editable="true" showRoot="false" AnchorPane.bottomAnchor="245.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
                         <columnResizePolicy><TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
                         <columns>
-                            <TreeTableColumn fx:id="nameColumn" editable="true"  prefWidth="150"  text="Name" />
-                            <TreeTableColumn fx:id="amountColumn" editable="true" text="Amount" />
+                            <TreeTableColumn fx:id="nameColumn" editable="true" sortable="false" prefWidth="150"  text="Name" />
+                            <TreeTableColumn fx:id="amountColumn" editable="true" sortable="false" text="Amount" />
                         </columns>
                     </TreeTableView>
                     <TableView fx:id="totalsTable" editable="true" prefHeight="130" AnchorPane.bottomAnchor="110.0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
