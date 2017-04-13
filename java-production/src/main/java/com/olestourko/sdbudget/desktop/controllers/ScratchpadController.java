@@ -1,5 +1,6 @@
 package com.olestourko.sdbudget.desktop.controllers;
 
+import com.olestourko.sdbudget.desktop.controls.CurrencyTableCell;
 import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
 import com.olestourko.sdbudget.desktop.models.MonthViewModel;
 import com.olestourko.sdbudget.desktop.repositories.MonthRepository;
@@ -18,13 +19,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.event.EventHandler;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.util.converter.BigDecimalStringConverter;
+import javafx.util.Callback;
+import javafx.util.StringConverter;
 import javax.inject.Inject;
 
 public class ScratchpadController implements Initializable {
@@ -74,10 +76,8 @@ public class ScratchpadController implements Initializable {
             this.setMonth(budget.getCurrentMonth());
         });
 
-        nameColumn.setCellValueFactory(new PropertyValueFactory<BudgetItemViewModel, String>("name")
-        );
-        amountColumn.setCellValueFactory(new PropertyValueFactory<BudgetItemViewModel, Double>("amount")
-        );
+        nameColumn.setCellValueFactory(new PropertyValueFactory<BudgetItemViewModel, String>("name"));
+        amountColumn.setCellValueFactory(new PropertyValueFactory<BudgetItemViewModel, Double>("amount"));
 
         //Add the "Adjustment Totals" item
         totalAdjustments.amountProperty().addListener(new ChangeListener<Number>() {
@@ -88,7 +88,15 @@ public class ScratchpadController implements Initializable {
         });
 
         //Allow editing of adjustments, and update "Total Adjustments" row whenever they change.
-        amountColumn.setCellFactory(TextFieldTableCell.<BudgetItemViewModel, BigDecimal>forTableColumn(new BigDecimalStringConverter()));
+        amountColumn.setCellFactory(new Callback<TableColumn<BudgetItemViewModel, BigDecimal>, TableCell<BudgetItemViewModel, BigDecimal>>() {
+            StringConverter<BigDecimal> converter;
+
+            @Override
+            public TableCell<BudgetItemViewModel, BigDecimal> call(TableColumn<BudgetItemViewModel, BigDecimal> param) {
+                CurrencyTableCell cell = new CurrencyTableCell("$");
+                return cell;
+            }
+        });
         amountColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal>>() {
             @Override
             public void handle(TableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal> t) {
@@ -101,6 +109,16 @@ public class ScratchpadController implements Initializable {
         //Set up the totals table
         totalsTable.getItems().add(totalAdjustments);
 
+        ((TableColumn) totalsTable.getColumns().get(1)).setCellFactory(new Callback<TableColumn<BudgetItemViewModel, BigDecimal>, TableCell<BudgetItemViewModel, BigDecimal>>() {
+            StringConverter<BigDecimal> converter;
+
+            @Override
+            public TableCell<BudgetItemViewModel, BigDecimal> call(TableColumn<BudgetItemViewModel, BigDecimal> param) {
+                CurrencyTableCell cell = new CurrencyTableCell("$");
+                return cell;
+            }
+        });
+        
         //Set the date on the label
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
         periodDate.setText(dateFormat.format(budget.getCurrentMonth().calendar.getTime()));

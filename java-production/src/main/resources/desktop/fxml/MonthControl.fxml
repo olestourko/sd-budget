@@ -15,7 +15,7 @@
             <AnchorPane AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
                 <children>
                     <Label fx:id="periodDate" text="Date goes here" />
-                    <TreeTableView fx:id="budgetTable" editable="true" AnchorPane.bottomAnchor="245.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
+                    <TreeTableView fx:id="budgetTable" editable="true" showRoot="false" AnchorPane.bottomAnchor="245.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
                         <columnResizePolicy><TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
                         <columns>
                             <TreeTableColumn fx:id="nameColumn" editable="true"  prefWidth="150"  text="Name" />
