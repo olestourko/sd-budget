@@ -22,6 +22,7 @@ public abstract class MonthMapper {
         cal.set(Calendar.MONTH, month.getNumber());
         cal.set(Calendar.YEAR, month.getYear());
         MonthViewModel viewModel = new MonthViewModel(cal);
+        viewModel.setIsClosed(month.getIsClosed());
 
         BudgetItemMapper budgetItemMapper = Mappers.getMapper(BudgetItemMapper.class);
         // Map Revenues
@@ -53,6 +54,7 @@ public abstract class MonthMapper {
     public Month updateMonthFromMonthViewModel(MonthViewModel monthViewModel, @MappingTarget Month month) {
         month.setNumber((short) monthViewModel.calendar.get(Calendar.MONTH));
         month.setYear((short) monthViewModel.calendar.get(Calendar.YEAR));
+        month.setIsClosed(monthViewModel.getIsClosed());
         // Map Revenues
         month.getRevenues().clear();
         for (BudgetItemViewModel revenue : monthViewModel.getRevenues()) {

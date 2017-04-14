@@ -11,6 +11,7 @@ public class Month extends Model implements Serializable {
 
     private short number;
     private short year;
+    private boolean isClosed;
     private ArrayList<BudgetItem> revenues = new ArrayList<BudgetItem>();
     private ArrayList<BudgetItem> expenses = new ArrayList<BudgetItem>();
     private ArrayList<BudgetItem> adjustments = new ArrayList<BudgetItem>();
@@ -33,6 +34,14 @@ public class Month extends Model implements Serializable {
         this.year = year;
     }
 
+    public boolean getIsClosed() {
+        return this.isClosed;
+    }
+
+    public void setIsClosed(boolean isClosed) {
+        this.isClosed = isClosed;
+    }
+    
     public ArrayList<BudgetItem> getRevenues() {
         return revenues;
     }

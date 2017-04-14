@@ -17,7 +17,8 @@ public interface MonthMapper {
     @Mappings({
         @Mapping(source = "id", target = "id"),
         @Mapping(source = "number", target = "number"),
-        @Mapping(source = "year", target = "year")
+        @Mapping(source = "year", target = "year"),
+        @Mapping(source = "isClosed", target = "isClosed")
     })
     Month mapMonthRecordToMonth(MonthRecord monthRecord);
 
@@ -27,6 +28,7 @@ public interface MonthMapper {
         }
         monthRecord.setNumber(month.getNumber());
         monthRecord.setYear(month.getYear());
+        monthRecord.setIsClosed(month.getIsClosed());
 
         return monthRecord;
     }
