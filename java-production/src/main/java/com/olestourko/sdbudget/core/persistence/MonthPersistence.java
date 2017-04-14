@@ -31,11 +31,34 @@ public class MonthPersistence implements IPersistance<Month> {
     private final MonthMapper monthMapper;
     private final BudgetItemMapper budgetItemMapper;
 
+    /* Relations */
+    private final MonthRevenuesRelation monthRevenuesRelation;
+    private final MonthExpensesRelation monthExpensesRelation;
+    private final MonthAdjustmentsRelation monthAdjustmentsRelation;
+    private final MonthNetIncomeTargetsRelation monthNetIncomeTargetsRelation;
+    private final MonthOpeningBalancesRelation monthOpeningBalanceRelation;
+    private final MonthClosingBalancesRelation monthClosingBalanceRelation;
+
     @Inject
-    public MonthPersistence(DSLContext createDSLContext) {
+    public MonthPersistence(
+            DSLContext createDSLContext,
+            MonthRevenuesRelation monthRevenuesRelation,
+            MonthExpensesRelation monthExpensesRelation,
+            MonthAdjustmentsRelation monthAdjustmentsRelation,
+            MonthNetIncomeTargetsRelation monthNetIncomeTargetsRelation,
+            MonthOpeningBalancesRelation monthOpeningBalanceRelation,
+            MonthClosingBalancesRelation monthClosingBalanceRelation
+    ) {
         this.createDSLContext = createDSLContext;
         this.monthMapper = Mappers.getMapper(MonthMapper.class);
         this.budgetItemMapper = Mappers.getMapper(BudgetItemMapper.class);
+
+        this.monthRevenuesRelation = monthRevenuesRelation;
+        this.monthExpensesRelation = monthExpensesRelation;
+        this.monthAdjustmentsRelation = monthAdjustmentsRelation;
+        this.monthNetIncomeTargetsRelation = monthNetIncomeTargetsRelation;
+        this.monthOpeningBalanceRelation = monthOpeningBalanceRelation;
+        this.monthClosingBalanceRelation = monthClosingBalanceRelation;
     }
 
     @Override
@@ -100,13 +123,11 @@ public class MonthPersistence implements IPersistance<Month> {
     }
 
     public void associateRevenue(Month month, BudgetItem budgetItem) {
-        MonthRevenuesRelation relation = new MonthRevenuesRelation(createDSLContext);
-        relation.associate(month, budgetItem);
+        monthRevenuesRelation.associate(month, budgetItem);
     }
 
     public void syncRevenuesFromDB(Month month) {
-        MonthRevenuesRelation relation = new MonthRevenuesRelation(createDSLContext);
-        Result<BudgetItemRecord> records = relation.load(month);
+        Result<BudgetItemRecord> records = monthRevenuesRelation.load(month);
         for (BudgetItemRecord record : records) {
             BudgetItem budgetItem = budgetItemMapper.mapBudgetItemRecordToBudgetItem(record);
             month.getRevenues().add(budgetItem);
@@ -114,22 +135,19 @@ public class MonthPersistence implements IPersistance<Month> {
     }
 
     public void syncRevenuesToDB(Month month) {
-        MonthRevenuesRelation relation = new MonthRevenuesRelation(createDSLContext);
         HashMap<Integer, BudgetItem> newRevenues = new HashMap<Integer, BudgetItem>();
         for (BudgetItem revenue : month.getRevenues()) {
             newRevenues.put(revenue.getId(), revenue);
         }
-        relation.syncToDB(month, newRevenues);
+        monthRevenuesRelation.syncToDB(month, newRevenues);
     }
 
     public void associateExpense(Month month, BudgetItem budgetItem) {
-        MonthExpensesRelation relation = new MonthExpensesRelation(createDSLContext);
-        relation.associate(month, budgetItem);
+        monthExpensesRelation.associate(month, budgetItem);
     }
 
     public void syncExpensesFromDB(Month month) {
-        MonthExpensesRelation relation = new MonthExpensesRelation(createDSLContext);
-        Result<BudgetItemRecord> records = relation.load(month);
+        Result<BudgetItemRecord> records = monthExpensesRelation.load(month);
 
         for (BudgetItemRecord record : records) {
             BudgetItem budgetItem = budgetItemMapper.mapBudgetItemRecordToBudgetItem(record);
@@ -138,22 +156,19 @@ public class MonthPersistence implements IPersistance<Month> {
     }
 
     public void syncExpensesToDB(Month month) {
-        MonthExpensesRelation relation = new MonthExpensesRelation(createDSLContext);
         HashMap<Integer, BudgetItem> newExpenses = new HashMap<Integer, BudgetItem>();
         for (BudgetItem expense : month.getExpenses()) {
             newExpenses.put(expense.getId(), expense);
         }
-        relation.syncToDB(month, newExpenses);
+        monthExpensesRelation.syncToDB(month, newExpenses);
     }
 
     public void associateAdjustment(Month month, BudgetItem budgetItem) {
-        MonthAdjustmentsRelation relation = new MonthAdjustmentsRelation(createDSLContext);
-        relation.associate(month, budgetItem);
+        monthAdjustmentsRelation.associate(month, budgetItem);
     }
 
     public void syncAdjustmentsFromDB(Month month) {
-        MonthAdjustmentsRelation relation = new MonthAdjustmentsRelation(createDSLContext);
-        Result<BudgetItemRecord> records = relation.load(month);
+        Result<BudgetItemRecord> records = monthAdjustmentsRelation.load(month);
 
         for (BudgetItemRecord record : records) {
             BudgetItem budgetItem = budgetItemMapper.mapBudgetItemRecordToBudgetItem(record);
@@ -162,22 +177,19 @@ public class MonthPersistence implements IPersistance<Month> {
     }
 
     public void syncAdjustmentsToDB(Month month) {
-        MonthAdjustmentsRelation relation = new MonthAdjustmentsRelation(createDSLContext);
         HashMap<Integer, BudgetItem> newAdjustments = new HashMap<Integer, BudgetItem>();
         for (BudgetItem adjustment : month.getAdjustments()) {
             newAdjustments.put(adjustment.getId(), adjustment);
         }
-        relation.syncToDB(month, newAdjustments);
+        monthAdjustmentsRelation.syncToDB(month, newAdjustments);
     }
 
     public void associateNetIncomeTarget(Month month, BudgetItem budgetItem) {
-        MonthNetIncomeTargetsRelation relation = new MonthNetIncomeTargetsRelation(createDSLContext);
-        relation.associate(month, budgetItem);
+        monthNetIncomeTargetsRelation.associate(month, budgetItem);
     }
 
     public void syncNetIncomeTargetFromDB(Month month) {
-        MonthNetIncomeTargetsRelation relation = new MonthNetIncomeTargetsRelation(createDSLContext);
-        Result<BudgetItemRecord> records = relation.load(month);
+        Result<BudgetItemRecord> records = monthNetIncomeTargetsRelation.load(month);
 
         if (records.size() > 0) {
             BudgetItemRecord record = records.get(0);
@@ -187,13 +199,11 @@ public class MonthPersistence implements IPersistance<Month> {
     }
 
     public void associateOpeningBalance(Month month, BudgetItem budgetItem) {
-        MonthOpeningBalancesRelation relation = new MonthOpeningBalancesRelation(createDSLContext);
-        relation.associate(month, budgetItem);
+        monthOpeningBalanceRelation.associate(month, budgetItem);
     }
 
     public void syncOpeningBalanceFromDB(Month month) {
-        MonthOpeningBalancesRelation relation = new MonthOpeningBalancesRelation(createDSLContext);
-        Result<BudgetItemRecord> records = relation.load(month);
+        Result<BudgetItemRecord> records = monthOpeningBalanceRelation.load(month);
 
         if (records.size() > 0) {
             BudgetItemRecord record = records.get(0);
@@ -203,13 +213,11 @@ public class MonthPersistence implements IPersistance<Month> {
     }
 
     public void associateClosingBalance(Month month, BudgetItem budgetItem) {
-        MonthClosingBalancesRelation relation = new MonthClosingBalancesRelation(createDSLContext);
-        relation.associate(month, budgetItem);
+        monthClosingBalanceRelation.associate(month, budgetItem);
     }
 
     public void syncClosingBalanceFromDB(Month month) {
-        MonthClosingBalancesRelation relation = new MonthClosingBalancesRelation(createDSLContext);
-        Result<BudgetItemRecord> records = relation.load(month);
+        Result<BudgetItemRecord> records = monthClosingBalanceRelation.load(month);
 
         if (records.size() > 0) {
             BudgetItemRecord record = records.get(0);

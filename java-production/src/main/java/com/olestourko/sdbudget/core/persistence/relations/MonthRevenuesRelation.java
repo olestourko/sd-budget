@@ -2,6 +2,7 @@ package com.olestourko.sdbudget.core.persistence.relations;
 
 import com.olestourko.sdbudget.core.models.BudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
+import javax.inject.Inject;
 import org.jooq.DSLContext;
 import org.jooq.util.maven.sdbudget.tables.records.MonthRevenuesRecord;
 import static org.jooq.util.maven.sdbudget.Tables.*;
@@ -9,6 +10,7 @@ import org.jooq.util.maven.sdbudget.tables.records.BudgetItemRecord;
 
 public class MonthRevenuesRelation extends Relation<Month, BudgetItem, MonthRevenuesRecord, BudgetItemRecord> {
 
+    @Inject
     public MonthRevenuesRelation(DSLContext context) {
         super(context);
         this.relationTable = MONTH_REVENUES;
