@@ -80,7 +80,7 @@ public class OneMonthController implements Initializable {
                 );
 
                 month.estimatedClosingBalance.setAmount(month.closingBalance.getAmount());
-                month.totalSurplus.setAmount(result.surplus);
+                month.totalSurplus.setAmount(result.closingSurplus);
 //                month.adjustments.setAmount(result.closingAdjustment);
             }
         });

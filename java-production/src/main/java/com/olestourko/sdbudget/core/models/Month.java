@@ -1,6 +1,7 @@
 package com.olestourko.sdbudget.core.models;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 /**
@@ -18,6 +19,12 @@ public class Month extends Model implements Serializable {
     private BudgetItem netIncomeTarget;
     private BudgetItem openingBalance;
     private BudgetItem closingBalance;
+
+    // These aren't meant to be stored in DB
+    private BudgetItem openingSurplus;
+    private BudgetItem closingSurplus;
+    private BudgetItem closingBalanceTarget;
+    private BudgetItem estimatedClosingBalance;
 
     public short getNumber() {
         return number;
@@ -67,6 +74,20 @@ public class Month extends Model implements Serializable {
         this.adjustments = adjustments;
     }
 
+// <editor-fold defaultstate="collapsed" desc="Revenue/Expense/Totals aggregators">
+    public BigDecimal getTotalRevenues() {
+        return revenues.stream().map(BudgetItem::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public BigDecimal getTotalExpenses() {
+        return expenses.stream().map(BudgetItem::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public BigDecimal getTotalAdjustments() {
+        return adjustments.stream().map(BudgetItem::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+// </editor-fold>
+
     public BudgetItem getNetIncomeTarget() {
         return netIncomeTarget;
     }
@@ -90,4 +111,38 @@ public class Month extends Model implements Serializable {
     public void setClosingBalance(BudgetItem closingBalance) {
         this.closingBalance = closingBalance;
     }
+
+// <editor-fold defaultstate="collapsed" desc="Properties not to be saved to DB">    
+    public BudgetItem getOpeningSurplus() {
+        return openingSurplus;
+    }
+
+    public void setOpeningSurplus(BudgetItem openingSurplus) {
+        this.openingSurplus = openingSurplus;
+    }
+
+    public BudgetItem getClosingSurplus() {
+        return closingSurplus;
+    }
+
+    public void setClosingSurplus(BudgetItem closingSurplus) {
+        this.closingSurplus = closingSurplus;
+    }
+
+    public BudgetItem getClosingBalanceTarget() {
+        return closingBalanceTarget;
+    }
+
+    public void setClosingBalanceTarget(BudgetItem closingBalanceTarget) {
+        this.closingBalanceTarget = closingBalanceTarget;
+    }
+
+    public BudgetItem getEstimatedClosingBalance() {
+        return estimatedClosingBalance;
+    }
+
+    public void setEstimatedClosingBalance(BudgetItem estimatedClosingBalance) {
+        this.estimatedClosingBalance = estimatedClosingBalance;
+    }
+    // </editor-fold>
 }

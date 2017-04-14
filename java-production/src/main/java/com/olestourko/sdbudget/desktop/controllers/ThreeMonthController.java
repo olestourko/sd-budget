@@ -91,7 +91,7 @@ public class ThreeMonthController implements Initializable {
                         );
 
                         month.estimatedClosingBalance.setAmount(month.closingBalance.getAmount());
-                        month.totalSurplus.setAmount(result.surplus);
+                        month.totalSurplus.setAmount(result.closingSurplus);
                     }
                     // Get the next month
                     month = monthRepository.getNext(month);

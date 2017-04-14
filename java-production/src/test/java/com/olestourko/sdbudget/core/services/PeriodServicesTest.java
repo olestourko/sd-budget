@@ -73,7 +73,7 @@ public class PeriodServicesTest {
         BigDecimal carriedSurplus = new BigDecimal("0.0");
         PeriodServices instance = new PeriodServices();
         ClosingResult result = instance.calculateClosing(incomeTarget, openingBalance, closingBalance, carriedSurplus);
-        assertEquals(result.surplus, new BigDecimal("100.0"));
+        assertEquals(result.closingSurplus, new BigDecimal("100.0"));
         assertEquals(result.closingAdjustment, new BigDecimal("100.0"));
     }
 
@@ -109,7 +109,7 @@ public class PeriodServicesTest {
         BigDecimal carriedSurplus = new BigDecimal("100.0");
         PeriodServices instance = new PeriodServices();
         ClosingResult result = instance.calculateClosing(incomeTarget, openingBalance, closingBalance, carriedSurplus);
-        assertEquals(result.surplus, new BigDecimal("200.0"));
+        assertEquals(result.closingSurplus, new BigDecimal("200.0"));
         assertEquals(result.closingAdjustment, new BigDecimal("100.0"));
     }
 

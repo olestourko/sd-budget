@@ -8,11 +8,11 @@ import java.math.BigDecimal;
  */
 public final class ClosingResult {
 
-    public final BigDecimal surplus;
+    public final BigDecimal closingSurplus;
     public final BigDecimal closingAdjustment;
 
-    public ClosingResult(BigDecimal surplus, BigDecimal closingAdjustment) {
-        this.surplus = surplus;
+    public ClosingResult(BigDecimal closingSurplus, BigDecimal closingAdjustment) {
+        this.closingSurplus = closingSurplus;
         this.closingAdjustment = closingAdjustment;
     }
 }

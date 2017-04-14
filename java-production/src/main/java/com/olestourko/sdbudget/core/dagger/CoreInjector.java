@@ -8,6 +8,8 @@ import com.olestourko.sdbudget.core.persistence.relations.MonthExpensesRelation;
 import com.olestourko.sdbudget.core.persistence.relations.MonthNetIncomeTargetsRelation;
 import com.olestourko.sdbudget.core.persistence.relations.MonthOpeningBalancesRelation;
 import com.olestourko.sdbudget.core.persistence.relations.MonthRevenuesRelation;
+import com.olestourko.sdbudget.core.services.MonthServices;
+import com.olestourko.sdbudget.core.services.PeriodServices;
 import dagger.Component;
 import javax.inject.Provider;
 import javax.inject.Singleton;
@@ -18,7 +20,7 @@ import org.jooq.DSLContext;
  * @author oles
  */
 @Singleton
-@Component(modules = PersistenceModule.class)
+@Component(modules = {PersistenceModule.class, ServicesModule.class})
 public interface CoreInjector {
 
     DSLContext createDSLContext();
@@ -39,4 +41,9 @@ public interface CoreInjector {
     MonthOpeningBalancesRelation monthOpeningBalancesRelation();
 
     MonthClosingBalancesRelation monthClosingBalancesRelation();
+
+    /* Services */
+    PeriodServices periodServices();
+    
+    MonthServices monthServices();
 }

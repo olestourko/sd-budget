@@ -12,6 +12,15 @@ public class BudgetItem extends Model implements Serializable {
     private String name;
     private BigDecimal amount;
 
+    public BudgetItem() {
+
+    }
+
+    public BudgetItem(String name, BigDecimal amount) {
+        this.name = name;
+        this.amount = amount;
+    }
+
     public String getName() {
         return name;
     }
