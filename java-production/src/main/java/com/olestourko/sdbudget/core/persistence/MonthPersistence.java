@@ -6,6 +6,7 @@ import com.olestourko.sdbudget.core.persistence.relations.MonthRevenuesRelation;
 import com.olestourko.sdbudget.core.models.BudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
 import com.olestourko.sdbudget.core.persistence.relations.MonthAdjustmentsRelation;
+import com.olestourko.sdbudget.core.persistence.relations.MonthClosingBalancesRelation;
 import com.olestourko.sdbudget.core.persistence.relations.MonthExpensesRelation;
 import com.olestourko.sdbudget.core.persistence.relations.MonthNetIncomeTargetsRelation;
 import com.olestourko.sdbudget.core.persistence.relations.MonthOpeningBalancesRelation;
@@ -92,6 +93,7 @@ public class MonthPersistence implements IPersistance<Month> {
             syncAdjustmentsFromDB(month);
             syncNetIncomeTargetFromDB(month);
             syncOpeningBalanceFromDB(month);
+            syncClosingBalanceFromDB(month);
         }
 
         return months;
@@ -167,7 +169,7 @@ public class MonthPersistence implements IPersistance<Month> {
         }
         relation.syncToDB(month, newAdjustments);
     }
-    
+
     public void associateNetIncomeTarget(Month month, BudgetItem budgetItem) {
         MonthNetIncomeTargetsRelation relation = new MonthNetIncomeTargetsRelation(createDSLContext);
         relation.associate(month, budgetItem);
@@ -197,6 +199,22 @@ public class MonthPersistence implements IPersistance<Month> {
             BudgetItemRecord record = records.get(0);
             BudgetItem budgetItem = budgetItemMapper.mapBudgetItemRecordToBudgetItem(record);
             month.setOpeningBalance(budgetItem);
+        }
+    }
+
+    public void associateClosingBalance(Month month, BudgetItem budgetItem) {
+        MonthClosingBalancesRelation relation = new MonthClosingBalancesRelation(createDSLContext);
+        relation.associate(month, budgetItem);
+    }
+
+    public void syncClosingBalanceFromDB(Month month) {
+        MonthClosingBalancesRelation relation = new MonthClosingBalancesRelation(createDSLContext);
+        Result<BudgetItemRecord> records = relation.load(month);
+
+        if (records.size() > 0) {
+            BudgetItemRecord record = records.get(0);
+            BudgetItem budgetItem = budgetItemMapper.mapBudgetItemRecordToBudgetItem(record);
+            month.setClosingBalance(budgetItem);
         }
     }
 }

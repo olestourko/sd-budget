@@ -17,6 +17,7 @@ public class Month extends Model implements Serializable {
     private ArrayList<BudgetItem> adjustments = new ArrayList<BudgetItem>();
     private BudgetItem netIncomeTarget;
     private BudgetItem openingBalance;
+    private BudgetItem closingBalance;
 
     public short getNumber() {
         return number;
@@ -41,7 +42,7 @@ public class Month extends Model implements Serializable {
     public void setIsClosed(boolean isClosed) {
         this.isClosed = isClosed;
     }
-    
+
     public ArrayList<BudgetItem> getRevenues() {
         return revenues;
     }
@@ -82,4 +83,11 @@ public class Month extends Model implements Serializable {
         this.openingBalance = openingBalance;
     }
 
+    public BudgetItem getClosingBalance() {
+        return closingBalance;
+    }
+
+    public void setClosingBalance(BudgetItem closingBalance) {
+        this.closingBalance = closingBalance;
+    }
 }

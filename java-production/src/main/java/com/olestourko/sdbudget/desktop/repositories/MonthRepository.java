@@ -124,6 +124,12 @@ public class MonthRepository implements IMonthRepository {
             budgetItemMapper.updateBudgetItemFromBudgetItemViewModel(openingBalanceViewModel.getModel(), openingBalanceViewModel);
             budgetItemPersistence.store(openingBalanceViewModel.getModel());
             monthPersistence.associateOpeningBalance(monthViewModel.getModel(), openingBalanceViewModel.getModel());
+
+            //Store the associated Closing Balance
+            BudgetItemViewModel closingBalanceViewModel = monthViewModel.closingBalance;
+            budgetItemMapper.updateBudgetItemFromBudgetItemViewModel(closingBalanceViewModel.getModel(), closingBalanceViewModel);
+            budgetItemPersistence.store(closingBalanceViewModel.getModel());
+            monthPersistence.associateClosingBalance(monthViewModel.getModel(), closingBalanceViewModel.getModel());
         }
     }
 

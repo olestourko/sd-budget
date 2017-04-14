@@ -46,7 +46,11 @@ public abstract class MonthMapper {
         if (month.getOpeningBalance() != null) {
             budgetItemMapper.updateBudgetItemViewModelFromBudgetItem(viewModel.openingBalance, month.getOpeningBalance());
         }
-
+        // Map Closing Balance
+        if (month.getClosingBalance() != null) {
+            budgetItemMapper.updateBudgetItemViewModelFromBudgetItem(viewModel.closingBalance, month.getClosingBalance());
+        }
+        
         viewModel.setModel(month);
         return viewModel;
     }
