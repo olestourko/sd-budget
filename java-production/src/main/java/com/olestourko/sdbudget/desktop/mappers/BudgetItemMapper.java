@@ -20,13 +20,13 @@ public abstract class BudgetItemMapper {
         return budgetItemViewModel;
     }
 
-    public BudgetItem updateBudgetItemFromBudgetItemViewModel(BudgetItem budgetItem, @MappingTarget BudgetItemViewModel budgetItemViewModel) {
+    public BudgetItem updateBudgetItemFromBudgetItemViewModel(@MappingTarget BudgetItem budgetItem, BudgetItemViewModel budgetItemViewModel) {
         budgetItem.setName(budgetItemViewModel.getName());
         budgetItem.setAmount(budgetItemViewModel.getAmount());
         return budgetItem;
     }
     
-    public BudgetItemViewModel updateBudgetItemViewModelFromBudgetItem(BudgetItemViewModel budgetItemViewModel, @MappingTarget BudgetItem budgetItem) {
+    public BudgetItemViewModel updateBudgetItemViewModelFromBudgetItem(@MappingTarget BudgetItemViewModel budgetItemViewModel, BudgetItem budgetItem) {
         budgetItemViewModel.setModel(budgetItem);
         budgetItemViewModel.setName(budgetItem.getName());
         budgetItemViewModel.setAmount(budgetItem.getAmount());

@@ -7,27 +7,25 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import com.olestourko.sdbudget.desktop.models.MonthViewModel;
 import com.olestourko.sdbudget.desktop.repositories.MonthRepository;
-import com.olestourko.sdbudget.core.services.PeriodServices;
 import com.olestourko.sdbudget.desktop.models.Budget;
-import com.olestourko.sdbudget.core.services.ClosingResult;
-import com.olestourko.sdbudget.core.services.EstimateResult;
-import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
-import java.math.BigDecimal;
+import com.olestourko.sdbudget.core.services.MonthServices;
+import com.olestourko.sdbudget.desktop.mappers.MonthMapper;
 import javafx.beans.property.SimpleObjectProperty;
 import javax.inject.Inject;
+import org.mapstruct.factory.Mappers;
 
 public class OneMonthController implements Initializable {
 
     @FXML
     public MonthControl monthControl;
 
-    final private PeriodServices periodServices;
+    final private MonthServices monthServices;
     final private MonthRepository monthRepository;
     final private Budget budget;
 
     @Inject
-    OneMonthController(PeriodServices periodServices, MonthRepository monthRepository, Budget budget) {
-        this.periodServices = periodServices;
+    OneMonthController(MonthServices monthServices, MonthRepository monthRepository, Budget budget) {
+        this.monthServices = monthServices;
         this.monthRepository = monthRepository;
         this.budget = budget;
     }
@@ -39,50 +37,19 @@ public class OneMonthController implements Initializable {
             this.monthControl.setMonth(monthProperty.getValue());
         });
 
-        monthControl.setOnMonthChange(event -> {
+        monthControl.setOnMonthChanged(event -> {
             MonthViewModel month = monthControl.getMonth();
             MonthViewModel previousMonth = monthRepository.getPrevious(month);
-
-            // Calculate innter-month estimates
-            if (!month.getIsClosed()) {
-                if (previousMonth != null) {
-                    month.openingBalance.setAmount(previousMonth.estimatedClosingBalance.getAmount());
-                    month.openingSurplus.setAmount(previousMonth.totalSurplus.getAmount());
-                }
-
-                EstimateResult result = periodServices.calculateEstimate(
-                        month.getTotalRevenues(),
-                        month.getTotalExpenses(),
-                        month.getTotalAdjustments(),
-                        month.netIncomeTarget.getAmount(),
-                        month.openingBalance.getAmount(),
-                        month.openingSurplus.getAmount()
-                );
-
-                month.closingBalanceTarget.setAmount(month.openingBalance.getAmount()
-                        .add(month.netIncomeTarget.getAmount()));
-                month.estimatedClosingBalance.setAmount(result.estimatedBalance.subtract(month.openingSurplus.getAmount()));
-                month.totalSurplus.setAmount(result.surplus);
-
-                BigDecimal sum = BigDecimal.ZERO;
-                for (Object o : month.getAdjustments()) {
-                    BudgetItemViewModel item = (BudgetItemViewModel) o;
-                    sum = sum.add(item.getAmount());
-                }
-//                month.adjustments.setAmount(sum);
-            } // Calculate end of month totals
-            else {
-                ClosingResult result = periodServices.calculateClosing(
-                        month.netIncomeTarget.getAmount(),
-                        month.openingBalance.getAmount(),
-                        month.closingBalance.getAmount(),
-                        month.openingSurplus.getAmount()
-                );
-
-                month.estimatedClosingBalance.setAmount(month.closingBalance.getAmount());
-                month.totalSurplus.setAmount(result.closingSurplus);
-//                month.adjustments.setAmount(result.closingAdjustment);
+            if (previousMonth != null) {
+                month.getOpeningBalance().setAmount(previousMonth.getFinalClosingBalance().getAmount());                
+                month.getOpeningSurplus().setAmount(previousMonth.getClosingSurplus().getAmount());
             }
+
+            MonthMapper mapper = Mappers.getMapper(MonthMapper.class);
+            mapper.updateMonthFromMonthViewModel(month, month.getModel());
+            monthServices.calculateMonthTotals(month.getModel());
+            mapper.updateMonthViewModelFromMonth(month.getModel(), month);
+            return month;
         });
     }
 

@@ -114,19 +114,19 @@ public class MonthRepository implements IMonthRepository {
             monthPersistence.syncAdjustmentsToDB(monthViewModel.getModel());
 
             //Store the associated Net Income Target
-            BudgetItemViewModel netIncomeTargetViewModel = monthViewModel.netIncomeTarget;
+            BudgetItemViewModel netIncomeTargetViewModel = monthViewModel.getNetIncomeTarget();
             budgetItemMapper.updateBudgetItemFromBudgetItemViewModel(netIncomeTargetViewModel.getModel(), netIncomeTargetViewModel);
             budgetItemPersistence.store(netIncomeTargetViewModel.getModel());
             monthPersistence.associateNetIncomeTarget(monthViewModel.getModel(), netIncomeTargetViewModel.getModel());
 
             //Store the associated Opening Balance
-            BudgetItemViewModel openingBalanceViewModel = monthViewModel.openingBalance;
+            BudgetItemViewModel openingBalanceViewModel = monthViewModel.getOpeningBalance();
             budgetItemMapper.updateBudgetItemFromBudgetItemViewModel(openingBalanceViewModel.getModel(), openingBalanceViewModel);
             budgetItemPersistence.store(openingBalanceViewModel.getModel());
             monthPersistence.associateOpeningBalance(monthViewModel.getModel(), openingBalanceViewModel.getModel());
 
             //Store the associated Closing Balance
-            BudgetItemViewModel closingBalanceViewModel = monthViewModel.closingBalance;
+            BudgetItemViewModel closingBalanceViewModel = monthViewModel.getClosingBalance();
             budgetItemMapper.updateBudgetItemFromBudgetItemViewModel(closingBalanceViewModel.getModel(), closingBalanceViewModel);
             budgetItemPersistence.store(closingBalanceViewModel.getModel());
             monthPersistence.associateClosingBalance(monthViewModel.getModel(), closingBalanceViewModel.getModel());

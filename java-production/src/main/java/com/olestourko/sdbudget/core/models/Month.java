@@ -16,15 +16,15 @@ public class Month extends Model implements Serializable {
     private ArrayList<BudgetItem> revenues = new ArrayList<BudgetItem>();
     private ArrayList<BudgetItem> expenses = new ArrayList<BudgetItem>();
     private ArrayList<BudgetItem> adjustments = new ArrayList<BudgetItem>();
-    private BudgetItem netIncomeTarget;
-    private BudgetItem openingBalance;
-    private BudgetItem closingBalance;
+    private BudgetItem netIncomeTarget = new BudgetItem("Net Income Target", BigDecimal.ZERO);
+    private BudgetItem openingBalance = new BudgetItem("Opening Balance", BigDecimal.ZERO);
+    private BudgetItem closingBalance = new BudgetItem("Closing Balance", BigDecimal.ZERO);
 
     // These aren't meant to be stored in DB
-    private BudgetItem openingSurplus;
-    private BudgetItem closingSurplus;
-    private BudgetItem closingBalanceTarget;
-    private BudgetItem estimatedClosingBalance;
+    private BudgetItem openingSurplus = new BudgetItem("Opening Surplus", BigDecimal.ZERO);
+    private BudgetItem closingSurplus = new BudgetItem("Closing Surplus", BigDecimal.ZERO);
+    private BudgetItem closingBalanceTarget = new BudgetItem("Closing Balance Target", BigDecimal.ZERO);
+    private BudgetItem estimatedClosingBalance = new BudgetItem("Estimated Closing Balance", BigDecimal.ZERO);
 
     public short getNumber() {
         return number;

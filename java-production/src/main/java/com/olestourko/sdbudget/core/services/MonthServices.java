@@ -17,27 +17,27 @@ public class MonthServices {
     }
 
     public Month calculateMonthTotals(Month month) {
+        EstimateResult result = periodServices.calculateEstimate(
+                month.getTotalRevenues(),
+                month.getTotalExpenses(),
+                month.getTotalAdjustments(),
+                month.getNetIncomeTarget().getAmount(),
+                month.getOpeningBalance().getAmount(),
+                month.getOpeningSurplus().getAmount()
+        );
+
+        month.getClosingBalanceTarget().setAmount(result.expectedBalance);
+        month.getEstimatedClosingBalance().setAmount(result.estimatedBalance);
+        month.getClosingSurplus().setAmount(result.surplus);
+
         if (month.getIsClosed()) {
-            ClosingResult result = periodServices.calculateClosing(
+            ClosingResult closingResult = periodServices.calculateClosing(
                     month.getNetIncomeTarget().getAmount(),
                     month.getOpeningBalance().getAmount(),
                     month.getClosingBalance().getAmount(),
                     month.getOpeningSurplus().getAmount()
             );
-            month.getClosingSurplus().setAmount(result.closingSurplus);
-        } else {
-            EstimateResult result = periodServices.calculateEstimate(
-                    month.getTotalRevenues(),
-                    month.getTotalExpenses(),
-                    month.getTotalAdjustments(),
-                    month.getNetIncomeTarget().getAmount(),
-                    month.getOpeningBalance().getAmount(),
-                    month.getOpeningSurplus().getAmount()
-            );
-
-            month.getClosingBalanceTarget().setAmount(result.expectedBalance);
-            month.getEstimatedClosingBalance().setAmount(result.estimatedBalance);
-            month.getClosingSurplus().setAmount(result.surplus);
+            month.getClosingSurplus().setAmount(closingResult.closingSurplus);
         }
 
         return month;

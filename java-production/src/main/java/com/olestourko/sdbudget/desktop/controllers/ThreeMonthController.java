@@ -1,5 +1,7 @@
 package com.olestourko.sdbudget.desktop.controllers;
 
+import com.olestourko.sdbudget.core.models.Month;
+import com.olestourko.sdbudget.core.services.MonthServices;
 import com.olestourko.sdbudget.desktop.controls.MonthControl;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -7,18 +9,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import com.olestourko.sdbudget.desktop.models.MonthViewModel;
 import com.olestourko.sdbudget.desktop.repositories.MonthRepository;
-import com.olestourko.sdbudget.core.services.PeriodServices;
 import com.olestourko.sdbudget.desktop.models.Budget;
-import com.olestourko.sdbudget.core.services.ClosingResult;
-import com.olestourko.sdbudget.core.services.EstimateResult;
-import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
-import java.math.BigDecimal;
+import com.olestourko.sdbudget.desktop.mappers.MonthMapper;
 import java.util.ArrayList;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.layout.Pane;
+import javafx.util.Callback;
 import javax.inject.Inject;
+import org.mapstruct.factory.Mappers;
 
 public class ThreeMonthController implements Initializable {
 
@@ -26,18 +24,19 @@ public class ThreeMonthController implements Initializable {
     public Pane monthControlContainer;
 
     final private ArrayList<MonthControl> monthControls = new ArrayList<MonthControl>();
-    final private PeriodServices periodServices;
+    final private MonthServices monthServices;
     final private MonthRepository monthRepository;
     final private Budget budget;
 
     @Inject
-    ThreeMonthController(PeriodServices periodServices, MonthRepository monthRepository, Budget budget) {
-        this.periodServices = periodServices;
+    ThreeMonthController(MonthServices monthServices, MonthRepository monthRepository, Budget budget) {
+        this.monthServices = monthServices;
         this.monthRepository = monthRepository;
         this.budget = budget;
     }
 
     @Override
+
     public void initialize(URL url, ResourceBundle rb) {
         monthControls.add((MonthControl) monthControlContainer.getChildren().get(0));
         monthControls.add((MonthControl) monthControlContainer.getChildren().get(1));
@@ -49,59 +48,33 @@ public class ThreeMonthController implements Initializable {
         });
 
         // This event updates all the months
-        EventHandler<ActionEvent> handleMonthChange = new EventHandler<ActionEvent>() {
+        Callback<MonthControl, MonthViewModel> monthChangedCallback = new Callback<MonthControl, MonthViewModel>() {
             @Override
-            public void handle(ActionEvent event) {
+            public MonthViewModel call(MonthControl param) {
                 MonthViewModel month = getMonth();
                 do {
                     MonthViewModel previousMonth = monthRepository.getPrevious(month);
-                    // Calculate innter-month estimates
-                    if (!month.getIsClosed()) {
-                        if (previousMonth != null) {
-                            month.openingBalance.setAmount(previousMonth.estimatedClosingBalance.getAmount());
-                            month.openingSurplus.setAmount(previousMonth.totalSurplus.getAmount());
-                        }
-
-                        EstimateResult result = periodServices.calculateEstimate(
-                                month.getTotalRevenues(),
-                                month.getTotalExpenses(),
-                                month.getTotalAdjustments(),
-                                month.netIncomeTarget.getAmount(),
-                                month.openingBalance.getAmount(),
-                                month.openingSurplus.getAmount()
-                        );
-
-                        month.closingBalanceTarget.setAmount(month.openingBalance.getAmount()
-                                .add(month.netIncomeTarget.getAmount()));
-                        month.estimatedClosingBalance.setAmount(result.estimatedBalance.subtract(month.openingSurplus.getAmount()));
-                        month.totalSurplus.setAmount(result.surplus);
-
-                        BigDecimal sum = BigDecimal.ZERO;
-                        for (Object o : month.getAdjustments()) {
-                            BudgetItemViewModel item = (BudgetItemViewModel) o;
-                            sum = sum.add(item.getAmount());
-                        }
-                    } // Calculate end of month totals
-                    else {
-                        ClosingResult result = periodServices.calculateClosing(
-                                month.netIncomeTarget.getAmount(),
-                                month.openingBalance.getAmount(),
-                                month.closingBalance.getAmount(),
-                                month.openingSurplus.getAmount()
-                        );
-
-                        month.estimatedClosingBalance.setAmount(month.closingBalance.getAmount());
-                        month.totalSurplus.setAmount(result.closingSurplus);
+                    if (previousMonth != null) {
+                        month.getOpeningBalance().setAmount(previousMonth.getFinalClosingBalance().getAmount());
+                        month.getOpeningSurplus().setAmount(previousMonth.getClosingSurplus().getAmount());
                     }
+
+                    MonthMapper mapper = Mappers.getMapper(MonthMapper.class);
+                    mapper.updateMonthFromMonthViewModel(month, month.getModel());
+                    monthServices.calculateMonthTotals(month.getModel());
+                    mapper.updateMonthViewModelFromMonth(month.getModel(), month);
+
                     // Get the next month
                     month = monthRepository.getNext(month);
                 } while (month != null);
+
+                return month;
             }
         };
 
         // Set event handlers for all the month components
         for (MonthControl monthControl : monthControls) {
-            monthControl.setOnMonthChange(handleMonthChange);
+            monthControl.setOnMonthChanged(monthChangedCallback);
         }
     }
 

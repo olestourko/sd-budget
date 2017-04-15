@@ -1,17 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.olestourko.sdbudget.desktop.models;
 
 import java.math.BigDecimal;
 import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
 import com.olestourko.sdbudget.core.models.Month;
-import java.math.BigInteger;
 import java.util.Calendar;
 import javafx.beans.Observable;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.util.Callback;
@@ -35,37 +30,37 @@ public class MonthViewModel implements IPeriod {
             };
         }
     };
-    
+
     private Month model = new Month();
-    
+
     protected final ObservableList<BudgetItemViewModel> revenues = FXCollections.observableArrayList(extractor);
     protected final ObservableList<BudgetItemViewModel> expenses = FXCollections.observableArrayList(extractor);
     protected final ObservableList<BudgetItemViewModel> adjustments = FXCollections.observableArrayList(extractor);
 
-    public final BudgetItemViewModel netIncomeTarget = new BudgetItemViewModel("Net Income Target", new BigDecimal(BigInteger.ZERO));
-    public final BudgetItemViewModel openingBalance = new BudgetItemViewModel("Opening Balance", new BigDecimal(BigInteger.ZERO));
-    public final BudgetItemViewModel openingSurplus = new BudgetItemViewModel("Carried Surplus", new BigDecimal(BigInteger.ZERO));
-    public final BudgetItemViewModel closingBalanceTarget = new BudgetItemViewModel("Closing Balance Target", new BigDecimal(BigInteger.ZERO));
-    public final BudgetItemViewModel estimatedClosingBalance = new BudgetItemViewModel("Closing Balance (Estimated)", new BigDecimal(BigInteger.ZERO));
-    public final BudgetItemViewModel totalSurplus = new BudgetItemViewModel("Total Surplus", new BigDecimal(BigInteger.ZERO));
-    public final BudgetItemViewModel closingBalance = new BudgetItemViewModel("Closing Balance", BigDecimal.ZERO);
+    public final SimpleObjectProperty<BudgetItemViewModel> netIncomeTarget = new SimpleObjectProperty<BudgetItemViewModel>(new BudgetItemViewModel("Net Income Target", BigDecimal.ZERO));
+    public final SimpleObjectProperty<BudgetItemViewModel> openingBalance = new SimpleObjectProperty<BudgetItemViewModel>(new BudgetItemViewModel("Opening Balance", BigDecimal.ZERO));
+    public final SimpleObjectProperty<BudgetItemViewModel> closingBalance = new SimpleObjectProperty<BudgetItemViewModel>(new BudgetItemViewModel("Closing Balance", BigDecimal.ZERO));
+    public final SimpleObjectProperty<BudgetItemViewModel> openingSurplus = new SimpleObjectProperty<BudgetItemViewModel>(new BudgetItemViewModel("Opening Surplus", BigDecimal.ZERO));
+    public final SimpleObjectProperty<BudgetItemViewModel> closingSurplus = new SimpleObjectProperty<BudgetItemViewModel>(new BudgetItemViewModel("Closing Surplus", BigDecimal.ZERO));
+    public final SimpleObjectProperty<BudgetItemViewModel> closingBalanceTarget = new SimpleObjectProperty<BudgetItemViewModel>(new BudgetItemViewModel("Closing Balance Target", BigDecimal.ZERO));
+    public final SimpleObjectProperty<BudgetItemViewModel> estimatedClosingBalance = new SimpleObjectProperty<BudgetItemViewModel>(new BudgetItemViewModel("Closing Balance (Estimated)", BigDecimal.ZERO));
 
     final public Calendar calendar;
 
     private final SimpleBooleanProperty isClosed = new SimpleBooleanProperty();
-   
+
     public MonthViewModel(Calendar calendar) {
         this.calendar = calendar;
     }
-    
+
     public Month getModel() {
         return model;
     }
-    
+
     public void setModel(Month model) {
         this.model = model;
     }
-    
+
     @Override
     public BigDecimal getTotalRevenues() {
         return revenues.stream().map(BudgetItemViewModel::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -79,16 +74,6 @@ public class MonthViewModel implements IPeriod {
     @Override
     public BigDecimal getTotalAdjustments() {
         return adjustments.stream().map(BudgetItemViewModel::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
-    @Override
-    public BigDecimal getNetIncomeTarget() {
-        return netIncomeTarget.getAmount();
-    }
-
-    @Override
-    public BigDecimal getOpeningBalance() {
-        return openingBalance.getAmount();
     }
 
     @Override
@@ -147,5 +132,73 @@ public class MonthViewModel implements IPeriod {
 
     public SimpleBooleanProperty isClosedProperty() {
         return this.isClosed;
+    }
+
+    @Override
+    public BudgetItemViewModel getNetIncomeTarget() {
+        return netIncomeTarget.getValue();
+    }
+
+    public SimpleObjectProperty<BudgetItemViewModel> getNetIncomeTargetProperty() {
+        return netIncomeTarget;
+    }
+
+    @Override
+    public BudgetItemViewModel getOpeningBalance() {
+        return openingBalance.getValue();
+    }
+
+    public SimpleObjectProperty<BudgetItemViewModel> getOpeningBalanceProperty() {
+        return openingBalance;
+    }
+
+    @Override
+    public BudgetItemViewModel getClosingBalance() {
+        return closingBalance.getValue();
+    }
+
+    public SimpleObjectProperty<BudgetItemViewModel> getClosingBalanceProperty() {
+        return closingBalance;
+    }
+
+    // Returns closing balance based on closed status
+    public BudgetItemViewModel getFinalClosingBalance() {
+        return getIsClosed() ? getClosingBalance() : getClosingBalanceTarget();
+    }
+
+    @Override
+    public BudgetItemViewModel getOpeningSurplus() {
+        return openingSurplus.getValue();
+    }
+
+    public SimpleObjectProperty<BudgetItemViewModel> getOpeningSurplusProperty() {
+        return openingSurplus;
+    }
+
+    @Override
+    public BudgetItemViewModel getClosingSurplus() {
+        return closingSurplus.getValue();
+    }
+
+    public SimpleObjectProperty<BudgetItemViewModel> getClosingSurplusProperty() {
+        return closingSurplus;
+    }
+
+    @Override
+    public BudgetItemViewModel getClosingBalanceTarget() {
+        return closingBalanceTarget.getValue();
+    }
+
+    public SimpleObjectProperty<BudgetItemViewModel> getClosingBalanceTargetProperty() {
+        return closingBalanceTarget;
+    }
+
+    @Override
+    public BudgetItemViewModel getEstimatedClosingBalance() {
+        return estimatedClosingBalance.getValue();
+    }
+
+    public SimpleObjectProperty<BudgetItemViewModel> getEstimatedClosingBalanceProperty() {
+        return estimatedClosingBalance;
     }
 }

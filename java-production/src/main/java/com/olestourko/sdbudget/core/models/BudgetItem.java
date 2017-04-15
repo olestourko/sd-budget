@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 public class BudgetItem extends Model implements Serializable {
 
     private String name;
-    private BigDecimal amount;
+    private BigDecimal amount = BigDecimal.ZERO;
 
     public BudgetItem() {
 
