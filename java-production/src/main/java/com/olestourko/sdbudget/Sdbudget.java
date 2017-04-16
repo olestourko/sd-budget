@@ -20,7 +20,7 @@ import com.olestourko.sdbudget.desktop.controllers.MainController;
 import java.util.Calendar;
 import com.olestourko.sdbudget.desktop.dagger.BudgetInjector;
 import java.util.ArrayList;
-import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.RadioMenuItem;
 
 public class Sdbudget extends Application {
 
@@ -79,29 +79,35 @@ public class Sdbudget extends Application {
         mainController.contentContainer.getChildren().addAll(currentRoot); // Set the month view
         Scene mainScene = new Scene(mainRoot);
         mainScene.getStylesheets().add("/desktop/styles/Styles.css");
-        
+
         // Register handler for save menu item
         mainController.mainMenu.getMenus().get(0).getItems().get(0).setOnAction(event -> {
             budgetInjector.monthRepository().get().storeMonths();
         });
-        
+
         // Register handler for view switching menu item
-        mainController.mainMenu.getMenus().get(1).getItems().get(0).setOnAction(event -> {
-            CheckMenuItem menu = (CheckMenuItem) mainController.mainMenu.getMenus().get(1).getItems().get(0);
-            if (menu.isSelected()) {
-                currentRoot = threeMonthRoot;
-                if (!mainController.contentContainer.getChildren().contains(scratchPadRoot)) {
-                    mainController.contentContainer.getChildren().remove(oneMonthRoot);
-                    mainController.contentContainer.getChildren().add(threeMonthRoot);
-                    stage.setWidth(920);
-                }
-            } else {
+        mainController.oneMonthViewMenuItem.setOnAction(event -> {
+            RadioMenuItem menuItem = (RadioMenuItem) event.getSource();
+            if (menuItem.isSelected()) {
                 currentRoot = oneMonthRoot;
                 if (!mainController.contentContainer.getChildren().contains(scratchPadRoot)) {
                     mainController.contentContainer.getChildren().remove(threeMonthRoot);
                     mainController.contentContainer.getChildren().add(oneMonthRoot);
                     stage.setWidth(400);
                 }
+            }
+        });
+
+        mainController.threeMonthViewMenuItem.setOnAction(event -> {
+            RadioMenuItem menuItem = (RadioMenuItem) event.getSource();
+            if (menuItem.isSelected()) {
+                currentRoot = threeMonthRoot;
+                if (!mainController.contentContainer.getChildren().contains(scratchPadRoot)) {
+                    mainController.contentContainer.getChildren().remove(oneMonthRoot);
+                    mainController.contentContainer.getChildren().add(threeMonthRoot);
+                    stage.setWidth(920);
+                }
+
             }
         });
 

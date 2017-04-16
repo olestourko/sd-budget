@@ -18,8 +18,12 @@
                     </items>
                 </Menu>
                 <Menu text="View">
+                    <fx:define>
+                        <ToggleGroup fx:id="monthViewToggleGroup"/>
+                    </fx:define>
                     <items>
-                        <CheckMenuItem text="3-Month View"/>
+                        <RadioMenuItem fx:id="oneMonthViewMenuItem" text="1-Month View" toggleGroup="$monthViewToggleGroup" selected="true" />
+                        <RadioMenuItem fx:id="threeMonthViewMenuItem" text="3-Month View" toggleGroup="$monthViewToggleGroup"/>
                     </items>
                 </Menu>
             </menus>

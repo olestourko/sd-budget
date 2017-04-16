@@ -6,6 +6,21 @@
 .root {
     -fx-background-color: #fdf6e3;
 }
+/* Menubar */
+.menu-bar {
+    -fx-background-color: #eee8d5;
+}
+.menu-bar .context-menu {
+    -fx-effect: none;
+    -fx-background-color: #eee8d5;
+    -fx-border-color: #657b83;
+    -fx-border-width: 1;
+}
+.menu-bar .menu:hover > .label,
+.menu-bar .menu:showing > .label,
+.menu-bar .menu-item:focused .label {
+	-fx-text-fill: #ffffff;
+}
 
 .label {
     -fx-text-fill: #657b83;
@@ -46,23 +61,21 @@
 }
 
 /*Basic Table Styles*/
+.table-view .column-header-background,
+.table-view .column-header-background .table-column,
+.table-view .column-header-background .filler,
 .tree-table-view .column-header-background,
 .tree-table-view .column-header-background .table-column,
 .tree-table-view .column-header-background .filler {
     -fx-background-color: #eee8d5;
 }
+
+.table-view .column-header-background .table-column .label,
 .tree-table-view .column-header-background .table-column .label {
     -fx-alignment: CENTER_LEFT;
 }
 .tree-table-view .tree-table-row-cell .tree-disclosure-node .arrow {
     -fx-background-color: #657b83;
-}
-
-
-.table-view .column-header-background {
-    -fx-max-height: 0;
-    -fx-pref-height: 0;
-    -fx-min-height: 0;
 }
 
 .tree-table-cell,
@@ -94,4 +107,11 @@
 .tree-table-view.disabled .tree-table-cell,
 .table-view.disabled .table-cell {
     -fx-text-fill: darkgray;
+}
+
+/* MonthControl specific */
+.month-control .table-view .column-header-background {
+    -fx-max-height: 0;
+    -fx-pref-height: 0;
+    -fx-min-height: 0;
 }
