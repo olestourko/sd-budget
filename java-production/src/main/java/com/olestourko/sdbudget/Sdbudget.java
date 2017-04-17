@@ -111,7 +111,7 @@ public class Sdbudget extends Application {
             }
         });
 
-        stage.setTitle("S/D Budget");
+        stage.setTitle("SDBudget");
         stage.setWidth(400);
         stage.setHeight(580);
         stage.setScene(mainScene);
