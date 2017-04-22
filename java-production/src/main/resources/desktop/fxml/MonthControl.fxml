@@ -15,14 +15,14 @@
             <AnchorPane AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
                 <children>
                     <Label fx:id="periodDate" text="Date goes here" />
-                    <TreeTableView fx:id="budgetTable" editable="true" showRoot="false" AnchorPane.bottomAnchor="245.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
+                    <TreeTableView fx:id="budgetTable" editable="true" showRoot="false" AnchorPane.bottomAnchor="156.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
                         <columnResizePolicy><TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
                         <columns>
                             <TreeTableColumn fx:id="nameColumn" editable="true" sortable="false" prefWidth="150"  text="Name" />
                             <TreeTableColumn fx:id="amountColumn" editable="true" sortable="false" text="Amount" />
                         </columns>
                     </TreeTableView>
-                    <TableView fx:id="totalsTable" editable="true" prefHeight="130" AnchorPane.bottomAnchor="110.0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+                    <TableView fx:id="totalsTable" editable="true" prefHeight="100" AnchorPane.bottomAnchor="58.0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
                         <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
                         <columns>
                            <TableColumn editable="false" text="Name">
@@ -37,7 +37,7 @@
                             </TableColumn>
                         </columns>
                     </TableView>
-                    <TableView fx:id="closingTable" editable="true" prefHeight="75" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+                    <TableView fx:id="closingTable" editable="true" prefHeight="28" AnchorPane.bottomAnchor="32.0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
                         <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
                         <columns>
                             <TableColumn editable="true" text="Name">

@@ -115,3 +115,8 @@
     -fx-pref-height: 0;
     -fx-min-height: 0;
 }
+
+.month-control #budgetTable,
+.month-control #totalsTable {
+    -fx-border-width: 1 1 0 1;
+}

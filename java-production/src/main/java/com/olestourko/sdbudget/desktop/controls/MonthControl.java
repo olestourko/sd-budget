@@ -194,6 +194,22 @@ public class MonthControl extends AnchorPane {
         budgetTable.setEditable(true);
         budgetTable.setRoot(budgetTableRoot);
 
+        // Prevent the tables from having rows selected at the same time
+        budgetTable.getSelectionModel().selectedItemProperty().addListener(objectProperty -> {
+            totalsTable.getSelectionModel().clearSelection();
+            closingTable.getSelectionModel().clearSelection();
+        });
+
+        totalsTable.getSelectionModel().selectedItemProperty().addListener(objectProperty -> {
+            budgetTable.getSelectionModel().clearSelection();
+            closingTable.getSelectionModel().clearSelection();
+        });
+
+        closingTable.getSelectionModel().selectedItemProperty().addListener(objectProperty -> {
+            budgetTable.getSelectionModel().clearSelection();
+            totalsTable.getSelectionModel().clearSelection();
+        });
+
         // Update the tables when the month is changed
         this.monthProperty().addListener(property -> {
             callMonthChangeCallback();
