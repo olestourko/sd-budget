@@ -275,6 +275,7 @@ public class MonthControl extends AnchorPane {
         // Set the handler for the "Close Month" checkbox
         this.closeMonthCheckBox.selectedProperty().addListener(checkbox -> {
             this.month.get().setIsClosed(this.closeMonthCheckBox.isSelected());
+            callMonthChangeCallback();
             updateTableStyles();
         });
 
