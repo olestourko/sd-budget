@@ -1,9 +1,11 @@
 package com.olestourko.sdbudget.desktop.controllers;
 
+import com.olestourko.sdbudget.core.models.Month;
 import com.olestourko.sdbudget.desktop.controls.CurrencyTableCell;
 import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
 import com.olestourko.sdbudget.desktop.models.MonthViewModel;
-import com.olestourko.sdbudget.desktop.repositories.MonthRepository;
+import com.olestourko.sdbudget.core.repositories.MonthRepository;
+import com.olestourko.sdbudget.desktop.mappers.MonthMapper;
 import com.olestourko.sdbudget.desktop.models.Budget;
 import java.math.BigDecimal;
 import java.net.URL;
@@ -28,6 +30,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import javax.inject.Inject;
+import org.mapstruct.factory.Mappers;
 
 public class ScratchpadController implements Initializable {
 
@@ -46,8 +49,8 @@ public class ScratchpadController implements Initializable {
     @FXML
     private TextField amountField;
 
-    final private MonthRepository monthRepository;
     final private BudgetItemViewModel totalAdjustments = new BudgetItemViewModel("Total Adjustments", BigDecimal.ZERO);
+    final private MonthMapper monthMapper;
     final private Budget budget;
 
     final private ListChangeListener<BudgetItemViewModel> listChangeListener = new ListChangeListener<BudgetItemViewModel>() {
@@ -63,17 +66,19 @@ public class ScratchpadController implements Initializable {
     }
 
     @Inject
-    public ScratchpadController(MonthRepository monthRepository, Budget budget) {
-        this.monthRepository = monthRepository;
+    public ScratchpadController(Budget budget) {
+        this.monthMapper = Mappers.getMapper(MonthMapper.class);
         this.budget = budget;
     }
 
     // TODO: Replace with dependency injection
     public void load() {
         //Set the month and add callback for when the month property in the Budget model changes
-        this.setMonth(budget.getCurrentMonth());
+        MonthViewModel monthViewModel = monthMapper.mapMonthToMonthViewModel(budget.getCurrentMonth());
+        
+        this.setMonth(monthViewModel);
         budget.currentMonthProperty().addListener(event -> {
-            this.setMonth(budget.getCurrentMonth());
+            this.setMonth(monthMapper.mapMonthToMonthViewModel(budget.getCurrentMonth()));
         });
 
         nameColumn.setCellValueFactory(new PropertyValueFactory<BudgetItemViewModel, String>("name"));
@@ -121,7 +126,7 @@ public class ScratchpadController implements Initializable {
         
         //Set the date on the label
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
-        periodDate.setText(dateFormat.format(budget.getCurrentMonth().calendar.getTime()));
+        periodDate.setText(dateFormat.format(monthViewModel.calendar.getTime()));
 
         // Remove adjusments when DELETE key is pressed
         scratchPadTable.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -132,7 +137,8 @@ public class ScratchpadController implements Initializable {
                     if (selectedItem == totalAdjustments) {
                         return;
                     }
-                    budget.getCurrentMonth().removeAdjustment(selectedItem);
+                    MonthViewModel monthViewModel = monthMapper.mapMonthToMonthViewModel(budget.getCurrentMonth());
+                    monthViewModel.removeAdjustment(selectedItem);
                 }
             }
         });
@@ -144,13 +150,15 @@ public class ScratchpadController implements Initializable {
         BudgetItemViewModel newItem = new BudgetItemViewModel(name, amount);
         nameField.setText("");
         amountField.setText("");
-        budget.getCurrentMonth().addAdjustment(newItem);
+        MonthViewModel monthViewModel = monthMapper.mapMonthToMonthViewModel(budget.getCurrentMonth());
+        monthViewModel.addAdjustment(newItem);
     }
 
-    private void setMonth(MonthViewModel month) {
-        budget.setCurrentMonth(month);
+    private void setMonth(MonthViewModel monthViewModel) {
+        Month month = monthMapper.mapMonthViewModelToMonth(monthViewModel);
+//        budget.setCurrentMonth(month);
         scratchPadTable.getItems().removeListener(listChangeListener);
-        scratchPadTable.setItems(month.getAdjustments());
+        scratchPadTable.setItems(monthViewModel.getAdjustments());
         scratchPadTable.getItems().addListener(listChangeListener);
         totalAdjustments.setAmount(month.getTotalAdjustments());
     }

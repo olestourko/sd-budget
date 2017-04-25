@@ -7,7 +7,7 @@ import com.olestourko.sdbudget.core.services.EstimateResult;
  *
  * @author oles
  */
-public class PeriodServices {
+public class PeriodCalculationServices {
 
     public EstimateResult calculateEstimate(BigDecimal revenue, BigDecimal expenses, BigDecimal adjustments, BigDecimal incomeTarget, BigDecimal openingBalance, BigDecimal openingSurplus) {
         BigDecimal netIncome = revenue.subtract(expenses)

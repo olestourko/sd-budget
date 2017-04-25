@@ -8,8 +8,8 @@ import com.olestourko.sdbudget.core.persistence.relations.MonthExpensesRelation;
 import com.olestourko.sdbudget.core.persistence.relations.MonthNetIncomeTargetsRelation;
 import com.olestourko.sdbudget.core.persistence.relations.MonthOpeningBalancesRelation;
 import com.olestourko.sdbudget.core.persistence.relations.MonthRevenuesRelation;
-import com.olestourko.sdbudget.core.services.MonthServices;
-import com.olestourko.sdbudget.core.services.PeriodServices;
+import com.olestourko.sdbudget.core.services.MonthCalculationServices;
+import com.olestourko.sdbudget.core.services.PeriodCalculationServices;
 import dagger.Component;
 import javax.inject.Provider;
 import javax.inject.Singleton;
@@ -43,7 +43,7 @@ public interface CoreInjector {
     MonthClosingBalancesRelation monthClosingBalancesRelation();
 
     /* Services */
-    PeriodServices periodServices();
+    PeriodCalculationServices periodServices();
     
-    MonthServices monthServices();
+    MonthCalculationServices monthServices();
 }

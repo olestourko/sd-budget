@@ -7,17 +7,17 @@ import javax.inject.Inject;
  *
  * @author oles
  */
-public class MonthServices {
+public class MonthCalculationServices {
 
-    private final PeriodServices periodServices;
+    private final PeriodCalculationServices periodCalculationServices;
 
     @Inject
-    public MonthServices(PeriodServices periodServices) {
-        this.periodServices = periodServices;
+    public MonthCalculationServices(PeriodCalculationServices periodServices) {
+        this.periodCalculationServices = periodServices;
     }
 
     public Month calculateMonthTotals(Month month) {
-        EstimateResult result = periodServices.calculateEstimate(
+        EstimateResult result = periodCalculationServices.calculateEstimate(
                 month.getTotalRevenues(),
                 month.getTotalExpenses(),
                 month.getTotalAdjustments(),
@@ -31,7 +31,7 @@ public class MonthServices {
         month.getClosingSurplus().setAmount(result.surplus);
 
         if (month.getIsClosed()) {
-            ClosingResult closingResult = periodServices.calculateClosing(
+            ClosingResult closingResult = periodCalculationServices.calculateClosing(
                     month.getNetIncomeTarget().getAmount(),
                     month.getOpeningBalance().getAmount(),
                     month.getClosingBalance().getAmount(),

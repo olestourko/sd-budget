@@ -19,6 +19,13 @@ public abstract class BudgetItemMapper {
         budgetItemViewModel.setAmount(budgetItem.getAmount());
         return budgetItemViewModel;
     }
+    
+    public BudgetItem mapBudgetItemViewModelToBudgetItem(BudgetItemViewModel budgetItemViewModel) {
+        BudgetItem budgetItem = new BudgetItem();
+        budgetItem.setName(budgetItemViewModel.getName());
+        budgetItem.setAmount(budgetItemViewModel.getAmount());
+        return budgetItem;
+    }
 
     public BudgetItem updateBudgetItemFromBudgetItemViewModel(@MappingTarget BudgetItem budgetItem, BudgetItemViewModel budgetItemViewModel) {
         budgetItem.setName(budgetItemViewModel.getName());

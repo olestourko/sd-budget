@@ -48,6 +48,43 @@ public abstract class MonthMapper {
         viewModel.setModel(month);
         return viewModel;
     }
+    
+    public Month mapMonthViewModelToMonth(MonthViewModel monthViewModel) {
+        Month month = new Month();
+        month.setNumber((short) monthViewModel.calendar.get(Calendar.MONTH));
+        month.setYear((short) monthViewModel.calendar.get(Calendar.YEAR));
+        month.setIsClosed(monthViewModel.getIsClosed());
+        
+        BudgetItemMapper budgetItemMapper = Mappers.getMapper(BudgetItemMapper.class);
+        
+        // Map Revenues
+        month.getRevenues().clear();
+        for (BudgetItemViewModel revenue : monthViewModel.getRevenues()) {
+            budgetItemMapper.updateBudgetItemFromBudgetItemViewModel(revenue.getModel(), revenue);
+            month.getRevenues().add(revenue.getModel());
+        }
+        // Map Expenses
+        month.getExpenses().clear();
+        for (BudgetItemViewModel expense : monthViewModel.getExpenses()) {
+            budgetItemMapper.updateBudgetItemFromBudgetItemViewModel(expense.getModel(), expense);
+            month.getExpenses().add(expense.getModel());
+        }
+        // Map Adjustments
+        month.getAdjustments().clear();
+        for (BudgetItemViewModel adjustment : monthViewModel.getAdjustments()) {
+            budgetItemMapper.updateBudgetItemFromBudgetItemViewModel(adjustment.getModel(), adjustment);
+            month.getAdjustments().add(adjustment.getModel());
+        }
+        
+        month.setNetIncomeTarget(budgetItemMapper.mapBudgetItemViewModelToBudgetItem(monthViewModel.getNetIncomeTarget()));
+        month.setOpeningBalance(budgetItemMapper.mapBudgetItemViewModelToBudgetItem(monthViewModel.getOpeningBalance()));
+        month.setClosingBalance(budgetItemMapper.mapBudgetItemViewModelToBudgetItem(monthViewModel.getClosingBalance()));
+        month.setOpeningSurplus(budgetItemMapper.mapBudgetItemViewModelToBudgetItem(monthViewModel.getOpeningSurplus()));
+        month.setClosingSurplus(budgetItemMapper.mapBudgetItemViewModelToBudgetItem(monthViewModel.getClosingSurplus()));
+        month.setClosingBalance(budgetItemMapper.mapBudgetItemViewModelToBudgetItem(monthViewModel.getClosingBalance()));
+        
+        return month;
+    }
 
     public Month updateMonthFromMonthViewModel(MonthViewModel monthViewModel, @MappingTarget Month month) {
         month.setNumber((short) monthViewModel.calendar.get(Calendar.MONTH));

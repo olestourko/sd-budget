@@ -5,7 +5,7 @@
  */
 package com.olestourko.sdbudget.core.services;
 
-import com.olestourko.sdbudget.core.services.PeriodServices;
+import com.olestourko.sdbudget.core.services.PeriodCalculationServices;
 import com.olestourko.sdbudget.core.services.ClosingResult;
 import com.olestourko.sdbudget.core.services.EstimateResult;
 import org.junit.After;
@@ -53,7 +53,7 @@ public class PeriodServicesTest {
         BigDecimal incomeTarget = new BigDecimal("500.0");
         BigDecimal openingBalance = new BigDecimal("0.0");
         BigDecimal carriedSurplus = new BigDecimal("0.0");
-        PeriodServices instance = new PeriodServices();
+        PeriodCalculationServices instance = new PeriodCalculationServices();
         EstimateResult result = instance.calculateEstimate(revenue, expenses, adjustments, incomeTarget, openingBalance, carriedSurplus);
         assertEquals(result.netIncome, new BigDecimal("750.0"));
         assertEquals(result.estimatedBalance, new BigDecimal("750.0"));
@@ -71,7 +71,7 @@ public class PeriodServicesTest {
         BigDecimal openingBalance = new BigDecimal("0.0");
         BigDecimal closingBalance = new BigDecimal("600.0");
         BigDecimal carriedSurplus = new BigDecimal("0.0");
-        PeriodServices instance = new PeriodServices();
+        PeriodCalculationServices instance = new PeriodCalculationServices();
         ClosingResult result = instance.calculateClosing(incomeTarget, openingBalance, closingBalance, carriedSurplus);
         assertEquals(result.closingSurplus, new BigDecimal("100.0"));
         assertEquals(result.closingAdjustment, new BigDecimal("100.0"));
@@ -89,7 +89,7 @@ public class PeriodServicesTest {
         BigDecimal incomeTarget = new BigDecimal("500.0");
         BigDecimal openingBalance = new BigDecimal("0.0");
         BigDecimal carriedSurplus = new BigDecimal("100.0");
-        PeriodServices instance = new PeriodServices();
+        PeriodCalculationServices instance = new PeriodCalculationServices();
         EstimateResult result = instance.calculateEstimate(revenue, expenses, adjustments, incomeTarget, openingBalance, carriedSurplus);
         assertEquals(result.netIncome, new BigDecimal("750.0"));
         assertEquals(result.estimatedBalance, new BigDecimal("850.0"));
@@ -107,7 +107,7 @@ public class PeriodServicesTest {
         BigDecimal openingBalance = new BigDecimal("0.0");
         BigDecimal closingBalance = new BigDecimal("600.0");
         BigDecimal carriedSurplus = new BigDecimal("100.0");
-        PeriodServices instance = new PeriodServices();
+        PeriodCalculationServices instance = new PeriodCalculationServices();
         ClosingResult result = instance.calculateClosing(incomeTarget, openingBalance, closingBalance, carriedSurplus);
         assertEquals(result.closingSurplus, new BigDecimal("200.0"));
         assertEquals(result.closingAdjustment, new BigDecimal("100.0"));

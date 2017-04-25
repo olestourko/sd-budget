@@ -1,6 +1,6 @@
 package com.olestourko.sdbudget.desktop.models;
 
-import com.olestourko.sdbudget.desktop.models.MonthViewModel;
+import com.olestourko.sdbudget.core.models.Month;
 import javafx.beans.property.SimpleObjectProperty;
 
 /**
@@ -9,17 +9,17 @@ import javafx.beans.property.SimpleObjectProperty;
  */
 public class Budget {
 
-    final private SimpleObjectProperty<MonthViewModel> currentMonth = new SimpleObjectProperty<MonthViewModel>();
+    final private SimpleObjectProperty<Month> currentMonth = new SimpleObjectProperty<Month>();
 
-    public MonthViewModel getCurrentMonth() {
+    public Month getCurrentMonth() {
         return this.currentMonth.get();
     }
 
-    public void setCurrentMonth(MonthViewModel month) {
+    public void setCurrentMonth(Month month) {
         this.currentMonth.set(month);
     }
 
-    public SimpleObjectProperty<MonthViewModel> currentMonthProperty() {
+    public SimpleObjectProperty<Month> currentMonthProperty() {
         return this.currentMonth;
     }
 }

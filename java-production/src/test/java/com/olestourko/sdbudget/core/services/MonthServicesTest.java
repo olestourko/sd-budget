@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
  */
 public class MonthServicesTest {
 
-    private final MonthServices monthServices;
+    private final MonthCalculationServices monthServices;
 
     public MonthServicesTest() {
         CoreInjector injector = DaggerCoreInjector.create();

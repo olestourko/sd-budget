@@ -5,10 +5,9 @@
  */
 package com.olestourko.sdbudget.core.repositories;
 
+import com.olestourko.sdbudget.core.models.Month;
 import com.olestourko.sdbudget.desktop.dagger.BudgetInjector;
 import com.olestourko.sdbudget.desktop.dagger.DaggerBudgetInjector;
-import com.olestourko.sdbudget.desktop.repositories.MonthRepository;
-import com.olestourko.sdbudget.desktop.models.MonthViewModel;
 import java.util.Calendar;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -50,11 +49,13 @@ public class MonthRepositoryTest {
     public void testPutMonth() {
         BudgetInjector injector = DaggerBudgetInjector.create();
 
-        MonthViewModel month = new MonthViewModel(Calendar.getInstance());
+        Month month = new Month();
+        month.setNumber((short) 1);
+        month.setYear((short) 2017);
         MonthRepository repository = injector.monthRepository().get();
         repository.putMonth(month);
 
-        MonthViewModel result = repository.getMonth(month.calendar);
+        Month result = repository.getMonth(month.getNumber(), month.getYear());
         assertEquals(month, result);
     }
 
@@ -65,11 +66,13 @@ public class MonthRepositoryTest {
     public void testGetMonth() {
         BudgetInjector injector = DaggerBudgetInjector.create();
 
-        MonthViewModel month = new MonthViewModel(Calendar.getInstance());
+        Month month = new Month();
+        month.setNumber((short) 1);
+        month.setYear((short) 2017);
         MonthRepository repository = injector.monthRepository().get();
         repository.putMonth(month);
 
-        MonthViewModel result = repository.getMonth(month.calendar);
+        Month result = repository.getMonth(month.getNumber(), month.getYear());
         assertEquals(month, result);
     }
 
@@ -78,17 +81,20 @@ public class MonthRepositoryTest {
      */
     @Test
     public void testGetPrevious() {
-        MonthViewModel currentMonth = new MonthViewModel(Calendar.getInstance());
-        Calendar previousCalendar = Calendar.getInstance();
-        previousCalendar.add(Calendar.MONTH, -1);
-        MonthViewModel previousMonth = new MonthViewModel(previousCalendar);
+        Month currentMonth = new Month();
+        currentMonth.setNumber((short) 2);
+        currentMonth.setYear((short) 2017);
+
+        Month previousMonth = new Month();
+        previousMonth.setNumber((short) 1);
+        previousMonth.setYear((short) 2017);
 
         BudgetInjector injector = DaggerBudgetInjector.create();
         MonthRepository repository = injector.monthRepository().get();
         repository.putMonth(currentMonth);
         repository.putMonth(previousMonth);
 
-        MonthViewModel result = repository.getPrevious(currentMonth);
+        Month result = repository.getPrevious(currentMonth);
         assertEquals(previousMonth, result);
     }
 
@@ -97,17 +103,20 @@ public class MonthRepositoryTest {
      */
     @Test
     public void testGetNext() {
-        MonthViewModel currentMonth = new MonthViewModel(Calendar.getInstance());
-        Calendar nextCalendar = Calendar.getInstance();
-        nextCalendar.add(Calendar.MONTH, 1);
-        MonthViewModel nextMonth = new MonthViewModel(nextCalendar);
-
+        Month currentMonth = new Month();
+        currentMonth.setNumber((short) 1);
+        currentMonth.setYear((short) 2017);
+        
+        Month nextMonth = new Month();
+        nextMonth.setNumber((short) 2);
+        nextMonth.setYear((short) 2017);
+        
         BudgetInjector injector = DaggerBudgetInjector.create();
         MonthRepository repository = injector.monthRepository().get();
         repository.putMonth(currentMonth);
         repository.putMonth(nextMonth);
 
-        MonthViewModel result = repository.getNext(currentMonth);
+        Month result = repository.getNext(currentMonth);
         assertEquals(nextMonth, result);
     }
 

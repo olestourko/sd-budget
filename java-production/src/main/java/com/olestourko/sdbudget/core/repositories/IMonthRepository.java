@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.olestourko.sdbudget.desktop.repositories;
+package com.olestourko.sdbudget.core.repositories;
 
-import com.olestourko.sdbudget.desktop.models.MonthViewModel;
+import com.olestourko.sdbudget.core.models.Month;
 import java.util.Calendar;
 
 /**
@@ -14,13 +14,13 @@ import java.util.Calendar;
  */
 public interface IMonthRepository {
 
-    public void putMonth(MonthViewModel month);
+    public void putMonth(Month month);
     
-    public MonthViewModel getMonth(Calendar calendar);
+    public Month getMonth(short number, short year);
 
-    public MonthViewModel getPrevious(MonthViewModel month);
+    public Month getPrevious(Month month);
 
-    public MonthViewModel getNext(MonthViewModel month);
+    public Month getNext(Month month);
     
     public void fetchMonths();
     

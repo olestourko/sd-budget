@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 import com.olestourko.sdbudget.desktop.models.MonthViewModel;
 import javafx.scene.layout.AnchorPane;
 import com.olestourko.sdbudget.desktop.dagger.DaggerBudgetInjector;
-import com.olestourko.sdbudget.desktop.repositories.MonthRepository;
+import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.desktop.models.Budget;
 import com.olestourko.sdbudget.desktop.controllers.MainController;
 import java.util.Calendar;
@@ -42,15 +42,17 @@ public class Sdbudget extends Application {
                 cal.set(Calendar.DAY_OF_MONTH, 1);
                 cal.add(Calendar.MONTH, i);
                 cal.set(Calendar.YEAR, 2017);
-                MonthViewModel desktopMonth = new MonthViewModel(cal);
-                monthRepository.putMonth(desktopMonth);
+                Month month = new Month();
+                month.setNumber((short) cal.get(Calendar.MONTH));
+                month.setYear((short) cal.get(Calendar.YEAR));
+                monthRepository.putMonth(month);
             }
             monthRepository.storeMonths();
         } else {
             monthRepository.fetchMonths();
         }
 
-        budget.setCurrentMonth(monthRepository.getMonth(Calendar.getInstance()));
+        budget.setCurrentMonth(monthRepository.getMonth((short) 0, (short) 2017));
 
         OneMonthController oneMonthController = budgetInjector.oneMonthController().get();
         FXMLLoader oneMonthLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/BudgetScene_OneMonth.fxml"));

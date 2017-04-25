@@ -1,6 +1,6 @@
 package com.olestourko.sdbudget.core.dagger;
 
-import com.olestourko.sdbudget.core.services.PeriodServices;
+import com.olestourko.sdbudget.core.services.PeriodCalculationServices;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Singleton;
@@ -14,7 +14,7 @@ public class ServicesModule {
 
     @Provides
     @Singleton
-    PeriodServices periodServices() {
-        return new PeriodServices();
+    PeriodCalculationServices periodServices() {
+        return new PeriodCalculationServices();
     }
 }

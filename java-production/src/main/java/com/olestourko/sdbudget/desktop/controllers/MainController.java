@@ -1,8 +1,9 @@
 package com.olestourko.sdbudget.desktop.controllers;
 
+import com.olestourko.sdbudget.core.models.Month;
 import com.olestourko.sdbudget.desktop.models.Budget;
-import com.olestourko.sdbudget.desktop.repositories.MonthRepository;
-import com.olestourko.sdbudget.core.services.PeriodServices;
+import com.olestourko.sdbudget.core.repositories.MonthRepository;
+import com.olestourko.sdbudget.core.services.PeriodCalculationServices;
 import com.olestourko.sdbudget.desktop.models.MonthViewModel;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -47,7 +48,7 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         previousMonthButton.setOnAction(event -> {
-            MonthViewModel previousMonth = monthRepository.getPrevious(budget.getCurrentMonth());
+            Month previousMonth = monthRepository.getPrevious(budget.getCurrentMonth());
             if (previousMonth != null) {
                 nextMonthButton.disableProperty().set(false);
                 budget.setCurrentMonth(previousMonth);
@@ -60,7 +61,7 @@ public class MainController implements Initializable {
             }
         });
         nextMonthButton.setOnAction(event -> {
-            MonthViewModel nextMonth = monthRepository.getNext(budget.getCurrentMonth());
+            Month nextMonth = monthRepository.getNext(budget.getCurrentMonth());
             if (nextMonth != null) {
                 previousMonthButton.disableProperty().set(false);
                 budget.setCurrentMonth(nextMonth);
