@@ -1,6 +1,8 @@
 package com.olestourko.sdbudget.desktop.controls;
 
 import com.olestourko.sdbudget.core.models.BudgetItem;
+import com.olestourko.sdbudget.core.models.Month;
+import com.olestourko.sdbudget.desktop.mappers.MonthMapper;
 import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -28,6 +30,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
+import org.mapstruct.factory.Mappers;
 
 /**
  *
@@ -36,7 +39,7 @@ import javafx.util.StringConverter;
 public class MonthControl extends AnchorPane {
 
     @FXML
-    private Label periodDate;
+    private Label dateLabel;
     @FXML
     private TreeTableView budgetTable;
 
@@ -55,20 +58,22 @@ public class MonthControl extends AnchorPane {
     @FXML
     public CheckBox closeMonthCheckBox;
 
-    private final SimpleObjectProperty<MonthViewModel> month = new SimpleObjectProperty<MonthViewModel>();
+    private final SimpleObjectProperty<Month> month = new SimpleObjectProperty<>();
+    private final SimpleObjectProperty<MonthViewModel> monthViewModel = new SimpleObjectProperty<MonthViewModel>();
+    private final MonthMapper monthMapper;
 
-    private Callback<MonthControl, MonthViewModel> monthChangedCallback;
+    private Callback<MonthControl, Month> monthChangedCallback;
 
-    public void setOnMonthChanged(Callback<MonthControl, MonthViewModel> callback) {
+    public void setOnMonthChanged(Callback<MonthControl, Month> callback) {
         this.monthChangedCallback = callback;
     }
 
     private final ListChangeListener<BudgetItemViewModel> revenuesListChangeListener = new ListChangeListener<BudgetItemViewModel>() {
         @Override
         public void onChanged(ListChangeListener.Change<? extends BudgetItemViewModel> change) {
-            revenuesRoot.getValue().setAmount(month.getValue().getTotalRevenues());
+            revenuesRoot.getValue().setAmount(monthViewModel.getValue().getTotalRevenues());
             revenuesRoot.getChildren().clear();
-            for (BudgetItemViewModel revenue : month.getValue().getRevenues()) {
+            for (BudgetItemViewModel revenue : monthViewModel.getValue().getRevenues()) {
                 revenuesRoot.getChildren().add(new TreeItem<BudgetItemViewModel>(revenue));
             }
         }
@@ -77,9 +82,9 @@ public class MonthControl extends AnchorPane {
     private final ListChangeListener<BudgetItemViewModel> expensesListChangeListener = new ListChangeListener<BudgetItemViewModel>() {
         @Override
         public void onChanged(ListChangeListener.Change<? extends BudgetItemViewModel> change) {
-            expensesRoot.getValue().setAmount(month.getValue().getTotalExpenses());
+            expensesRoot.getValue().setAmount(monthViewModel.getValue().getTotalExpenses());
             expensesRoot.getChildren().clear();
-            for (BudgetItemViewModel expense : month.getValue().getExpenses()) {
+            for (BudgetItemViewModel expense : monthViewModel.getValue().getExpenses()) {
                 expensesRoot.getChildren().add(new TreeItem<BudgetItemViewModel>(expense));
             }
         }
@@ -88,9 +93,9 @@ public class MonthControl extends AnchorPane {
     private final ListChangeListener<BudgetItemViewModel> adjustmentsListChangeListener = new ListChangeListener<BudgetItemViewModel>() {
         @Override
         public void onChanged(ListChangeListener.Change<? extends BudgetItemViewModel> change) {
-            adjustmentsRoot.getValue().setAmount(month.getValue().getTotalAdjustments());
+            adjustmentsRoot.getValue().setAmount(monthViewModel.getValue().getTotalAdjustments());
             adjustmentsRoot.getChildren().clear();
-            for (BudgetItemViewModel adjustment : month.getValue().getAdjustments()) {
+            for (BudgetItemViewModel adjustment : monthViewModel.getValue().getAdjustments()) {
                 adjustmentsRoot.getChildren().add(new TreeItem<BudgetItemViewModel>(adjustment));
             }
         }
@@ -105,6 +110,8 @@ public class MonthControl extends AnchorPane {
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
+
+        this.monthMapper = Mappers.getMapper(MonthMapper.class);
 
         nameColumn.setCellFactory(new Callback<TreeTableColumn<BudgetItemViewModel, String>, TreeTableCell<BudgetItemViewModel, String>>() {
             @Override
@@ -128,9 +135,9 @@ public class MonthControl extends AnchorPane {
                     newBudgetItem.setModel(new BudgetItem());
                     TreeItem<BudgetItemViewModel> treeItem = cell.getTreeTableRow().getTreeItem();
                     if (treeItem.getValue() == revenuesRoot.getValue()) {
-                        month.getValue().getRevenues().add(newBudgetItem);
+                        monthViewModel.getValue().getRevenues().add(newBudgetItem);
                     } else if (treeItem.getValue() == expensesRoot.getValue()) {
-                        month.getValue().getExpenses().add(newBudgetItem);
+                        monthViewModel.getValue().getExpenses().add(newBudgetItem);
                     }
                     treeItem.setExpanded(true);
                 });
@@ -212,47 +219,60 @@ public class MonthControl extends AnchorPane {
 
         // Update the tables when the month is changed
         this.monthProperty().addListener(property -> {
+            MonthViewModel monthViewModel = monthMapper.mapMonthToMonthViewModel(getMonth());
+            if (this.monthViewModel.getValue() != null) {
+                this.monthViewModel.getValue().getRevenues().removeListener(revenuesListChangeListener);
+                this.monthViewModel.getValue().getExpenses().removeListener(expensesListChangeListener);
+                this.monthViewModel.getValue().getAdjustments().removeListener(adjustmentsListChangeListener);
+            }
+
+            this.monthViewModel.set(monthViewModel);
+            monthViewModel.getRevenues().addListener(revenuesListChangeListener);
+            monthViewModel.getExpenses().addListener(expensesListChangeListener);
+            monthViewModel.getAdjustments().addListener(adjustmentsListChangeListener);
+
+            // This does the calculations
             callMonthChangeCallback();
-            MonthViewModel month = this.getMonth();
+            
             budgetTableRoot.getChildren().clear();
             revenuesRoot.getChildren().clear();
-            revenuesRoot.getValue().setAmount(month.getTotalRevenues());
+            revenuesRoot.getValue().setAmount(monthViewModel.getTotalRevenues());
             expensesRoot.getChildren().clear();
-            expensesRoot.getValue().setAmount(month.getTotalExpenses());
+            expensesRoot.getValue().setAmount(monthViewModel.getTotalExpenses());
             adjustmentsRoot.getChildren().clear();
-            adjustmentsRoot.getValue().setAmount(month.getTotalAdjustments());
+            adjustmentsRoot.getValue().setAmount(monthViewModel.getTotalAdjustments());
 
             budgetTableRoot.getChildren().add(revenuesRoot);
             budgetTableRoot.getChildren().add(expensesRoot);
             budgetTableRoot.getChildren().add(adjustmentsRoot);
 
-            for (BudgetItemViewModel revenue : month.getRevenues()) {
+            for (BudgetItemViewModel revenue : monthViewModel.getRevenues()) {
                 revenuesRoot.getChildren().add(new TreeItem<BudgetItemViewModel>(revenue));
             }
 
-            for (BudgetItemViewModel expense : month.getExpenses()) {
+            for (BudgetItemViewModel expense : monthViewModel.getExpenses()) {
                 expensesRoot.getChildren().add(new TreeItem<BudgetItemViewModel>(expense));
             }
 
-            budgetTableRoot.getChildren().add(new TreeItem<>(month.getNetIncomeTarget()));
-            budgetTableRoot.getChildren().add(new TreeItem<>(month.getOpeningBalance()));
+            budgetTableRoot.getChildren().add(new TreeItem<>(monthViewModel.getNetIncomeTarget()));
+            budgetTableRoot.getChildren().add(new TreeItem<>(monthViewModel.getOpeningBalance()));
 
             totalsTable.getItems().clear();
             totalsTable.getItems().addAll(
-                    month.getClosingBalanceTarget(),
-                    month.getEstimatedClosingBalance(),
-                    month.getOpeningSurplus(),
-                    month.getClosingSurplus()
+                    monthViewModel.getClosingBalanceTarget(),
+                    monthViewModel.getEstimatedClosingBalance(),
+                    monthViewModel.getOpeningSurplus(),
+                    monthViewModel.getClosingSurplus()
             );
             closingTable.getItems().clear();
-            closingTable.getItems().addAll(month.getClosingBalance());
+            closingTable.getItems().addAll(monthViewModel.getClosingBalance());
 
             // Set the date on the label
             SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
-            periodDate.setText(dateFormat.format(month.calendar.getTime()));
+            dateLabel.setText(dateFormat.format(monthViewModel.calendar.getTime()));
 
             // Set the closing checkbox value
-            closeMonthCheckBox.setSelected(month.getIsClosed());
+            closeMonthCheckBox.setSelected(monthViewModel.getIsClosed());
         });
 
         // Totals table
@@ -290,7 +310,7 @@ public class MonthControl extends AnchorPane {
 
         // Set the handler for the "Close Month" checkbox
         this.closeMonthCheckBox.selectedProperty().addListener(checkbox -> {
-            this.month.get().setIsClosed(this.closeMonthCheckBox.isSelected());
+            this.monthViewModel.get().setIsClosed(this.closeMonthCheckBox.isSelected());
             callMonthChangeCallback();
             updateTableStyles();
         });
@@ -304,7 +324,7 @@ public class MonthControl extends AnchorPane {
                 if (event.getCode().equals(KeyCode.DELETE)) {
                     TreeItem treeItem = (TreeItem) budgetTable.getSelectionModel().getSelectedItem();
                     BudgetItemViewModel selectedItem = (BudgetItemViewModel) treeItem.getValue();
-                    MonthViewModel month = MonthControl.this.month.get();
+                    MonthViewModel month = MonthControl.this.monthViewModel.get();
                     if (month.getRevenues().contains(selectedItem)) {
                         month.getRevenues().remove(selectedItem);
                     } else if (month.getExpenses().contains(selectedItem)) {
@@ -338,23 +358,23 @@ public class MonthControl extends AnchorPane {
     }
 
     // Month property
-    public MonthViewModel getMonth() {
+    public Month getMonth() {
         return this.month.get();
     }
 
-    public void setMonth(MonthViewModel month) {
-        if (this.month.getValue() != null) {
-            this.month.getValue().getRevenues().removeListener(revenuesListChangeListener);
-            this.month.getValue().getExpenses().removeListener(expensesListChangeListener);
-            this.month.getValue().getAdjustments().removeListener(adjustmentsListChangeListener);
-        }
+    public void setMonth(Month month) {
         this.month.set(month);
-        month.getRevenues().addListener(revenuesListChangeListener);
-        month.getExpenses().addListener(expensesListChangeListener);
-        month.getAdjustments().addListener(adjustmentsListChangeListener);
     }
 
-    public SimpleObjectProperty<MonthViewModel> monthProperty() {
+    public MonthViewModel getMonthViewModel() {
+        return this.monthViewModel.get();
+    }
+
+    public void setMonthViewModel(MonthViewModel monthViewModel) {
+        this.monthViewModel.set(monthViewModel);
+    }
+
+    public SimpleObjectProperty<Month> monthProperty() {
         return this.month;
     }
 }

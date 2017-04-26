@@ -46,36 +46,33 @@ public class ThreeMonthController implements Initializable {
 
         this.budget.currentMonthProperty().addListener(month -> {
             SimpleObjectProperty<Month> monthProperty = (SimpleObjectProperty<Month>) month;
-            MonthViewModel monthVM = monthMapper.mapMonthToMonthViewModel(monthProperty.getValue());
-            this.setMonth(monthVM);
+            this.setMonth(monthProperty.getValue());
         });
 
         // This event updates all the months
-        Callback<MonthControl, MonthViewModel> monthChangedCallback = new Callback<MonthControl, MonthViewModel>() {
+        Callback<MonthControl, Month> monthChangedCallback = new Callback<MonthControl, Month>() {
             @Override
-            public MonthViewModel call(MonthControl param) {
-                MonthViewModel monthVM = getMonth();
-                Month month = monthMapper.mapMonthViewModelToMonth(monthVM);
+            public Month call(MonthControl monthControl) {
+                Month month = monthControl.getMonth();
+                monthMapper.updateMonthFromMonthViewModel(monthControl.getMonthViewModel(), month);
                 do {
                     Month previousMonth = monthRepository.getPrevious(month);
                     if (previousMonth != null) {
-                        MonthViewModel previousMonthVM = monthMapper.mapMonthToMonthViewModel(previousMonth);
-                        monthVM.getOpeningBalance().setAmount(previousMonthVM.getFinalClosingBalance().getAmount());
-                        monthVM.getOpeningSurplus().setAmount(previousMonthVM.getClosingSurplus().getAmount());
+                        month.getOpeningBalance().setAmount(previousMonth.getClosingBalance().getAmount());
+                        month.getOpeningSurplus().setAmount(previousMonth.getClosingSurplus().getAmount());
                     }
-
-                    monthMapper.updateMonthFromMonthViewModel(monthVM, monthVM.getModel());
-                    monthServices.calculateMonthTotals(monthVM.getModel());
-                    monthMapper.updateMonthViewModelFromMonth(monthVM.getModel(), monthVM);
-
+                    
+                    monthServices.calculateMonthTotals(month);
                     // Get the next month
                     month = monthRepository.getNext(month);
-                    if (month != null) {
-                        monthVM = monthMapper.mapMonthToMonthViewModel(month);
-                    }
                 } while (month != null);
 
-                return monthVM;
+                //Update monthControls months
+                for (MonthControl mC : monthControls) {
+                    monthMapper.updateMonthViewModelFromMonth(monthControl.getMonth(), monthControl.getMonthViewModel());
+                }
+
+                return month;
             }
         };
 
@@ -86,21 +83,12 @@ public class ThreeMonthController implements Initializable {
     }
 
     public void load() {
-        MonthViewModel monthVM = this.monthMapper.mapMonthToMonthViewModel(budget.getCurrentMonth());
-        this.setMonth(monthVM);
+        this.setMonth(budget.getCurrentMonth());
     }
 
-    private final MonthViewModel getMonth() {
-        return this.monthControls.get(0).getMonth();
-    }
-
-    private final void setMonth(MonthViewModel month) {
+    private final void setMonth(Month month) {
         this.monthControls.get(0).setMonth(month);
-
-        Month monthTwo = monthRepository.getNext(this.monthMapper.mapMonthViewModelToMonth(month));
-        Month monthThree = monthRepository.getNext(monthTwo);
-
-        this.monthControls.get(1).setMonth(this.monthMapper.mapMonthToMonthViewModel(monthTwo));
-        this.monthControls.get(2).setMonth(this.monthMapper.mapMonthToMonthViewModel(monthThree));
+        this.monthControls.get(1).setMonth(monthRepository.getNext(this.monthControls.get(0).getMonth()));
+        this.monthControls.get(2).setMonth(monthRepository.getNext(this.monthControls.get(1).getMonth()));
     }
 }

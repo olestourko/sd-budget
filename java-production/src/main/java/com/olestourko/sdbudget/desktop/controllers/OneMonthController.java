@@ -37,13 +37,11 @@ public class OneMonthController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         this.budget.currentMonthProperty().addListener(month -> {
             SimpleObjectProperty<Month> monthProperty = (SimpleObjectProperty<Month>) month;
-            MonthViewModel monthVM = monthMapper.mapMonthToMonthViewModel(monthProperty.getValue());
-            this.monthControl.setMonth(monthVM);
+            this.monthControl.setMonth(monthProperty.getValue());
         });
 
         monthControl.setOnMonthChanged(event -> {
-            MonthViewModel monthViewModel = monthControl.getMonth();
-            Month month = this.monthMapper.mapMonthViewModelToMonth(monthViewModel);
+            Month month = monthControl.getMonth();
             Month previousMonth = monthRepository.getPrevious(month);
             if (previousMonth != null) {
                 MonthViewModel previousMonthVM = this.monthMapper.mapMonthToMonthViewModel(previousMonth);
@@ -51,15 +49,14 @@ public class OneMonthController implements Initializable {
                 month.getOpeningSurplus().setAmount(previousMonthVM.getClosingSurplus().getAmount());
             }
 
-            this.monthMapper.updateMonthFromMonthViewModel(monthViewModel, month);
+            this.monthMapper.updateMonthFromMonthViewModel(monthControl.getMonthViewModel(), month);
             monthServices.calculateMonthTotals(month);
-            this.monthMapper.updateMonthViewModelFromMonth(month, monthViewModel);
-            return monthViewModel;
+            this.monthMapper.updateMonthViewModelFromMonth(month, monthControl.getMonthViewModel());
+            return month;
         });
     }
 
     public void load() {
-        MonthViewModel monthViewModel = this.monthMapper.mapMonthToMonthViewModel(budget.getCurrentMonth());
-        this.monthControl.setMonth(monthViewModel);
+        this.monthControl.setMonth(budget.getCurrentMonth());
     }
 }

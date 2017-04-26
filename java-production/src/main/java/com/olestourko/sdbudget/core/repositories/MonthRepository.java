@@ -93,21 +93,18 @@ public class MonthRepository implements IMonthRepository {
             // Store the associated Revenues
             for (BudgetItem budgetItem : month.getRevenues()) {
                 budgetItem = budgetItemPersistence.store(budgetItem);
-                month.getRevenues().add(budgetItem);
             }
             monthPersistence.syncRevenuesToDB(month);
 
             // Store the associated Expenses
             for (BudgetItem budgetItem : month.getExpenses()) {
                 budgetItem = budgetItemPersistence.store(budgetItem);
-                month.getExpenses().add(budgetItem);
             }
             monthPersistence.syncExpensesToDB(month);
 
             // Store the associated Adjustments
             for (BudgetItem budgetItem : month.getAdjustments()) {
                 budgetItem = budgetItemPersistence.store(budgetItem);
-                month.getAdjustments().add(budgetItem);
             }
             monthPersistence.syncAdjustmentsToDB(month);
 
