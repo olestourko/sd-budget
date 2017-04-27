@@ -7,11 +7,10 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import com.olestourko.sdbudget.desktop.models.MonthViewModel;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.desktop.models.Budget;
 import com.olestourko.sdbudget.desktop.mappers.MonthMapper;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
@@ -23,7 +22,7 @@ public class ThreeMonthController implements Initializable {
     @FXML
     public Pane monthControlContainer;
 
-    final private ArrayList<MonthControl> monthControls = new ArrayList<MonthControl>();
+    final private LinkedList<MonthControl> monthControls = new LinkedList<MonthControl>();
     final private MonthCalculationServices monthServices;
     final private MonthRepository monthRepository;
     final private Budget budget;
@@ -44,6 +43,7 @@ public class ThreeMonthController implements Initializable {
         monthControls.add((MonthControl) monthControlContainer.getChildren().get(1));
         monthControls.add((MonthControl) monthControlContainer.getChildren().get(2));
 
+        // Change the MonthControls' month instance whenever the instance in the Budget changes
         this.budget.currentMonthProperty().addListener(month -> {
             SimpleObjectProperty<Month> monthProperty = (SimpleObjectProperty<Month>) month;
             this.setMonth(monthProperty.getValue());
@@ -54,22 +54,19 @@ public class ThreeMonthController implements Initializable {
             @Override
             public Month call(MonthControl monthControl) {
                 Month month = monthControl.getMonth();
-                monthMapper.updateMonthFromMonthViewModel(monthControl.getMonthViewModel(), month);
-                do {
-                    Month previousMonth = monthRepository.getPrevious(month);
-                    if (previousMonth != null) {
-                        month.getOpeningBalance().setAmount(previousMonth.getClosingBalance().getAmount());
-                        month.getOpeningSurplus().setAmount(previousMonth.getClosingSurplus().getAmount());
-                    }
-                    
-                    monthServices.calculateMonthTotals(month);
-                    // Get the next month
-                    month = monthRepository.getNext(month);
-                } while (month != null);
 
-                //Update monthControls months
-                for (MonthControl mC : monthControls) {
-                    monthMapper.updateMonthViewModelFromMonth(monthControl.getMonth(), monthControl.getMonthViewModel());
+                for (MonthControl mc : monthControls) {
+                    Month mcMonth = mc.getMonth();
+                    if (mcMonth != null) {
+                        Month previousMonth = monthRepository.getPrevious(mc.getMonth());
+                        if (previousMonth != null) {
+                            mc.getMonth().getOpeningBalance().setAmount(previousMonth.getClosingBalance().getAmount());
+                            mc.getMonth().getOpeningSurplus().setAmount(previousMonth.getClosingSurplus().getAmount());
+                        }
+                        monthServices.calculateMonthTotals(mc.getMonth());
+                        monthMapper.updateMonthViewModelFromMonth(mc.getMonth(), mc.getMonthViewModel());
+                        mc.populateTables();
+                    }
                 }
 
                 return month;
@@ -78,7 +75,7 @@ public class ThreeMonthController implements Initializable {
 
         // Set event handlers for all the month components
         for (MonthControl monthControl : monthControls) {
-            monthControl.setOnMonthChanged(monthChangedCallback);
+            monthControl.setOnMonthModified(monthChangedCallback);
         }
     }
 

@@ -20,14 +20,14 @@ public class OneMonthController implements Initializable {
     @FXML
     public MonthControl monthControl;
 
-    private final MonthCalculationServices monthServices;
+    private final MonthCalculationServices monthCalculationervices;
     private final MonthRepository monthRepository;
     private final Budget budget;
     private final MonthMapper monthMapper;
 
     @Inject
     OneMonthController(MonthCalculationServices monthServices, MonthRepository monthRepository, Budget budget) {
-        this.monthServices = monthServices;
+        this.monthCalculationervices = monthServices;
         this.monthRepository = monthRepository;
         this.budget = budget;
         this.monthMapper = Mappers.getMapper(MonthMapper.class);
@@ -35,12 +35,13 @@ public class OneMonthController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        // Change the MonthControl's month instance whenever the instance in the Budget changes
         this.budget.currentMonthProperty().addListener(month -> {
             SimpleObjectProperty<Month> monthProperty = (SimpleObjectProperty<Month>) month;
             this.monthControl.setMonth(monthProperty.getValue());
         });
 
-        monthControl.setOnMonthChanged(event -> {
+        monthControl.setOnMonthModified(event -> {
             Month month = monthControl.getMonth();
             Month previousMonth = monthRepository.getPrevious(month);
             if (previousMonth != null) {
@@ -50,7 +51,7 @@ public class OneMonthController implements Initializable {
             }
 
             this.monthMapper.updateMonthFromMonthViewModel(monthControl.getMonthViewModel(), month);
-            monthServices.calculateMonthTotals(month);
+            monthCalculationervices.calculateMonthTotals(month);
             this.monthMapper.updateMonthViewModelFromMonth(month, monthControl.getMonthViewModel());
             return month;
         });
