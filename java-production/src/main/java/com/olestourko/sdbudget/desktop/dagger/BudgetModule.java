@@ -1,11 +1,8 @@
 package com.olestourko.sdbudget.desktop.dagger;
 
-import com.olestourko.sdbudget.core.repositories.MonthRepository;
-import com.olestourko.sdbudget.core.services.PeriodCalculationServices;
 import com.olestourko.sdbudget.desktop.models.Budget;
 import dagger.Module;
 import dagger.Provides;
-import javax.inject.Singleton;
 
 /**
  *
@@ -15,15 +12,8 @@ import javax.inject.Singleton;
 public class BudgetModule {
 
     @Provides
-    @Singleton
-    PeriodCalculationServices providePeriodServices() {
-        return new PeriodCalculationServices();
-    }
-
-    @Provides
-    @Singleton
+    @DesktopApplicationScope
     Budget provideBudget() {
         return new Budget();
     }
-
 }

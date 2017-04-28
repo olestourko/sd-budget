@@ -1,7 +1,9 @@
 package com.olestourko.sdbudget.desktop.controls;
 
+import com.olestourko.sdbudget.core.dagger.DaggerCoreInjector;
 import com.olestourko.sdbudget.core.models.BudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
+import com.olestourko.sdbudget.core.services.MonthLogicServices;
 import com.olestourko.sdbudget.desktop.mappers.MonthMapper;
 import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
 import javafx.fxml.FXML;
@@ -57,6 +59,8 @@ public class MonthControl extends AnchorPane {
     private final SimpleObjectProperty<Month> month = new SimpleObjectProperty<>();
     private final SimpleObjectProperty<MonthViewModel> monthViewModel = new SimpleObjectProperty<MonthViewModel>();
     private final MonthMapper monthMapper;
+
+    private final MonthLogicServices monthLogicServices;
 
     // <editor-fold defaultstate="collapsed" desc="Month / MonthViewModel update callbacks">
     // This callback should be called (passing the Month) when and only when the month's items are changed or updated through the Control UI ONLY
@@ -120,8 +124,8 @@ public class MonthControl extends AnchorPane {
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
-
         this.monthMapper = Mappers.getMapper(MonthMapper.class);
+        this.monthLogicServices = DaggerCoreInjector.builder().build().monthLogicServices();
 
         setupBudgetTable();
         setupTotalsTable();
@@ -400,5 +404,7 @@ public class MonthControl extends AnchorPane {
 
         // Set the closing checkbox value
         closeMonthCheckBox.setSelected(monthViewModel.getIsClosed());
+        closeMonthCheckBox.setVisible(monthLogicServices.isMonthClosable(month.getValue()));
+//        closeMonthCheckBox.setDisable();
     }
 }

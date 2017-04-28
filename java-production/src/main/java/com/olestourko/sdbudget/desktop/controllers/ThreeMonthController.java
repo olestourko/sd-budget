@@ -37,7 +37,6 @@ public class ThreeMonthController implements Initializable {
     }
 
     @Override
-
     public void initialize(URL url, ResourceBundle rb) {
         monthControls.add((MonthControl) monthControlContainer.getChildren().get(0));
         monthControls.add((MonthControl) monthControlContainer.getChildren().get(1));
@@ -50,7 +49,7 @@ public class ThreeMonthController implements Initializable {
         });
 
         // This event updates all the months
-        Callback<MonthControl, Month> monthChangedCallback = new Callback<MonthControl, Month>() {
+        Callback<MonthControl, Month> monthModifiedCallback = new Callback<MonthControl, Month>() {
             @Override
             public Month call(MonthControl monthControl) {
                 Month month = monthControl.getMonth();
@@ -75,7 +74,7 @@ public class ThreeMonthController implements Initializable {
 
         // Set event handlers for all the month components
         for (MonthControl monthControl : monthControls) {
-            monthControl.setOnMonthModified(monthChangedCallback);
+            monthControl.setOnMonthModified(monthModifiedCallback);
         }
     }
 

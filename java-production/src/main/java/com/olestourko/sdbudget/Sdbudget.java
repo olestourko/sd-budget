@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import javafx.scene.layout.AnchorPane;
 import com.olestourko.sdbudget.desktop.dagger.DaggerBudgetInjector;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
+import com.olestourko.sdbudget.core.services.MonthLogicServices;
 import com.olestourko.sdbudget.desktop.models.Budget;
 import com.olestourko.sdbudget.desktop.controllers.MainController;
 import java.util.Calendar;
@@ -27,13 +28,13 @@ public class Sdbudget extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        final BudgetInjector budgetInjector = DaggerBudgetInjector.create();
+        final CoreInjector coreInjector = DaggerCoreInjector.builder().build();
+        final BudgetInjector budgetInjector = DaggerBudgetInjector.builder().coreInjector(coreInjector).build();
         final Budget budget = budgetInjector.budget();
-        final CoreInjector coreInjector = DaggerCoreInjector.create();
         final MonthPersistence monthPersistence = coreInjector.monthPersistenceProvider().get();
 
         //Populate the month repository
-        MonthRepository monthRepository = budgetInjector.monthRepository().get();
+        MonthRepository monthRepository = coreInjector.monthRepository();
         ArrayList<Month> months = monthPersistence.getAllMonths();
         if (months.size() == 0) {
             for (int i = 0; i < 12; i++) {
@@ -83,7 +84,7 @@ public class Sdbudget extends Application {
 
         // Register handler for save menu item
         mainController.mainMenu.getMenus().get(0).getItems().get(0).setOnAction(event -> {
-            budgetInjector.monthRepository().get().storeMonths();
+            coreInjector.monthRepository().storeMonths();
         });
 
         // Register handler for view switching menu item

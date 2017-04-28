@@ -1,39 +1,28 @@
 package com.olestourko.sdbudget.core.repositories;
-
 import com.olestourko.sdbudget.core.models.BudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
 import com.olestourko.sdbudget.core.persistence.BudgetItemPersistence;
 import com.olestourko.sdbudget.core.persistence.MonthPersistence;
-import com.olestourko.sdbudget.desktop.mappers.BudgetItemMapper;
-import com.olestourko.sdbudget.desktop.mappers.MonthMapper;
-import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import javax.inject.Inject;
-import javax.inject.Singleton;
-import org.mapstruct.factory.Mappers;
 
 /**
  *
  * @author oles
  */
-@Singleton
 public class MonthRepository implements IMonthRepository {
 
     private final HashMap<String, Month> months = new HashMap<>();
     private final MonthPersistence monthPersistence;
     private final BudgetItemPersistence budgetItemPersistence;
-    private final MonthMapper monthMapper;
-    private final BudgetItemMapper budgetItemMapper;
 
     @Inject
     public MonthRepository(MonthPersistence monthPersistence, BudgetItemPersistence budgetItemPersistence) {
         this.monthPersistence = monthPersistence;
         this.budgetItemPersistence = budgetItemPersistence;
-        this.monthMapper = Mappers.getMapper(MonthMapper.class);
-        this.budgetItemMapper = Mappers.getMapper(BudgetItemMapper.class);
     }
 
     @Override

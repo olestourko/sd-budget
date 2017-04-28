@@ -59,7 +59,6 @@ public class MainController implements Initializable {
             }
         });
         nextMonthButton.setOnAction(event -> {
-            Month currentMonth = budget.getCurrentMonth();
             Month nextMonth = monthRepository.getNext(budget.getCurrentMonth());
             if (nextMonth != null) {
                 previousMonthButton.disableProperty().set(false);

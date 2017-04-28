@@ -1,5 +1,8 @@
 package com.olestourko.sdbudget.core.dagger;
 
+import com.olestourko.sdbudget.core.persistence.BudgetItemPersistence;
+import com.olestourko.sdbudget.core.persistence.MonthPersistence;
+import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import dagger.Module;
 import dagger.Provides;
 import java.sql.Connection;
@@ -13,11 +16,12 @@ import org.jooq.impl.DSL;
  *
  * @author oles
  */
+//@CoreApplicationScope
+@Singleton
 @Module
 public class PersistenceModule {
 
     @Provides
-    @Singleton
     DSLContext createDSLContext() {
         /*
         I really need to find an alternative to wrapping this in a try catch and ignoring exceptions.
@@ -33,5 +37,11 @@ public class PersistenceModule {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    @Provides
+    @Singleton
+    MonthRepository monthRepository(MonthPersistence monthPersistence, BudgetItemPersistence budgetItemPersistence) {
+        return new MonthRepository(monthPersistence, budgetItemPersistence);
     }
 }

@@ -5,6 +5,8 @@
  */
 package com.olestourko.sdbudget.core.repositories;
 
+import com.olestourko.sdbudget.core.dagger.CoreInjector;
+import com.olestourko.sdbudget.core.dagger.DaggerCoreInjector;
 import com.olestourko.sdbudget.core.models.Month;
 import com.olestourko.sdbudget.desktop.dagger.BudgetInjector;
 import com.olestourko.sdbudget.desktop.dagger.DaggerBudgetInjector;
@@ -47,12 +49,12 @@ public class MonthRepositoryTest {
      */
     @Test
     public void testPutMonth() {
-        BudgetInjector injector = DaggerBudgetInjector.create();
+        CoreInjector injector = DaggerCoreInjector.create();
 
         Month month = new Month();
         month.setNumber((short) 1);
         month.setYear((short) 2017);
-        MonthRepository repository = injector.monthRepository().get();
+        MonthRepository repository = injector.monthRepository();
         repository.putMonth(month);
 
         Month result = repository.getMonth(month.getNumber(), month.getYear());
@@ -64,12 +66,12 @@ public class MonthRepositoryTest {
      */
     @Test
     public void testGetMonth() {
-        BudgetInjector injector = DaggerBudgetInjector.create();
+        CoreInjector injector = DaggerCoreInjector.create();
 
         Month month = new Month();
         month.setNumber((short) 1);
         month.setYear((short) 2017);
-        MonthRepository repository = injector.monthRepository().get();
+        MonthRepository repository = injector.monthRepository();
         repository.putMonth(month);
 
         Month result = repository.getMonth(month.getNumber(), month.getYear());
@@ -89,8 +91,8 @@ public class MonthRepositoryTest {
         previousMonth.setNumber((short) 1);
         previousMonth.setYear((short) 2017);
 
-        BudgetInjector injector = DaggerBudgetInjector.create();
-        MonthRepository repository = injector.monthRepository().get();
+        CoreInjector injector = DaggerCoreInjector.create();
+        MonthRepository repository = injector.monthRepository();
         repository.putMonth(currentMonth);
         repository.putMonth(previousMonth);
 
@@ -111,8 +113,8 @@ public class MonthRepositoryTest {
         nextMonth.setNumber((short) 2);
         nextMonth.setYear((short) 2017);
         
-        BudgetInjector injector = DaggerBudgetInjector.create();
-        MonthRepository repository = injector.monthRepository().get();
+        CoreInjector injector = DaggerCoreInjector.create();
+        MonthRepository repository = injector.monthRepository();
         repository.putMonth(currentMonth);
         repository.putMonth(nextMonth);
 
