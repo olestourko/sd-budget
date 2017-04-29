@@ -19,7 +19,6 @@ public class ButtonTreeTableCell extends TextFieldTreeTableCell<BudgetItemViewMo
     public ButtonTreeTableCell(String buttonText) {
         super(new DefaultStringConverter());
         button.setText(buttonText);
-        button.setPadding(new Insets(0, 2, 0, 2));
     }
 
     public void setShowButtonCondition(Callback<ButtonTreeTableCell, Boolean> callback) {

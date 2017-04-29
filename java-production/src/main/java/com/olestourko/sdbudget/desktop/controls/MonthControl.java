@@ -26,11 +26,13 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn.CellDataFeatures;
 import javafx.scene.control.TreeTableView;
+import javafx.scene.control.cell.TextFieldTreeTableCell;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
+import javafx.util.converter.DefaultStringConverter;
 import javax.inject.Inject;
 import org.mapstruct.factory.Mappers;
 
@@ -207,46 +209,26 @@ public class MonthControl extends AnchorPane {
     protected void setupBudgetTable() {
         TreeTableColumn nameColumn = (TreeTableColumn) budgetTable.getColumns().get(0);
         TreeTableColumn amountColumn = (TreeTableColumn) budgetTable.getColumns().get(1);
+        TreeTableColumn actionColumn = (TreeTableColumn) budgetTable.getColumns().get(2);
 
-        nameColumn.setCellFactory(new Callback<TreeTableColumn<BudgetItemViewModel, String>, TreeTableCell<BudgetItemViewModel, String>>() {
-            @Override
-            public TreeTableCell<BudgetItemViewModel, String> call(TreeTableColumn<BudgetItemViewModel, String> p) {
-                ButtonTreeTableCell cell = new ButtonTreeTableCell("+");
-                cell.setShowButtonCondition(new Callback<ButtonTreeTableCell, Boolean>() {
-                    @Override
-                    public Boolean call(ButtonTreeTableCell cell) {
-                        TreeItem treeItem = cell.getTreeTableRow().getTreeItem();
-                        try {
-                            return (treeItem == revenuesRoot || treeItem == expensesRoot);
-                        } catch (NullPointerException exception) {
-                            // Do nothing
-                        }
-                        return false;
-                    }
-                });
-
-                cell.button.setOnAction(event -> {
-                    BudgetItemViewModel newBudgetItem = new BudgetItemViewModel("New Item", BigDecimal.ZERO);
-                    newBudgetItem.setModel(new BudgetItem());
-                    TreeItem<BudgetItemViewModel> treeItem = cell.getTreeTableRow().getTreeItem();
-                    if (treeItem.getValue() == revenuesRoot.getValue()) {
-                        monthViewModel.getValue().getRevenues().add(newBudgetItem);
-                    } else if (treeItem.getValue() == expensesRoot.getValue()) {
-                        monthViewModel.getValue().getExpenses().add(newBudgetItem);
-                    }
-                    // Update the month model
-                    monthMapper.updateMonthFromMonthViewModel(monthViewModel.getValue(), month.getValue());
-                    treeItem.setExpanded(true);
-                    callMonthModifiedCallback();
-                });
-
-                return cell;
-            }
-        });
+        nameColumn.prefWidthProperty().bind(budgetTable.widthProperty().multiply(0.5).subtract(28));
+        amountColumn.prefWidthProperty().bind(budgetTable.widthProperty().multiply(0.5));
+        actionColumn.prefWidthProperty().set(24);
+        nameColumn.setResizable(false);
+        amountColumn.setResizable(false);
+        actionColumn.setResizable(false);
 
         nameColumn.setCellValueFactory(new Callback<CellDataFeatures<BudgetItemViewModel, String>, ObservableValue<String>>() {
             public ObservableValue<String> call(CellDataFeatures<BudgetItemViewModel, String> p) {
                 return p.getValue().getValue().nameProperty();
+            }
+        });
+
+        nameColumn.setCellFactory(new Callback<TreeTableColumn<BudgetItemViewModel, BigDecimal>, TreeTableCell<BudgetItemViewModel, BigDecimal>>() {
+            @Override
+            public TreeTableCell<BudgetItemViewModel, BigDecimal> call(TreeTableColumn<BudgetItemViewModel, BigDecimal> param) {
+                TextFieldTreeTableCell cell = new TextFieldTreeTableCell(new DefaultStringConverter());
+                return cell;
             }
         });
 
@@ -297,14 +279,56 @@ public class MonthControl extends AnchorPane {
             }
         });
 
+        actionColumn.setCellFactory(new Callback<TreeTableColumn<BudgetItemViewModel, String>, TreeTableCell<BudgetItemViewModel, String>>() {
+            @Override
+            public TreeTableCell<BudgetItemViewModel, String> call(TreeTableColumn<BudgetItemViewModel, String> p) {
+                ButtonTreeTableCell cell = new ButtonTreeTableCell("+");
+                cell.setShowButtonCondition(new Callback<ButtonTreeTableCell, Boolean>() {
+                    @Override
+                    public Boolean call(ButtonTreeTableCell cell) {
+                        TreeItem treeItem = cell.getTreeTableRow().getTreeItem();
+                        try {
+                            return (treeItem == revenuesRoot || treeItem == expensesRoot);
+                        } catch (NullPointerException exception) {
+                            // Do nothing
+                        }
+                        return false;
+                    }
+                });
+
+                cell.button.setOnAction(event -> {
+                    BudgetItemViewModel newBudgetItem = new BudgetItemViewModel("New Item", BigDecimal.ZERO);
+                    newBudgetItem.setModel(new BudgetItem());
+                    TreeItem<BudgetItemViewModel> treeItem = cell.getTreeTableRow().getTreeItem();
+                    if (treeItem.getValue() == revenuesRoot.getValue()) {
+                        monthViewModel.getValue().getRevenues().add(newBudgetItem);
+                    } else if (treeItem.getValue() == expensesRoot.getValue()) {
+                        monthViewModel.getValue().getExpenses().add(newBudgetItem);
+                    }
+                    // Update the month model
+                    monthMapper.updateMonthFromMonthViewModel(monthViewModel.getValue(), month.getValue());
+                    treeItem.setExpanded(true);
+                    callMonthModifiedCallback();
+                });
+
+                return cell;
+            }
+        });
+
         budgetTableRoot.setExpanded(true);
         budgetTable.setEditable(true);
         budgetTable.setRoot(budgetTableRoot);
     }
 
     protected void setupTotalsTable() {
-        TableColumn totalsTableAmountColumn = (TableColumn) totalsTable.getColumns().get(1);
-        totalsTableAmountColumn.setCellFactory(new Callback<TableColumn<BudgetItemViewModel, BigDecimal>, TableCell<BudgetItemViewModel, BigDecimal>>() {
+        TableColumn nameColumn = (TableColumn) totalsTable.getColumns().get(0);
+        TableColumn amountColumn = (TableColumn) totalsTable.getColumns().get(1);
+
+        nameColumn.prefWidthProperty().bind(totalsTable.widthProperty().multiply(0.5).subtract(28));
+        nameColumn.setResizable(false);
+        amountColumn.setResizable(false);
+        
+        amountColumn.setCellFactory(new Callback<TableColumn<BudgetItemViewModel, BigDecimal>, TableCell<BudgetItemViewModel, BigDecimal>>() {
             StringConverter<BigDecimal> converter;
 
             @Override
@@ -316,8 +340,14 @@ public class MonthControl extends AnchorPane {
     }
 
     protected void setupClosingTable() {
-        TableColumn closingTableAmountColumn = (TableColumn) closingTable.getColumns().get(1);
-        closingTableAmountColumn.setCellFactory(new Callback<TableColumn<BudgetItemViewModel, BigDecimal>, TableCell<BudgetItemViewModel, BigDecimal>>() {
+        TableColumn nameColumn = (TableColumn) closingTable.getColumns().get(0);
+        TableColumn amountColumn = (TableColumn) closingTable.getColumns().get(1);
+
+        nameColumn.prefWidthProperty().bind(closingTable.widthProperty().multiply(0.5).subtract(28));
+        nameColumn.setResizable(false);
+        amountColumn.setResizable(false);
+        
+        amountColumn.setCellFactory(new Callback<TableColumn<BudgetItemViewModel, BigDecimal>, TableCell<BudgetItemViewModel, BigDecimal>>() {
             StringConverter<BigDecimal> converter;
 
             @Override
@@ -327,7 +357,7 @@ public class MonthControl extends AnchorPane {
             }
         });
 
-        closingTableAmountColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal>>() {
+        amountColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal>>() {
             @Override
             public void handle(TableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal> t) {
                 BudgetItemViewModel budgetItem = (BudgetItemViewModel) t.getTableView().getItems().get(t.getTablePosition().getRow());

@@ -19,7 +19,7 @@
 .menu-bar .menu:hover > .label,
 .menu-bar .menu:showing > .label,
 .menu-bar .menu-item:focused .label {
-	-fx-text-fill: #ffffff;
+    -fx-text-fill: #ffffff;
 }
 
 .label {
@@ -78,10 +78,20 @@
     -fx-background-color: #657b83;
 }
 
+.tree-table-row-cell,
+.table-row-cell {
+    -fx-background-color: #fdf6e3;
+}
+
 .tree-table-cell,
 .table-cell {
     -fx-background-color: #fdf6e3;
     -fx-text-fill: #657b83;
+}
+
+/* Button cells */
+.tree-table-view .button {
+    -fx-padding: 0 2 0 2;
 }
 
 .tree-table-row-cell:selected .tree-table-cell,
@@ -97,6 +107,7 @@
 }
 
 .table-column {
+    -fx-border: none;
     -fx-background-color: #fdf6e3;
 }
 

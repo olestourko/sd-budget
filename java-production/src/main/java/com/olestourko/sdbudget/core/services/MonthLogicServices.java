@@ -21,4 +21,9 @@ public class MonthLogicServices {
 
         return previousMonth.getIsClosed();
     }
+    
+    public boolean canEditOpeningBalance(Month month) {
+        Month previousMonth = monthRepository.getPrevious(month);
+        return previousMonth == null;
+    }
 }
