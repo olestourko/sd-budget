@@ -10,6 +10,7 @@ import com.olestourko.sdbudget.desktop.models.MonthViewModel;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.desktop.models.Budget;
 import com.olestourko.sdbudget.core.services.MonthCalculationServices;
+import com.olestourko.sdbudget.core.services.MonthLogicServices;
 import com.olestourko.sdbudget.desktop.mappers.MonthMapper;
 import javafx.beans.property.SimpleObjectProperty;
 import javax.inject.Inject;
@@ -21,13 +22,15 @@ public class OneMonthController implements Initializable {
     public MonthControl monthControl;
 
     private final MonthCalculationServices monthCalculationervices;
+    final private MonthLogicServices monthLogicServices;
     private final MonthRepository monthRepository;
     private final Budget budget;
     private final MonthMapper monthMapper;
 
     @Inject
-    OneMonthController(MonthCalculationServices monthServices, MonthRepository monthRepository, Budget budget) {
+    OneMonthController(MonthCalculationServices monthServices, MonthLogicServices monthLogicServices, MonthRepository monthRepository, Budget budget) {
         this.monthCalculationervices = monthServices;
+        this.monthLogicServices = monthLogicServices;
         this.monthRepository = monthRepository;
         this.budget = budget;
         this.monthMapper = Mappers.getMapper(MonthMapper.class);
@@ -41,6 +44,7 @@ public class OneMonthController implements Initializable {
             this.monthControl.setMonth(monthProperty.getValue());
         });
 
+        monthControl.setMonthLogicServices(monthLogicServices);
         monthControl.setOnMonthModified(event -> {
             Month month = monthControl.getMonth();
             Month previousMonth = monthRepository.getPrevious(month);

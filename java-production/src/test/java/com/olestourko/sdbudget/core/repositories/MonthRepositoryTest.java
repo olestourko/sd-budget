@@ -5,18 +5,15 @@
  */
 package com.olestourko.sdbudget.core.repositories;
 
-import com.olestourko.sdbudget.core.dagger.CoreInjector;
-import com.olestourko.sdbudget.core.dagger.DaggerCoreInjector;
 import com.olestourko.sdbudget.core.models.Month;
-import com.olestourko.sdbudget.desktop.dagger.BudgetInjector;
-import com.olestourko.sdbudget.desktop.dagger.DaggerBudgetInjector;
-import java.util.Calendar;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import com.olestourko.sdbudget.core.dagger.CoreComponent;
+import com.olestourko.sdbudget.core.dagger.DaggerCoreComponent;
 
 /**
  *
@@ -49,7 +46,7 @@ public class MonthRepositoryTest {
      */
     @Test
     public void testPutMonth() {
-        CoreInjector injector = DaggerCoreInjector.create();
+        CoreComponent injector = DaggerCoreComponent.create();
 
         Month month = new Month();
         month.setNumber((short) 1);
@@ -66,7 +63,7 @@ public class MonthRepositoryTest {
      */
     @Test
     public void testGetMonth() {
-        CoreInjector injector = DaggerCoreInjector.create();
+        CoreComponent injector = DaggerCoreComponent.create();
 
         Month month = new Month();
         month.setNumber((short) 1);
@@ -91,7 +88,7 @@ public class MonthRepositoryTest {
         previousMonth.setNumber((short) 1);
         previousMonth.setYear((short) 2017);
 
-        CoreInjector injector = DaggerCoreInjector.create();
+        CoreComponent injector = DaggerCoreComponent.create();
         MonthRepository repository = injector.monthRepository();
         repository.putMonth(currentMonth);
         repository.putMonth(previousMonth);
@@ -113,7 +110,7 @@ public class MonthRepositoryTest {
         nextMonth.setNumber((short) 2);
         nextMonth.setYear((short) 2017);
         
-        CoreInjector injector = DaggerCoreInjector.create();
+        CoreComponent injector = DaggerCoreComponent.create();
         MonthRepository repository = injector.monthRepository();
         repository.putMonth(currentMonth);
         repository.putMonth(nextMonth);

@@ -5,8 +5,7 @@
  */
 package com.olestourko.sdbudget.core.services;
 
-import com.olestourko.sdbudget.core.dagger.CoreInjector;
-import com.olestourko.sdbudget.core.dagger.DaggerCoreInjector;
+import com.olestourko.sdbudget.core.dagger.DaggerCoreComponent;
 import com.olestourko.sdbudget.core.models.BudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
 import java.math.BigDecimal;
@@ -16,6 +15,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import com.olestourko.sdbudget.core.dagger.CoreComponent;
 
 /**
  *
@@ -26,7 +26,7 @@ public class MonthServicesTest {
     private final MonthCalculationServices monthServices;
 
     public MonthServicesTest() {
-        CoreInjector injector = DaggerCoreInjector.create();
+        CoreComponent injector = DaggerCoreComponent.create();
         this.monthServices = injector.monthServices();
     }
 

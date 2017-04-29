@@ -23,7 +23,7 @@ import javax.inject.Singleton;
 //@CoreApplicationScope
 @Singleton
 @Component(modules = {PersistenceModule.class, ServicesModule.class})
-public interface CoreInjector {
+public interface CoreComponent {
 
     Provider<MonthPersistence> monthPersistenceProvider();
 

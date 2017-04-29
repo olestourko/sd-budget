@@ -51,6 +51,7 @@ public class MonthRepository implements IMonthRepository {
     @Override
     public Month getPrevious(Month month) {
         Calendar previousCalendar = Calendar.getInstance();
+        previousCalendar.set(Calendar.DAY_OF_MONTH, 1);
         previousCalendar.set(Calendar.MONTH, month.getNumber());
         previousCalendar.set(Calendar.YEAR, month.getYear());
         previousCalendar.add(Calendar.MONTH, -1);
@@ -60,6 +61,7 @@ public class MonthRepository implements IMonthRepository {
     @Override
     public Month getNext(Month month) {
         Calendar nextCalendar = Calendar.getInstance();
+        nextCalendar.set(Calendar.DAY_OF_MONTH, 1);
         nextCalendar.set(Calendar.MONTH, month.getNumber());
         nextCalendar.set(Calendar.YEAR, month.getYear());
         nextCalendar.add(Calendar.MONTH, 1);

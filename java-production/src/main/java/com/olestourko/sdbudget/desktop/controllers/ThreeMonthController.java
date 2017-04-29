@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
+import com.olestourko.sdbudget.core.services.MonthLogicServices;
 import com.olestourko.sdbudget.desktop.models.Budget;
 import com.olestourko.sdbudget.desktop.mappers.MonthMapper;
 import java.util.LinkedList;
@@ -23,14 +24,16 @@ public class ThreeMonthController implements Initializable {
     public Pane monthControlContainer;
 
     final private LinkedList<MonthControl> monthControls = new LinkedList<MonthControl>();
-    final private MonthCalculationServices monthServices;
+    final private MonthCalculationServices monthCalculationServices;
+    final private MonthLogicServices monthLogicServices;
     final private MonthRepository monthRepository;
     final private Budget budget;
     private final MonthMapper monthMapper;
 
     @Inject
-    ThreeMonthController(MonthCalculationServices monthServices, MonthRepository monthRepository, Budget budget) {
-        this.monthServices = monthServices;
+    ThreeMonthController(MonthCalculationServices monthCalculationServices, MonthLogicServices monthLogicServices, MonthRepository monthRepository, Budget budget) {
+        this.monthCalculationServices = monthCalculationServices;
+        this.monthLogicServices = monthLogicServices;
         this.monthRepository = monthRepository;
         this.budget = budget;
         this.monthMapper = Mappers.getMapper(MonthMapper.class);
@@ -41,6 +44,9 @@ public class ThreeMonthController implements Initializable {
         monthControls.add((MonthControl) monthControlContainer.getChildren().get(0));
         monthControls.add((MonthControl) monthControlContainer.getChildren().get(1));
         monthControls.add((MonthControl) monthControlContainer.getChildren().get(2));
+        monthControls.get(0).setMonthLogicServices(monthLogicServices);
+        monthControls.get(1).setMonthLogicServices(monthLogicServices);
+        monthControls.get(2).setMonthLogicServices(monthLogicServices);
 
         // Change the MonthControls' month instance whenever the instance in the Budget changes
         this.budget.currentMonthProperty().addListener(month -> {
@@ -62,7 +68,7 @@ public class ThreeMonthController implements Initializable {
                             mc.getMonth().getOpeningBalance().setAmount(previousMonth.getClosingBalance().getAmount());
                             mc.getMonth().getOpeningSurplus().setAmount(previousMonth.getClosingSurplus().getAmount());
                         }
-                        monthServices.calculateMonthTotals(mc.getMonth());
+                        monthCalculationServices.calculateMonthTotals(mc.getMonth());
                         monthMapper.updateMonthViewModelFromMonth(mc.getMonth(), mc.getMonthViewModel());
                         mc.populateTables();
                     }

@@ -1,6 +1,5 @@
 package com.olestourko.sdbudget.desktop.controls;
 
-import com.olestourko.sdbudget.core.dagger.DaggerCoreInjector;
 import com.olestourko.sdbudget.core.models.BudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
 import com.olestourko.sdbudget.core.services.MonthLogicServices;
@@ -32,6 +31,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
+import javax.inject.Inject;
 import org.mapstruct.factory.Mappers;
 
 /**
@@ -60,9 +60,13 @@ public class MonthControl extends AnchorPane {
     private final SimpleObjectProperty<MonthViewModel> monthViewModel = new SimpleObjectProperty<MonthViewModel>();
     private final MonthMapper monthMapper;
 
-    private final MonthLogicServices monthLogicServices;
+    private MonthLogicServices monthLogicServices;
 
-    // <editor-fold defaultstate="collapsed" desc="Month / MonthViewModel update callbacks">
+    public void setMonthLogicServices(MonthLogicServices monthLogicServices) {
+        this.monthLogicServices = monthLogicServices;
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="Month modified callback">
     // This callback should be called (passing the Month) when and only when the month's items are changed or updated through the Control UI ONLY
     private Callback<MonthControl, Month> monthModifiedCallback;
 
@@ -75,7 +79,6 @@ public class MonthControl extends AnchorPane {
         if (monthModifiedCallback != null) {
             monthModifiedCallback.call(this);
         }
-//        this.populateTables(); // Repopulate the table while we're at it. TODO: Change this so the current MonthViewModel is updated, not replaced.
     }
     // </editor-fold>
 
@@ -125,7 +128,6 @@ public class MonthControl extends AnchorPane {
             throw new RuntimeException(ex);
         }
         this.monthMapper = Mappers.getMapper(MonthMapper.class);
-        this.monthLogicServices = DaggerCoreInjector.builder().build().monthLogicServices();
 
         setupBudgetTable();
         setupTotalsTable();
@@ -404,7 +406,6 @@ public class MonthControl extends AnchorPane {
 
         // Set the closing checkbox value
         closeMonthCheckBox.setSelected(monthViewModel.getIsClosed());
-        closeMonthCheckBox.setVisible(monthLogicServices.isMonthClosable(month.getValue()));
-//        closeMonthCheckBox.setDisable();
+        closeMonthCheckBox.setDisable(!monthLogicServices.isMonthClosable(month.getValue()));
     }
 }

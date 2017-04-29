@@ -1,7 +1,5 @@
 package com.olestourko.sdbudget;
 
-import com.olestourko.sdbudget.core.dagger.CoreInjector;
-import com.olestourko.sdbudget.core.dagger.DaggerCoreInjector;
 import com.olestourko.sdbudget.core.models.Month;
 import com.olestourko.sdbudget.core.persistence.MonthPersistence;
 import com.olestourko.sdbudget.desktop.controllers.OneMonthController;
@@ -12,15 +10,16 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.layout.AnchorPane;
-import com.olestourko.sdbudget.desktop.dagger.DaggerBudgetInjector;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
-import com.olestourko.sdbudget.core.services.MonthLogicServices;
 import com.olestourko.sdbudget.desktop.models.Budget;
 import com.olestourko.sdbudget.desktop.controllers.MainController;
 import java.util.Calendar;
-import com.olestourko.sdbudget.desktop.dagger.BudgetInjector;
 import java.util.ArrayList;
 import javafx.scene.control.RadioMenuItem;
+import com.olestourko.sdbudget.core.dagger.CoreComponent;
+import com.olestourko.sdbudget.core.dagger.DaggerCoreComponent;
+import com.olestourko.sdbudget.desktop.dagger.BudgetComponent;
+import com.olestourko.sdbudget.desktop.dagger.DaggerBudgetComponent;
 
 public class Sdbudget extends Application {
 
@@ -28,13 +27,13 @@ public class Sdbudget extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        final CoreInjector coreInjector = DaggerCoreInjector.builder().build();
-        final BudgetInjector budgetInjector = DaggerBudgetInjector.builder().coreInjector(coreInjector).build();
-        final Budget budget = budgetInjector.budget();
-        final MonthPersistence monthPersistence = coreInjector.monthPersistenceProvider().get();
-
+        final CoreComponent coreComponent = DaggerCoreComponent.builder().build();
+        final BudgetComponent budgetComponent = DaggerBudgetComponent.builder().coreComponent(coreComponent).build();
+        final Budget budget = budgetComponent.budget();
+        final MonthPersistence monthPersistence = coreComponent.monthPersistenceProvider().get();
+        
         //Populate the month repository
-        MonthRepository monthRepository = coreInjector.monthRepository();
+        MonthRepository monthRepository = coreComponent.monthRepository();
         ArrayList<Month> months = monthPersistence.getAllMonths();
         if (months.size() == 0) {
             for (int i = 0; i < 12; i++) {
@@ -54,25 +53,25 @@ public class Sdbudget extends Application {
 
         budget.setCurrentMonth(monthRepository.getMonth((short) 0, (short) 2017));
 
-        OneMonthController oneMonthController = budgetInjector.oneMonthController().get();
+        OneMonthController oneMonthController = budgetComponent.oneMonthController().get();
         FXMLLoader oneMonthLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/BudgetScene_OneMonth.fxml"));
         oneMonthLoader.setController(oneMonthController);
         AnchorPane oneMonthRoot = oneMonthLoader.load();
         oneMonthController.load();
 
-        ThreeMonthController threeMonthController = budgetInjector.threeMonthController().get();
+        ThreeMonthController threeMonthController = budgetComponent.threeMonthController().get();
         FXMLLoader threeMonthLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/BudgetScene_ThreeMonth.fxml"));
         threeMonthLoader.setController(threeMonthController);
         AnchorPane threeMonthRoot = threeMonthLoader.load();
         threeMonthController.load();
 
-        ScratchpadController scratchpadController = budgetInjector.scratchpadController().get();
+        ScratchpadController scratchpadController = budgetComponent.scratchpadController().get();
         FXMLLoader scratchpadLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/ScratchpadScene.fxml"));
         scratchpadLoader.setController(scratchpadController);
         AnchorPane scratchPadRoot = scratchpadLoader.load();
         scratchpadController.load();
 
-        MainController mainController = budgetInjector.mainController().get();
+        MainController mainController = budgetComponent.mainController().get();
         FXMLLoader mainLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/MainScene.fxml"));
         mainLoader.setController(mainController);
         AnchorPane mainRoot = mainLoader.load();
@@ -84,7 +83,7 @@ public class Sdbudget extends Application {
 
         // Register handler for save menu item
         mainController.mainMenu.getMenus().get(0).getItems().get(0).setOnAction(event -> {
-            coreInjector.monthRepository().storeMonths();
+            coreComponent.monthRepository().storeMonths();
         });
 
         // Register handler for view switching menu item
