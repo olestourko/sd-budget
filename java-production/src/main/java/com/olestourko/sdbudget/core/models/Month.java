@@ -16,6 +16,8 @@ public class Month extends Model implements Serializable {
     private ArrayList<BudgetItem> revenues = new ArrayList<BudgetItem>();
     private ArrayList<BudgetItem> expenses = new ArrayList<BudgetItem>();
     private ArrayList<BudgetItem> adjustments = new ArrayList<BudgetItem>();
+    private BudgetItem debtRepayments = new BudgetItem("Debt Repayments", BigDecimal.ZERO);
+    private BudgetItem investmentOutflows = new BudgetItem("Investment Outflows", BigDecimal.ZERO);
     private BudgetItem netIncomeTarget = new BudgetItem("Net Income Target", BigDecimal.ZERO);
     private BudgetItem openingBalance = new BudgetItem("Opening Balance", BigDecimal.ZERO);
     private BudgetItem closingBalance = new BudgetItem("Closing Balance", BigDecimal.ZERO);
@@ -88,6 +90,22 @@ public class Month extends Model implements Serializable {
     }
 // </editor-fold>
 
+    public BudgetItem getDebtRepayments() {
+        return debtRepayments;
+    }
+    
+    public void setDebtRepayments(BudgetItem debtRepayments) {
+        this.debtRepayments = debtRepayments;
+    }
+    
+    public BudgetItem getInvestmentOutflows() {
+        return this.investmentOutflows;
+    }
+    
+    public void setInvestmentOutflows(BudgetItem investmentOutflows) {
+        this.investmentOutflows = investmentOutflows;
+    }
+    
     public BudgetItem getNetIncomeTarget() {
         return netIncomeTarget;
     }

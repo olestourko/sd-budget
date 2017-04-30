@@ -218,8 +218,8 @@ public class MonthControl extends AnchorPane {
         TreeTableColumn amountColumn = (TreeTableColumn) budgetTable.getColumns().get(1);
         TreeTableColumn actionColumn = (TreeTableColumn) budgetTable.getColumns().get(2);
 
-        nameColumn.prefWidthProperty().bind(budgetTable.widthProperty().multiply(0.5).subtract(28));
-        amountColumn.prefWidthProperty().bind(budgetTable.widthProperty().multiply(0.5));
+        nameColumn.prefWidthProperty().bind(budgetTable.widthProperty().multiply(0.6).subtract(28));
+        amountColumn.prefWidthProperty().bind(budgetTable.widthProperty().multiply(0.4));
         actionColumn.prefWidthProperty().set(24);
         nameColumn.setResizable(false);
         amountColumn.setResizable(false);
@@ -331,7 +331,8 @@ public class MonthControl extends AnchorPane {
         TableColumn nameColumn = (TableColumn) totalsTable.getColumns().get(0);
         TableColumn amountColumn = (TableColumn) totalsTable.getColumns().get(1);
 
-        nameColumn.prefWidthProperty().bind(totalsTable.widthProperty().multiply(0.5).subtract(28));
+        nameColumn.prefWidthProperty().bind(totalsTable.widthProperty().multiply(0.6).subtract(28));
+        amountColumn.prefWidthProperty().bind(totalsTable.widthProperty().multiply(0.4));
         nameColumn.setResizable(false);
         amountColumn.setResizable(false);
 
@@ -350,7 +351,8 @@ public class MonthControl extends AnchorPane {
         TableColumn nameColumn = (TableColumn) closingTable.getColumns().get(0);
         TableColumn amountColumn = (TableColumn) closingTable.getColumns().get(1);
 
-        nameColumn.prefWidthProperty().bind(closingTable.widthProperty().multiply(0.5).subtract(28));
+        nameColumn.prefWidthProperty().bind(closingTable.widthProperty().multiply(0.6).subtract(28));
+        amountColumn.prefWidthProperty().bind(closingTable.widthProperty().multiply(0.4));
         nameColumn.setResizable(false);
         amountColumn.setResizable(false);
 
@@ -424,6 +426,8 @@ public class MonthControl extends AnchorPane {
             expensesRoot.getChildren().add(new TreeItem<BudgetItemViewModel>(expense));
         }
 
+        budgetTableRoot.getChildren().add(new TreeItem<>(monthViewModel.getDebtRepayments()));
+        budgetTableRoot.getChildren().add(new TreeItem<>(monthViewModel.getInvestmentOutflows()));
         budgetTableRoot.getChildren().add(new TreeItem<>(monthViewModel.getNetIncomeTarget()));
         budgetTableRoot.getChildren().add(new TreeItem<>(monthViewModel.getOpeningBalance()));
 

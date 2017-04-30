@@ -38,6 +38,8 @@ public abstract class MonthMapper {
             viewModel.getAdjustments().add(budgetItemMapper.mapBudgetItemToBudgetItemViewModel(budgetItem));
         }
 
+        budgetItemMapper.updateBudgetItemViewModelFromBudgetItem(viewModel.getDebtRepayments(), month.getDebtRepayments());
+        budgetItemMapper.updateBudgetItemViewModelFromBudgetItem(viewModel.getInvestmentOutflows(), month.getInvestmentOutflows());
         budgetItemMapper.updateBudgetItemViewModelFromBudgetItem(viewModel.getNetIncomeTarget(), month.getNetIncomeTarget());
         budgetItemMapper.updateBudgetItemViewModelFromBudgetItem(viewModel.getOpeningBalance(), month.getOpeningBalance());
         budgetItemMapper.updateBudgetItemViewModelFromBudgetItem(viewModel.getClosingBalance(), month.getClosingBalance());
@@ -48,15 +50,15 @@ public abstract class MonthMapper {
         viewModel.setModel(month);
         return viewModel;
     }
-    
+
     public Month mapMonthViewModelToMonth(MonthViewModel monthViewModel) {
         Month month = new Month();
         month.setNumber((short) monthViewModel.calendar.get(Calendar.MONTH));
         month.setYear((short) monthViewModel.calendar.get(Calendar.YEAR));
         month.setIsClosed(monthViewModel.getIsClosed());
-        
+
         BudgetItemMapper budgetItemMapper = Mappers.getMapper(BudgetItemMapper.class);
-        
+
         // Map Revenues
         month.getRevenues().clear();
         for (BudgetItemViewModel revenue : monthViewModel.getRevenues()) {
@@ -75,14 +77,16 @@ public abstract class MonthMapper {
             budgetItemMapper.updateBudgetItemFromBudgetItemViewModel(adjustment.getModel(), adjustment);
             month.getAdjustments().add(adjustment.getModel());
         }
-        
+
+        month.setDebtRepayments(budgetItemMapper.mapBudgetItemViewModelToBudgetItem(monthViewModel.getDebtRepayments()));
+        month.setInvestmentOutflows(budgetItemMapper.mapBudgetItemViewModelToBudgetItem(monthViewModel.getInvestmentOutflows()));
         month.setNetIncomeTarget(budgetItemMapper.mapBudgetItemViewModelToBudgetItem(monthViewModel.getNetIncomeTarget()));
         month.setOpeningBalance(budgetItemMapper.mapBudgetItemViewModelToBudgetItem(monthViewModel.getOpeningBalance()));
         month.setClosingBalance(budgetItemMapper.mapBudgetItemViewModelToBudgetItem(monthViewModel.getClosingBalance()));
         month.setOpeningSurplus(budgetItemMapper.mapBudgetItemViewModelToBudgetItem(monthViewModel.getOpeningSurplus()));
         month.setClosingSurplus(budgetItemMapper.mapBudgetItemViewModelToBudgetItem(monthViewModel.getClosingSurplus()));
         month.setClosingBalance(budgetItemMapper.mapBudgetItemViewModelToBudgetItem(monthViewModel.getClosingBalance()));
-        
+
         return month;
     }
 
@@ -90,9 +94,9 @@ public abstract class MonthMapper {
         month.setNumber((short) monthViewModel.calendar.get(Calendar.MONTH));
         month.setYear((short) monthViewModel.calendar.get(Calendar.YEAR));
         month.setIsClosed(monthViewModel.getIsClosed());
-        
+
         BudgetItemMapper budgetItemMapper = Mappers.getMapper(BudgetItemMapper.class);
-        
+
         // Map Revenues
         month.getRevenues().clear();
         for (BudgetItemViewModel revenue : monthViewModel.getRevenues()) {
@@ -112,7 +116,8 @@ public abstract class MonthMapper {
             month.getAdjustments().add(adjustment.getModel());
         }
 
-        
+        budgetItemMapper.updateBudgetItemFromBudgetItemViewModel(monthViewModel.getDebtRepayments().getModel(), monthViewModel.getDebtRepayments());
+        budgetItemMapper.updateBudgetItemFromBudgetItemViewModel(monthViewModel.getInvestmentOutflows().getModel(), monthViewModel.getInvestmentOutflows());
         budgetItemMapper.updateBudgetItemFromBudgetItemViewModel(monthViewModel.getNetIncomeTarget().getModel(), monthViewModel.getNetIncomeTarget());
         budgetItemMapper.updateBudgetItemFromBudgetItemViewModel(monthViewModel.getOpeningBalance().getModel(), monthViewModel.getOpeningBalance());
         budgetItemMapper.updateBudgetItemFromBudgetItemViewModel(monthViewModel.getClosingBalance().getModel(), monthViewModel.getClosingBalance());
@@ -147,6 +152,8 @@ public abstract class MonthMapper {
             monthViewModel.getAdjustments().add(budgetItemMapper.mapBudgetItemToBudgetItemViewModel(budgetItem));
         }
 
+        budgetItemMapper.updateBudgetItemViewModelFromBudgetItem(monthViewModel.getDebtRepayments(), month.getDebtRepayments());
+        budgetItemMapper.updateBudgetItemViewModelFromBudgetItem(monthViewModel.getInvestmentOutflows(), month.getInvestmentOutflows());
         budgetItemMapper.updateBudgetItemViewModelFromBudgetItem(monthViewModel.getNetIncomeTarget(), month.getNetIncomeTarget());
         budgetItemMapper.updateBudgetItemViewModelFromBudgetItem(monthViewModel.getOpeningBalance(), month.getOpeningBalance());
         budgetItemMapper.updateBudgetItemViewModelFromBudgetItem(monthViewModel.getClosingBalance(), month.getClosingBalance());

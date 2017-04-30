@@ -7,7 +7,9 @@ import com.olestourko.sdbudget.core.models.BudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
 import com.olestourko.sdbudget.core.persistence.relations.MonthAdjustmentsRelation;
 import com.olestourko.sdbudget.core.persistence.relations.MonthClosingBalancesRelation;
+import com.olestourko.sdbudget.core.persistence.relations.MonthDebtRepaymentsRelation;
 import com.olestourko.sdbudget.core.persistence.relations.MonthExpensesRelation;
+import com.olestourko.sdbudget.core.persistence.relations.MonthInvestmentOutflowsRelation;
 import com.olestourko.sdbudget.core.persistence.relations.MonthNetIncomeTargetsRelation;
 import com.olestourko.sdbudget.core.persistence.relations.MonthOpeningBalancesRelation;
 import java.util.ArrayList;
@@ -35,6 +37,8 @@ public class MonthPersistence implements IPersistance<Month> {
     private final MonthRevenuesRelation monthRevenuesRelation;
     private final MonthExpensesRelation monthExpensesRelation;
     private final MonthAdjustmentsRelation monthAdjustmentsRelation;
+    private final MonthDebtRepaymentsRelation monthDebtRepaymentsRelation;
+    private final MonthInvestmentOutflowsRelation monthInvestmentOuflowsRelation;
     private final MonthNetIncomeTargetsRelation monthNetIncomeTargetsRelation;
     private final MonthOpeningBalancesRelation monthOpeningBalanceRelation;
     private final MonthClosingBalancesRelation monthClosingBalanceRelation;
@@ -45,6 +49,8 @@ public class MonthPersistence implements IPersistance<Month> {
             MonthRevenuesRelation monthRevenuesRelation,
             MonthExpensesRelation monthExpensesRelation,
             MonthAdjustmentsRelation monthAdjustmentsRelation,
+            MonthDebtRepaymentsRelation monthDebtRepaymentsRelation,
+            MonthInvestmentOutflowsRelation monthInvestmentOutflowsRelation,
             MonthNetIncomeTargetsRelation monthNetIncomeTargetsRelation,
             MonthOpeningBalancesRelation monthOpeningBalanceRelation,
             MonthClosingBalancesRelation monthClosingBalanceRelation
@@ -56,6 +62,8 @@ public class MonthPersistence implements IPersistance<Month> {
         this.monthRevenuesRelation = monthRevenuesRelation;
         this.monthExpensesRelation = monthExpensesRelation;
         this.monthAdjustmentsRelation = monthAdjustmentsRelation;
+        this.monthDebtRepaymentsRelation = monthDebtRepaymentsRelation;
+        this.monthInvestmentOuflowsRelation = monthInvestmentOutflowsRelation;
         this.monthNetIncomeTargetsRelation = monthNetIncomeTargetsRelation;
         this.monthOpeningBalanceRelation = monthOpeningBalanceRelation;
         this.monthClosingBalanceRelation = monthClosingBalanceRelation;
@@ -114,6 +122,8 @@ public class MonthPersistence implements IPersistance<Month> {
             syncRevenuesFromDB(month);
             syncExpensesFromDB(month);
             syncAdjustmentsFromDB(month);
+            syncDebtRepaymentsFromDB(month);
+            syncInvestmentOutflowsFromDB(month);
             syncNetIncomeTargetFromDB(month);
             syncOpeningBalanceFromDB(month);
             syncClosingBalanceFromDB(month);
@@ -182,6 +192,34 @@ public class MonthPersistence implements IPersistance<Month> {
             newAdjustments.put(adjustment.getId(), adjustment);
         }
         monthAdjustmentsRelation.syncToDB(month, newAdjustments);
+    }
+
+    public void associateDebtRepayments(Month month, BudgetItem budgetItem) {
+        monthDebtRepaymentsRelation.associate(month, budgetItem);
+    }
+
+    public void syncDebtRepaymentsFromDB(Month month) {
+        Result<BudgetItemRecord> records = monthDebtRepaymentsRelation.load(month);
+
+        if (records.size() > 0) {
+            BudgetItemRecord record = records.get(0);
+            BudgetItem budgetItem = budgetItemMapper.mapBudgetItemRecordToBudgetItem(record);
+            month.setDebtRepayments(budgetItem);
+        }
+    }
+
+    public void associateInvestmentOuflows(Month month, BudgetItem budgetItem) {
+        monthInvestmentOuflowsRelation.associate(month, budgetItem);
+    }
+
+    public void syncInvestmentOutflowsFromDB(Month month) {
+        Result<BudgetItemRecord> records = monthInvestmentOuflowsRelation.load(month);
+
+        if (records.size() > 0) {
+            BudgetItemRecord record = records.get(0);
+            BudgetItem budgetItem = budgetItemMapper.mapBudgetItemRecordToBudgetItem(record);
+            month.setInvestmentOutflows(budgetItem);
+        }
     }
 
     public void associateNetIncomeTarget(Month month, BudgetItem budgetItem) {

@@ -1,4 +1,5 @@
 package com.olestourko.sdbudget.core.repositories;
+
 import com.olestourko.sdbudget.core.models.BudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
 import com.olestourko.sdbudget.core.persistence.BudgetItemPersistence;
@@ -99,6 +100,16 @@ public class MonthRepository implements IMonthRepository {
             }
             monthPersistence.syncAdjustmentsToDB(month);
 
+            //Store the associated Debt Repayments
+            BudgetItem debtRepayments = month.getDebtRepayments();
+            budgetItemPersistence.store(debtRepayments);
+            monthPersistence.associateDebtRepayments(month, debtRepayments);
+
+            //Store the associated Investment Outflows
+            BudgetItem investmentOutflows = month.getInvestmentOutflows();
+            budgetItemPersistence.store(investmentOutflows);
+            monthPersistence.associateInvestmentOuflows(month, investmentOutflows);
+            
             //Store the associated Net Income Target
             BudgetItem netIncomeTarget = month.getNetIncomeTarget();
             budgetItemPersistence.store(netIncomeTarget);

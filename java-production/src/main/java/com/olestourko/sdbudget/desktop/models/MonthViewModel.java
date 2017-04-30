@@ -37,6 +37,8 @@ public class MonthViewModel implements IPeriod {
     protected final ObservableList<BudgetItemViewModel> expenses = FXCollections.observableArrayList(extractor);
     protected final ObservableList<BudgetItemViewModel> adjustments = FXCollections.observableArrayList(extractor);
 
+    public final SimpleObjectProperty<BudgetItemViewModel> debtRepayments = new SimpleObjectProperty<BudgetItemViewModel>(new BudgetItemViewModel("Debt Repayments", BigDecimal.ZERO));
+    public final SimpleObjectProperty<BudgetItemViewModel> investmentOuflows = new SimpleObjectProperty<BudgetItemViewModel>(new BudgetItemViewModel("Investment Outflows", BigDecimal.ZERO));
     public final SimpleObjectProperty<BudgetItemViewModel> netIncomeTarget = new SimpleObjectProperty<BudgetItemViewModel>(new BudgetItemViewModel("Net Income Target", BigDecimal.ZERO));
     public final SimpleObjectProperty<BudgetItemViewModel> openingBalance = new SimpleObjectProperty<BudgetItemViewModel>(new BudgetItemViewModel("Opening Balance", BigDecimal.ZERO));
     public final SimpleObjectProperty<BudgetItemViewModel> closingBalance = new SimpleObjectProperty<BudgetItemViewModel>(new BudgetItemViewModel("Closing Balance", BigDecimal.ZERO));
@@ -132,6 +134,24 @@ public class MonthViewModel implements IPeriod {
 
     public SimpleBooleanProperty isClosedProperty() {
         return this.isClosed;
+    }
+
+    @Override
+    public BudgetItemViewModel getDebtRepayments() {
+        return debtRepayments.getValue();
+    }
+
+    public SimpleObjectProperty<BudgetItemViewModel> getDebtRepaymentsProperty() {
+        return debtRepayments;
+    }
+
+    @Override
+    public BudgetItemViewModel getInvestmentOutflows() {
+        return investmentOuflows.getValue();
+    }
+
+    public SimpleObjectProperty<BudgetItemViewModel> getInvestmentOutflowsProperty() {
+        return investmentOuflows;
     }
 
     @Override

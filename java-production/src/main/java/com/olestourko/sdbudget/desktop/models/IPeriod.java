@@ -33,6 +33,10 @@ public interface IPeriod {
 
     public BigDecimal getTotalAdjustments();
 
+    public BudgetItemViewModel getDebtRepayments();
+    
+    public BudgetItemViewModel getInvestmentOutflows();
+    
     public BudgetItemViewModel getNetIncomeTarget();
 
     public BudgetItemViewModel getOpeningBalance();

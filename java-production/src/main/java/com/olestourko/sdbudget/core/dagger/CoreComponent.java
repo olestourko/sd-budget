@@ -4,7 +4,9 @@ import com.olestourko.sdbudget.core.persistence.BudgetItemPersistence;
 import com.olestourko.sdbudget.core.persistence.MonthPersistence;
 import com.olestourko.sdbudget.core.persistence.relations.MonthAdjustmentsRelation;
 import com.olestourko.sdbudget.core.persistence.relations.MonthClosingBalancesRelation;
+import com.olestourko.sdbudget.core.persistence.relations.MonthDebtRepaymentsRelation;
 import com.olestourko.sdbudget.core.persistence.relations.MonthExpensesRelation;
+import com.olestourko.sdbudget.core.persistence.relations.MonthInvestmentOutflowsRelation;
 import com.olestourko.sdbudget.core.persistence.relations.MonthNetIncomeTargetsRelation;
 import com.olestourko.sdbudget.core.persistence.relations.MonthOpeningBalancesRelation;
 import com.olestourko.sdbudget.core.persistence.relations.MonthRevenuesRelation;
@@ -29,7 +31,7 @@ public interface CoreComponent {
     Provider<MonthPersistence> monthPersistenceProvider();
 
     MonthRepository monthRepository();
-    
+
     Provider<BudgetItemPersistence> budgetItemProvider();
 
     /* Relations */
@@ -39,6 +41,10 @@ public interface CoreComponent {
 
     MonthAdjustmentsRelation monthAdjustmentsRelation();
 
+    MonthDebtRepaymentsRelation monthDebtRepaymentsRelation();
+
+    MonthInvestmentOutflowsRelation monthInvestmentOutflowsRelation();
+
     MonthNetIncomeTargetsRelation monthNetIncomeTargetsRelation();
 
     MonthOpeningBalancesRelation monthOpeningBalancesRelation();
@@ -47,10 +53,10 @@ public interface CoreComponent {
 
     /* Services */
     PeriodCalculationServices periodServices();
-    
+
     MonthCalculationServices monthServices();
-    
+
     MonthLogicServices monthLogicServices();
-    
+
     MonthCopyService monthCopyService();
 }
