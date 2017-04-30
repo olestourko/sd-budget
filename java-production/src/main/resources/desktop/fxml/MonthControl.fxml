@@ -14,7 +14,7 @@
         <children>
             <AnchorPane AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
                 <children>
-                    <Label fx:id="dateLabel" text="Date goes here" />
+                    <Label fx:id="dateLabel" text="Date goes here" AnchorPane.topAnchor="0.0"/>
                     <TreeTableView fx:id="budgetTable" editable="true" showRoot="false" AnchorPane.bottomAnchor="156.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
                         <columnResizePolicy>
                             <TreeTableView fx:constant="UNCONSTRAINED_RESIZE_POLICY"/>
@@ -59,11 +59,12 @@
                             </TableColumn>
                         </columns>
                     </TableView>
-                    <HBox AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0">
+                    <HBox AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" styleClass="bottom-buttons" spacing="10">
                         <children>
                             <CheckBox fx:id="closeMonthCheckBox" mnemonicParsing="false" text="Close Month" />
                         </children>
                     </HBox>
+                    <Button fx:id="copyToNext" text="&#xbb;" AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="5.0" />
                 </children>
             </AnchorPane>
         </children>

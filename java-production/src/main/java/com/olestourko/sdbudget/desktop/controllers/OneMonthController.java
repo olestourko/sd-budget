@@ -10,6 +10,7 @@ import com.olestourko.sdbudget.desktop.models.MonthViewModel;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.desktop.models.Budget;
 import com.olestourko.sdbudget.core.services.MonthCalculationServices;
+import com.olestourko.sdbudget.core.services.MonthCopyService;
 import com.olestourko.sdbudget.core.services.MonthLogicServices;
 import com.olestourko.sdbudget.desktop.mappers.MonthMapper;
 import javafx.beans.property.SimpleObjectProperty;
@@ -22,15 +23,22 @@ public class OneMonthController implements Initializable {
     public MonthControl monthControl;
 
     private final MonthCalculationServices monthCalculationervices;
-    final private MonthLogicServices monthLogicServices;
+    private final MonthLogicServices monthLogicServices;
+    private final MonthCopyService monthCopyService;
     private final MonthRepository monthRepository;
     private final Budget budget;
     private final MonthMapper monthMapper;
 
     @Inject
-    OneMonthController(MonthCalculationServices monthServices, MonthLogicServices monthLogicServices, MonthRepository monthRepository, Budget budget) {
+    OneMonthController(
+            MonthCalculationServices monthServices,
+            MonthLogicServices monthLogicServices,
+            MonthCopyService monthCopyService,
+            MonthRepository monthRepository,
+            Budget budget) {
         this.monthCalculationervices = monthServices;
         this.monthLogicServices = monthLogicServices;
+        this.monthCopyService = monthCopyService;
         this.monthRepository = monthRepository;
         this.budget = budget;
         this.monthMapper = Mappers.getMapper(MonthMapper.class);
@@ -50,7 +58,7 @@ public class OneMonthController implements Initializable {
             Month previousMonth = monthRepository.getPrevious(month);
             if (previousMonth != null) {
                 MonthViewModel previousMonthVM = this.monthMapper.mapMonthToMonthViewModel(previousMonth);
-                month.getOpeningBalance().setAmount(previousMonthVM.getFinalClosingBalance().getAmount());                
+                month.getOpeningBalance().setAmount(previousMonthVM.getFinalClosingBalance().getAmount());
                 month.getOpeningSurplus().setAmount(previousMonthVM.getClosingSurplus().getAmount());
             }
 
@@ -58,6 +66,15 @@ public class OneMonthController implements Initializable {
             monthCalculationervices.calculateMonthTotals(month);
             this.monthMapper.updateMonthViewModelFromMonth(month, monthControl.getMonthViewModel());
             return month;
+        });
+
+        // Month cloning
+        monthControl.getCopyToNextButton().setOnAction(event -> {
+            Month nextMonth = monthRepository.getNext(monthControl.getMonth());
+            if (nextMonth != null) {
+                monthCopyService.cloneMonth(monthControl.getMonth(), nextMonth);
+                monthControl.populateTables();
+            }
         });
     }
 

@@ -10,6 +10,7 @@ import com.olestourko.sdbudget.core.persistence.relations.MonthOpeningBalancesRe
 import com.olestourko.sdbudget.core.persistence.relations.MonthRevenuesRelation;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.core.services.MonthCalculationServices;
+import com.olestourko.sdbudget.core.services.MonthCopyService;
 import com.olestourko.sdbudget.core.services.MonthLogicServices;
 import com.olestourko.sdbudget.core.services.PeriodCalculationServices;
 import dagger.Component;
@@ -50,4 +51,6 @@ public interface CoreComponent {
     MonthCalculationServices monthServices();
     
     MonthLogicServices monthLogicServices();
+    
+    MonthCopyService monthCopyService();
 }

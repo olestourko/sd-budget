@@ -131,3 +131,7 @@
 .month-control #totalsTable {
     -fx-border-width: 1 1 0 1;
 }
+
+.month-control #copyToNext {
+    -fx-padding: 1 4 1 4;
+}

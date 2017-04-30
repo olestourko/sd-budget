@@ -18,6 +18,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
+import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableCell;
@@ -33,8 +34,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
-import javax.inject.Inject;
 import org.mapstruct.factory.Mappers;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  *
@@ -46,17 +47,19 @@ public class MonthControl extends AnchorPane {
     private Label dateLabel;
     @FXML
     private TreeTableView budgetTable;
-
-    private final TreeItem<BudgetItemViewModel> budgetTableRoot = new TreeItem<>(new BudgetItemViewModel("Budget", BigDecimal.ZERO));
-    private final TreeItem<BudgetItemViewModel> revenuesRoot = new TreeItem<>(new BudgetItemViewModel("Revenues", BigDecimal.ZERO));
-    private final TreeItem<BudgetItemViewModel> expensesRoot = new TreeItem<>(new BudgetItemViewModel("Expenses", BigDecimal.ZERO));
-    private final TreeItem<BudgetItemViewModel> adjustmentsRoot = new TreeItem<>(new BudgetItemViewModel("Adjustments", BigDecimal.ZERO));
     @FXML
     private TableView totalsTable;
     @FXML
     private TableView closingTable;
     @FXML
     public CheckBox closeMonthCheckBox;
+    @FXML
+    private Button copyToNext;
+
+    private final TreeItem<BudgetItemViewModel> budgetTableRoot = new TreeItem<>(new BudgetItemViewModel("Budget", BigDecimal.ZERO));
+    private final TreeItem<BudgetItemViewModel> revenuesRoot = new TreeItem<>(new BudgetItemViewModel("Revenues", BigDecimal.ZERO));
+    private final TreeItem<BudgetItemViewModel> expensesRoot = new TreeItem<>(new BudgetItemViewModel("Expenses", BigDecimal.ZERO));
+    private final TreeItem<BudgetItemViewModel> adjustmentsRoot = new TreeItem<>(new BudgetItemViewModel("Adjustments", BigDecimal.ZERO));
 
     private final SimpleObjectProperty<Month> month = new SimpleObjectProperty<>();
     private final SimpleObjectProperty<MonthViewModel> monthViewModel = new SimpleObjectProperty<MonthViewModel>();
@@ -83,6 +86,10 @@ public class MonthControl extends AnchorPane {
         }
     }
     // </editor-fold>
+
+    public Button getCopyToNextButton() {
+        return this.copyToNext;
+    }
 
     // <editor-fold defaultstate="collapsed" desc="Month Revenues/Expenses/Adjustments change listeners">
     // These update the table tree items whenever monthViewModels's revenues/expenses/adjustments lists change
@@ -327,7 +334,7 @@ public class MonthControl extends AnchorPane {
         nameColumn.prefWidthProperty().bind(totalsTable.widthProperty().multiply(0.5).subtract(28));
         nameColumn.setResizable(false);
         amountColumn.setResizable(false);
-        
+
         amountColumn.setCellFactory(new Callback<TableColumn<BudgetItemViewModel, BigDecimal>, TableCell<BudgetItemViewModel, BigDecimal>>() {
             StringConverter<BigDecimal> converter;
 
@@ -346,7 +353,7 @@ public class MonthControl extends AnchorPane {
         nameColumn.prefWidthProperty().bind(closingTable.widthProperty().multiply(0.5).subtract(28));
         nameColumn.setResizable(false);
         amountColumn.setResizable(false);
-        
+
         amountColumn.setCellFactory(new Callback<TableColumn<BudgetItemViewModel, BigDecimal>, TableCell<BudgetItemViewModel, BigDecimal>>() {
             StringConverter<BigDecimal> converter;
 
@@ -437,5 +444,8 @@ public class MonthControl extends AnchorPane {
         // Set the closing checkbox value
         closeMonthCheckBox.setSelected(monthViewModel.getIsClosed());
         closeMonthCheckBox.setDisable(!monthLogicServices.isMonthClosable(month.getValue()));
+        
+        // Enable/Disable month closing button
+        copyToNext.setDisable(!monthLogicServices.isMonthCloneable(month.getValue()));
     }
 }

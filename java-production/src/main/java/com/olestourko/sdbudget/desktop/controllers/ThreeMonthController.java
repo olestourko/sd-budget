@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
+import com.olestourko.sdbudget.core.services.MonthCopyService;
 import com.olestourko.sdbudget.core.services.MonthLogicServices;
 import com.olestourko.sdbudget.desktop.models.Budget;
 import com.olestourko.sdbudget.desktop.mappers.MonthMapper;
@@ -17,23 +18,31 @@ import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 import javax.inject.Inject;
 import org.mapstruct.factory.Mappers;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class ThreeMonthController implements Initializable {
 
     @FXML
     public Pane monthControlContainer;
 
-    final private LinkedList<MonthControl> monthControls = new LinkedList<MonthControl>();
-    final private MonthCalculationServices monthCalculationServices;
-    final private MonthLogicServices monthLogicServices;
-    final private MonthRepository monthRepository;
-    final private Budget budget;
+    private final LinkedList<MonthControl> monthControls = new LinkedList<MonthControl>();
+    private final MonthCalculationServices monthCalculationServices;
+    private final MonthLogicServices monthLogicServices;
+    private final MonthCopyService monthCopyService;
+    private final MonthRepository monthRepository;
+    private final Budget budget;
     private final MonthMapper monthMapper;
 
     @Inject
-    ThreeMonthController(MonthCalculationServices monthCalculationServices, MonthLogicServices monthLogicServices, MonthRepository monthRepository, Budget budget) {
+    ThreeMonthController(
+            MonthCalculationServices monthCalculationServices,
+            MonthLogicServices monthLogicServices,
+            MonthCopyService monthCopyService,
+            MonthRepository monthRepository,
+            Budget budget) {
         this.monthCalculationServices = monthCalculationServices;
         this.monthLogicServices = monthLogicServices;
+        this.monthCopyService = monthCopyService;
         this.monthRepository = monthRepository;
         this.budget = budget;
         this.monthMapper = Mappers.getMapper(MonthMapper.class);
@@ -54,7 +63,7 @@ public class ThreeMonthController implements Initializable {
             this.setMonth(monthProperty.getValue());
         });
 
-        // This event updates all the months
+        // This callback updates all the months
         Callback<MonthControl, Month> monthModifiedCallback = new Callback<MonthControl, Month>() {
             @Override
             public Month call(MonthControl monthControl) {
@@ -77,10 +86,21 @@ public class ThreeMonthController implements Initializable {
                 return month;
             }
         };
-
+        
         // Set event handlers for all the month components
         for (MonthControl monthControl : monthControls) {
             monthControl.setOnMonthModified(monthModifiedCallback);
+        }
+        
+        // Month cloning
+        for (MonthControl monthControl : monthControls) {
+            monthControl.getCopyToNextButton().setOnAction(event -> {
+                Month nextMonth = monthRepository.getNext(monthControl.getMonth());
+                if(nextMonth != null) {
+                    monthCopyService.cloneMonth(monthControl.getMonth(), nextMonth);
+                    populateMonthControls();
+                }
+            });
         }
     }
 
@@ -92,5 +112,11 @@ public class ThreeMonthController implements Initializable {
         this.monthControls.get(0).setMonth(month);
         this.monthControls.get(1).setMonth(monthRepository.getNext(this.monthControls.get(0).getMonth()));
         this.monthControls.get(2).setMonth(monthRepository.getNext(this.monthControls.get(1).getMonth()));
+    }
+    
+    private void populateMonthControls() {
+        for (MonthControl monthControl : monthControls) {
+            monthControl.populateTables();
+        }        
     }
 }
