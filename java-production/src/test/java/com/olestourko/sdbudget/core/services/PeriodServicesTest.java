@@ -50,11 +50,22 @@ public class PeriodServicesTest {
         BigDecimal revenue = new BigDecimal("2000.0");
         BigDecimal expenses = new BigDecimal("1000.0");
         BigDecimal adjustments = new BigDecimal("-250.0");
+        BigDecimal debtRepayments = new BigDecimal("0.0");
+        BigDecimal investmentOutflows = new BigDecimal("0.0");
         BigDecimal incomeTarget = new BigDecimal("500.0");
         BigDecimal openingBalance = new BigDecimal("0.0");
         BigDecimal carriedSurplus = new BigDecimal("0.0");
         PeriodCalculationServices instance = new PeriodCalculationServices();
-        EstimateResult result = instance.calculateEstimate(revenue, expenses, adjustments, incomeTarget, openingBalance, carriedSurplus);
+        EstimateResult result = instance.calculateEstimate(
+                revenue,
+                expenses,
+                adjustments,
+                debtRepayments,
+                investmentOutflows,
+                incomeTarget,
+                openingBalance,
+                carriedSurplus
+        );
         assertEquals(result.netIncome, new BigDecimal("750.0"));
         assertEquals(result.estimatedBalance, new BigDecimal("750.0"));
         assertEquals(result.expectedBalance, new BigDecimal("500.0"));
@@ -86,11 +97,22 @@ public class PeriodServicesTest {
         BigDecimal revenue = new BigDecimal("2000.0");
         BigDecimal expenses = new BigDecimal("1000.0");
         BigDecimal adjustments = new BigDecimal("-250.0");
+        BigDecimal debtRepayments = new BigDecimal("0.0");
+        BigDecimal investmentOutflows = new BigDecimal("0.0");
         BigDecimal incomeTarget = new BigDecimal("500.0");
         BigDecimal openingBalance = new BigDecimal("0.0");
         BigDecimal carriedSurplus = new BigDecimal("100.0");
         PeriodCalculationServices instance = new PeriodCalculationServices();
-        EstimateResult result = instance.calculateEstimate(revenue, expenses, adjustments, incomeTarget, openingBalance, carriedSurplus);
+        EstimateResult result = instance.calculateEstimate(
+                revenue,
+                expenses,
+                adjustments,
+                debtRepayments,
+                investmentOutflows,
+                incomeTarget,
+                openingBalance,
+                carriedSurplus
+        );
         assertEquals(result.netIncome, new BigDecimal("750.0"));
         assertEquals(result.estimatedBalance, new BigDecimal("850.0"));
         assertEquals(result.expectedBalance, new BigDecimal("500.0"));

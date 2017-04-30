@@ -21,6 +21,8 @@ public class MonthCalculationServices {
                 month.getTotalRevenues(),
                 month.getTotalExpenses(),
                 month.getTotalAdjustments(),
+                month.getDebtRepayments().getAmount(),
+                month.getInvestmentOutflows().getAmount(),
                 month.getNetIncomeTarget().getAmount(),
                 month.getOpeningBalance().getAmount(),
                 month.getOpeningSurplus().getAmount()
