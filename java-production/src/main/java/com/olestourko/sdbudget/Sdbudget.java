@@ -20,6 +20,9 @@ import com.olestourko.sdbudget.core.dagger.CoreComponent;
 import com.olestourko.sdbudget.core.dagger.DaggerCoreComponent;
 import com.olestourko.sdbudget.desktop.dagger.BudgetComponent;
 import com.olestourko.sdbudget.desktop.dagger.DaggerBudgetComponent;
+import java.util.List;
+import org.flywaydb.core.Flyway;
+import javafx.application.Application.Parameters;
 
 public class Sdbudget extends Application {
 
@@ -27,12 +30,22 @@ public class Sdbudget extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+
+        // Migrate DB if the migrate flag is set
+        Parameters parameters = getParameters();
+        List<String> unnamedParamers = parameters.getUnnamed();
+        if (unnamedParamers.contains("migrate")) {
+            Flyway flyway = new Flyway();
+            flyway.setDataSource("jdbc:h2:~/test", "sa", "");
+            flyway.migrate();
+        }
+
         final CoreComponent coreComponent = DaggerCoreComponent.builder().build();
         final BudgetComponent budgetComponent = DaggerBudgetComponent.builder().coreComponent(coreComponent).build();
         final Budget budget = budgetComponent.budget();
         final MonthPersistence monthPersistence = coreComponent.monthPersistenceProvider().get();
-        
-        //Populate the month repository
+
+        // Populate the month repository
         MonthRepository monthRepository = coreComponent.monthRepository();
         ArrayList<Month> months = monthPersistence.getAllMonths();
         if (months.size() == 0) {
