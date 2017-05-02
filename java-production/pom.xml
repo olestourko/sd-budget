@@ -196,6 +196,27 @@
                     </execution>
                 </executions>
             </plugin>
+ 
+            <!-- SASS plugin
+            https://github.com/warmuuh/libsass-maven-plugin -->           
+            <plugin>
+                <groupId>com.github.warmuuh</groupId>
+                <artifactId>libsass-maven-plugin</artifactId>
+                <version>0.2.7-libsass_3.4.3</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <inputPath>${project.basedir}/src/main/resources/desktop/styles/sass/</inputPath>
+                    <outputPath>${project.basedir}/src/main/resources/desktop/styles/css/</outputPath>
+                    <includePath>${project.basedir}/src/main/resources/desktop/styles/sass/</includePath>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     

@@ -92,7 +92,7 @@ public class Sdbudget extends Application {
         currentRoot = oneMonthRoot;
         mainController.contentContainer.getChildren().addAll(currentRoot); // Set the month view
         Scene mainScene = new Scene(mainRoot);
-        mainScene.getStylesheets().add("/desktop/styles/Styles.css");
+        mainScene.getStylesheets().add("/desktop/styles/css/styles.css");
 
         // Register handler for save menu item
         mainController.mainMenu.getMenus().get(0).getItems().get(0).setOnAction(event -> {
