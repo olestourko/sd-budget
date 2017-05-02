@@ -44,7 +44,7 @@ public class Sdbudget extends Application {
         final BudgetComponent budgetComponent = DaggerBudgetComponent.builder().coreComponent(coreComponent).build();
         final Budget budget = budgetComponent.budget();
         final MonthPersistence monthPersistence = coreComponent.monthPersistenceProvider().get();
-
+        
         // Populate the month repository
         MonthRepository monthRepository = coreComponent.monthRepository();
         ArrayList<Month> months = monthPersistence.getAllMonths();

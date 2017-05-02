@@ -263,4 +263,30 @@ public class MonthPersistence implements IPersistance<Month> {
             month.setClosingBalance(budgetItem);
         }
     }
+
+    public void removeUnusedBudgetItems() {
+        Result<BudgetItemRecord> budgetItemRecords = createDSLContext.select(BUDGET_ITEM.ID, BUDGET_ITEM.NAME, BUDGET_ITEM.AMOUNT).from(BUDGET_ITEM)
+                .leftJoin(MONTH_REVENUES).on(BUDGET_ITEM.ID.equal(MONTH_REVENUES.BUDGET_ITEM_ID))
+                .leftJoin(MONTH_EXPENSES).on(BUDGET_ITEM.ID.equal(MONTH_EXPENSES.BUDGET_ITEM_ID))
+                .leftJoin(MONTH_ADJUSTMENTS).on(BUDGET_ITEM.ID.equal(MONTH_ADJUSTMENTS.BUDGET_ITEM_ID))
+                .leftJoin(MONTH_DEBT_REPAYMENTS).on(BUDGET_ITEM.ID.equal(MONTH_DEBT_REPAYMENTS.BUDGET_ITEM_ID))
+                .leftJoin(MONTH_INVESTMENT_OUTFLOWS).on(BUDGET_ITEM.ID.equal(MONTH_INVESTMENT_OUTFLOWS.BUDGET_ITEM_ID))
+                .leftJoin(MONTH_NET_INCOME_TARGETS).on(BUDGET_ITEM.ID.equal(MONTH_NET_INCOME_TARGETS.BUDGET_ITEM_ID))
+                .leftJoin(MONTH_OPENING_BALANCES).on(BUDGET_ITEM.ID.equal(MONTH_OPENING_BALANCES.BUDGET_ITEM_ID))
+                .leftJoin(MONTH_CLOSING_BALANCES).on(BUDGET_ITEM.ID.equal(MONTH_CLOSING_BALANCES.BUDGET_ITEM_ID))
+                .where(MONTH_REVENUES.BUDGET_ITEM_ID.isNull())
+                .and(MONTH_EXPENSES.BUDGET_ITEM_ID.isNull())
+                .and(MONTH_ADJUSTMENTS.BUDGET_ITEM_ID.isNull())
+                .and(MONTH_DEBT_REPAYMENTS.BUDGET_ITEM_ID.isNull())
+                .and(MONTH_INVESTMENT_OUTFLOWS.BUDGET_ITEM_ID.isNull())
+                .and(MONTH_NET_INCOME_TARGETS.BUDGET_ITEM_ID.isNull())
+                .and(MONTH_OPENING_BALANCES.BUDGET_ITEM_ID.isNull())
+                .and(MONTH_CLOSING_BALANCES.BUDGET_ITEM_ID.isNull())
+                .fetch().into(BUDGET_ITEM);
+
+        for (BudgetItemRecord budgetItemRecord : budgetItemRecords) {
+            budgetItemRecord.delete();
+        }
+
+    }
 }
