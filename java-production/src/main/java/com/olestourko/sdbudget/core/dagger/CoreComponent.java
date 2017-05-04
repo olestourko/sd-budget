@@ -1,5 +1,6 @@
 package com.olestourko.sdbudget.core.dagger;
 
+import com.olestourko.sdbudget.core.models.factories.MonthFactory;
 import com.olestourko.sdbudget.core.persistence.BudgetItemPersistence;
 import com.olestourko.sdbudget.core.persistence.MonthPersistence;
 import com.olestourko.sdbudget.core.persistence.relations.MonthAdjustmentsRelation;
@@ -59,4 +60,7 @@ public interface CoreComponent {
     MonthLogicServices monthLogicServices();
 
     MonthCopyService monthCopyService();
+    
+    /* Factories */
+    MonthFactory monthFactory();
 }

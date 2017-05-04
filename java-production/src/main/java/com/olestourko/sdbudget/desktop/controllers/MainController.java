@@ -1,6 +1,7 @@
 package com.olestourko.sdbudget.desktop.controllers;
 
 import com.olestourko.sdbudget.core.models.Month;
+import com.olestourko.sdbudget.core.models.factories.MonthFactory;
 import com.olestourko.sdbudget.desktop.models.Budget;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import java.net.URL;
@@ -32,14 +33,20 @@ public class MainController implements Initializable {
     @FXML
     public RadioMenuItem oneMonthViewMenuItem;
     @FXML
-    public RadioMenuItem threeMonthViewMenuItem;    
-    
-    final private MonthRepository monthRepository;
-    final private Budget budget;
+    public RadioMenuItem threeMonthViewMenuItem;
+
+    private final MonthRepository monthRepository;
+    private final MonthFactory monthFactory;
+    private final Budget budget;
 
     @Inject
-    MainController(MonthRepository monthRepository, Budget budget) {
+    MainController(
+            MonthRepository monthRepository,
+            MonthFactory monthFactory,
+            Budget budget
+    ) {
         this.monthRepository = monthRepository;
+        this.monthFactory = monthFactory;
         this.budget = budget;
     }
 
@@ -60,16 +67,26 @@ public class MainController implements Initializable {
         });
         nextMonthButton.setOnAction(event -> {
             Month nextMonth = monthRepository.getNext(budget.getCurrentMonth());
-            if (nextMonth != null) {
-                previousMonthButton.disableProperty().set(false);
-                budget.setCurrentMonth(nextMonth);
 
-                if (monthRepository.getNext(budget.getCurrentMonth()) == null) {
-                    nextMonthButton.disableProperty().set(true);
-                }
-            } else {
-                nextMonthButton.disableProperty().set(true);
+            if (nextMonth == null) {
+                nextMonth = monthFactory.createNextMonth(budget.getCurrentMonth());
+                monthRepository.putMonth(nextMonth);
             }
+
+            // Create the 2 months after the next month (for three-month view)
+            Month nextMonth2 = monthRepository.getNext(nextMonth);
+            if (nextMonth2 == null) {
+                nextMonth2 = monthFactory.createNextMonth(nextMonth);
+                monthRepository.putMonth(nextMonth2);
+            }
+            Month nextMonth3 = monthRepository.getNext(nextMonth2);
+            if (nextMonth3 == null) {
+                nextMonth3 = monthFactory.createNextMonth(nextMonth2);
+                monthRepository.putMonth(nextMonth3);
+            }
+
+            budget.setCurrentMonth(nextMonth);
+            previousMonthButton.disableProperty().set(false);
         });
     }
 
