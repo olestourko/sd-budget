@@ -13,13 +13,14 @@ import javafx.scene.layout.AnchorPane;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.desktop.models.Budget;
 import com.olestourko.sdbudget.desktop.controllers.MainController;
-import java.util.Calendar;
 import java.util.ArrayList;
 import javafx.scene.control.RadioMenuItem;
 import com.olestourko.sdbudget.core.dagger.CoreComponent;
 import com.olestourko.sdbudget.core.dagger.DaggerCoreComponent;
+import com.olestourko.sdbudget.core.models.factories.MonthFactory;
 import com.olestourko.sdbudget.desktop.dagger.BudgetComponent;
 import com.olestourko.sdbudget.desktop.dagger.DaggerBudgetComponent;
+import java.util.Calendar;
 import java.util.List;
 import org.flywaydb.core.Flyway;
 import javafx.application.Application.Parameters;
@@ -44,27 +45,28 @@ public class Sdbudget extends Application {
         final BudgetComponent budgetComponent = DaggerBudgetComponent.builder().coreComponent(coreComponent).build();
         final Budget budget = budgetComponent.budget();
         final MonthPersistence monthPersistence = coreComponent.monthPersistenceProvider().get();
-        
+
         // Populate the month repository
         MonthRepository monthRepository = coreComponent.monthRepository();
-        ArrayList<Month> months = monthPersistence.getAllMonths();
-        if (months.size() == 0) {
-            for (int i = 0; i < 12; i++) {
-                Calendar cal = Calendar.getInstance();
-                cal.set(Calendar.DAY_OF_MONTH, 1);
-                cal.add(Calendar.MONTH, i);
-                cal.set(Calendar.YEAR, 2017);
-                Month month = new Month();
-                month.setNumber((short) cal.get(Calendar.MONTH));
-                month.setYear((short) cal.get(Calendar.YEAR));
-                monthRepository.putMonth(month);
+        MonthFactory monthFactory = coreComponent.monthFactory();
+        
+        monthRepository.fetchMonths();
+        Calendar calendar = Calendar.getInstance();
+        
+        Month month = monthRepository.getMonth((short) calendar.get(Calendar.MONTH), (short) calendar.get(Calendar.YEAR));
+        if(month == null) {
+            month = monthFactory.createCurrentMonth();
+            monthRepository.putMonth(month);
+        }
+        
+        for (int i = 0; i < 2; i++) {
+            if(monthRepository.getNext(month) == null) {
+                monthRepository.putMonth(monthFactory.createNextMonth(month));
             }
-            monthRepository.storeMonths();
-        } else {
-            monthRepository.fetchMonths();
+            month = monthRepository.getNext(month);
         }
 
-        budget.setCurrentMonth(monthRepository.getMonth((short) 0, (short) 2017));
+        budget.setCurrentMonth(monthRepository.getMonth((short) calendar.get(Calendar.MONTH), (short) calendar.get(Calendar.YEAR)));
 
         OneMonthController oneMonthController = budgetComponent.oneMonthController().get();
         FXMLLoader oneMonthLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/BudgetScene_OneMonth.fxml"));

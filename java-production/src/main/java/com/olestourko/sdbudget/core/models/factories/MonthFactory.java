@@ -15,6 +15,15 @@ public class MonthFactory {
 
     }
 
+    public Month createCurrentMonth() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        Month month = new Month();
+        month.setNumber((short) calendar.get(Calendar.MONTH));
+        month.setYear((short) calendar.get(Calendar.YEAR));
+        return month;
+    }
+    
     public Month createNextMonth(Month month) {
         Calendar nextCalendar = Calendar.getInstance();
         nextCalendar.set(Calendar.DAY_OF_MONTH, 1);
