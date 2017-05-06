@@ -14,6 +14,8 @@ import com.olestourko.sdbudget.desktop.models.MonthViewModel;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -60,6 +62,11 @@ public class MonthControl extends AnchorPane {
     private final TreeItem<BudgetItemViewModel> revenuesRoot = new TreeItem<>(new BudgetItemViewModel("Revenues", BigDecimal.ZERO));
     private final TreeItem<BudgetItemViewModel> expensesRoot = new TreeItem<>(new BudgetItemViewModel("Expenses", BigDecimal.ZERO));
     private final TreeItem<BudgetItemViewModel> adjustmentsRoot = new TreeItem<>(new BudgetItemViewModel("Adjustments", BigDecimal.ZERO));
+
+    private final TreeItem<BudgetItemViewModel> debtRepaymentsTreeItem = new TreeItem<>();
+    private final TreeItem<BudgetItemViewModel> investmentOutflowsTreeItem = new TreeItem<>();
+    private final TreeItem<BudgetItemViewModel> netIncomeTargetTreeItem = new TreeItem<>();
+    private final TreeItem<BudgetItemViewModel> openingBalanceTreeItem = new TreeItem<>();
 
     private final SimpleObjectProperty<Month> month = new SimpleObjectProperty<>();
     private final SimpleObjectProperty<MonthViewModel> monthViewModel = new SimpleObjectProperty<MonthViewModel>();
@@ -278,10 +285,20 @@ public class MonthControl extends AnchorPane {
             @Override
             public void handle(TreeTableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal> t) {
                 TreeItem treeItem = t.getTreeTablePosition().getTreeItem();
+
                 if (treeItem.getChildren().size() == 0) {
                     BudgetItemViewModel budgetItem = (BudgetItemViewModel) treeItem.getValue();
-                    budgetItem.setAmount(t.getNewValue());
-                    callMonthModifiedCallback();
+
+                    // Don't allow negative numbers for revenues, expenses, debt repayments, investment outflows
+                    List<TreeItem> allowNegative = new ArrayList<>();
+                    allowNegative.add(openingBalanceTreeItem);
+                    allowNegative.add(netIncomeTargetTreeItem);
+                    if (!allowNegative.contains(treeItem) && t.getNewValue().compareTo(BigDecimal.ZERO) == -1) {
+                        budgetTable.refresh();
+                    } else {
+                        budgetItem.setAmount(t.getNewValue());
+                        callMonthModifiedCallback();
+                    }
                 }
             }
         });
@@ -322,6 +339,7 @@ public class MonthControl extends AnchorPane {
             }
         });
 
+        budgetTableRoot.getChildren().addAll(revenuesRoot, expensesRoot, adjustmentsRoot, debtRepaymentsTreeItem, investmentOutflowsTreeItem, netIncomeTargetTreeItem, openingBalanceTreeItem);
         budgetTableRoot.setExpanded(true);
         budgetTable.setEditable(true);
         budgetTable.setRoot(budgetTableRoot);
@@ -406,17 +424,12 @@ public class MonthControl extends AnchorPane {
         monthViewModel.getExpenses().addListener(expensesListChangeListener);
         monthViewModel.getAdjustments().addListener(adjustmentsListChangeListener);
 
-        budgetTableRoot.getChildren().clear();
         revenuesRoot.getChildren().clear();
         revenuesRoot.getValue().setAmount(monthViewModel.getTotalRevenues());
         expensesRoot.getChildren().clear();
         expensesRoot.getValue().setAmount(monthViewModel.getTotalExpenses());
         adjustmentsRoot.getChildren().clear();
         adjustmentsRoot.getValue().setAmount(monthViewModel.getTotalAdjustments());
-
-        budgetTableRoot.getChildren().add(revenuesRoot);
-        budgetTableRoot.getChildren().add(expensesRoot);
-        budgetTableRoot.getChildren().add(adjustmentsRoot);
 
         for (BudgetItemViewModel revenue : monthViewModel.getRevenues()) {
             revenuesRoot.getChildren().add(new TreeItem<BudgetItemViewModel>(revenue));
@@ -426,10 +439,10 @@ public class MonthControl extends AnchorPane {
             expensesRoot.getChildren().add(new TreeItem<BudgetItemViewModel>(expense));
         }
 
-        budgetTableRoot.getChildren().add(new TreeItem<>(monthViewModel.getDebtRepayments()));
-        budgetTableRoot.getChildren().add(new TreeItem<>(monthViewModel.getInvestmentOutflows()));
-        budgetTableRoot.getChildren().add(new TreeItem<>(monthViewModel.getNetIncomeTarget()));
-        budgetTableRoot.getChildren().add(new TreeItem<>(monthViewModel.getOpeningBalance()));
+        debtRepaymentsTreeItem.setValue(monthViewModel.getDebtRepayments());
+        investmentOutflowsTreeItem.setValue(monthViewModel.getInvestmentOutflows());
+        netIncomeTargetTreeItem.setValue(monthViewModel.getNetIncomeTarget());
+        openingBalanceTreeItem.setValue(monthViewModel.getOpeningBalance());
 
         totalsTable.getItems().clear();
         totalsTable.getItems().addAll(
@@ -448,7 +461,7 @@ public class MonthControl extends AnchorPane {
         // Set the closing checkbox value
         closeMonthCheckBox.setSelected(monthViewModel.getIsClosed());
         closeMonthCheckBox.setDisable(!monthLogicServices.isMonthClosable(month.getValue()));
-        
+
         // Enable/Disable month closing button
         copyToNext.setDisable(!monthLogicServices.isMonthCloneable(month.getValue()));
     }
