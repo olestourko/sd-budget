@@ -26,10 +26,12 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
+import javafx.util.converter.DefaultStringConverter;
 import javax.inject.Inject;
 import org.mapstruct.factory.Mappers;
 
@@ -55,7 +57,7 @@ public class ScratchpadController implements Initializable {
     private final Budget budget;
     private final SimpleObjectProperty<Month> month = new SimpleObjectProperty<>();
     private final SimpleObjectProperty<MonthViewModel> monthViewModel = new SimpleObjectProperty<>();
-    
+
     private final ListChangeListener<BudgetItemViewModel> listChangeListener = new ListChangeListener<BudgetItemViewModel>() {
         @Override
         public void onChanged(Change<? extends BudgetItemViewModel> change) {
@@ -80,7 +82,6 @@ public class ScratchpadController implements Initializable {
         budget.currentMonthProperty().addListener(event -> {
             this.setMonth(budget.getCurrentMonth());
         });
-
         nameColumn.setCellValueFactory(new PropertyValueFactory<BudgetItemViewModel, String>("name"));
         amountColumn.setCellValueFactory(new PropertyValueFactory<BudgetItemViewModel, Double>("amount"));
 
@@ -93,6 +94,21 @@ public class ScratchpadController implements Initializable {
         });
 
         //Allow editing of adjustments, and update "Total Adjustments" row whenever they change.
+        nameColumn.setCellFactory(new Callback<TableColumn<BudgetItemViewModel, String>, TableCell<BudgetItemViewModel, String>>() {
+            @Override
+            public TableCell<BudgetItemViewModel, String> call(TableColumn<BudgetItemViewModel, String> param) {
+                TextFieldTableCell cell = new TextFieldTableCell(new DefaultStringConverter());
+                return cell;
+            }
+        });
+        nameColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<BudgetItemViewModel, String>>() {
+            @Override
+            public void handle(TableColumn.CellEditEvent<BudgetItemViewModel, String> t) {
+                BudgetItemViewModel budgetItem = (BudgetItemViewModel) t.getTableView().getItems().get(t.getTablePosition().getRow());
+                budgetItem.setName(t.getNewValue());
+            }
+        });
+
         amountColumn.setCellFactory(new Callback<TableColumn<BudgetItemViewModel, BigDecimal>, TableCell<BudgetItemViewModel, BigDecimal>>() {
             StringConverter<BigDecimal> converter;
 
@@ -124,6 +140,9 @@ public class ScratchpadController implements Initializable {
             }
         });
 
+        // Disable selection on the totals table
+        totalsTable.setSelectionModel(null);
+
         //Set the date on the label
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
         periodDate.setText(dateFormat.format(this.monthViewModel.get().calendar.getTime()));
@@ -154,11 +173,11 @@ public class ScratchpadController implements Initializable {
         this.monthMapper.updateMonthViewModelFromMonth(this.month.getValue(), this.monthViewModel.getValue());
     }
 
-    private void setMonth(Month month) {
+    protected void setMonth(Month month) {
         MonthViewModel monthViewModel = monthMapper.mapMonthToMonthViewModel(month);
         this.month.set(month);
         this.monthViewModel.set(monthViewModel);
-        
+
         scratchpadTable.getItems().removeListener(listChangeListener);
         scratchpadTable.setItems(monthViewModel.getAdjustments());
         scratchpadTable.getItems().addListener(listChangeListener);
