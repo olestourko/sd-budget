@@ -19,7 +19,7 @@
         <AnchorPane AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
             <children>
                 <Label fx:id="periodDate" text="" />
-                <TableView fx:id="scratchPadTable" editable="true" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="20.0">
+                <TableView fx:id="scratchpadTable" editable="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="20.0">
                     <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
                     </columnResizePolicy>
@@ -38,7 +38,7 @@
                 </TableView>
             </children>
         </AnchorPane>
-        <AnchorPane prefHeight="70.0" AnchorPane.bottomAnchor="35.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
+        <AnchorPane prefHeight="28.0" AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
             <children>
                 <TableView fx:id="totalsTable" editable="true" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
                     <columnResizePolicy>
@@ -59,11 +59,11 @@
                 </TableView>
             </children>
         </AnchorPane>
-        <HBox spacing="5.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
+        <HBox spacing="5.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
             <children>
                 <TextField fx:id="nameField" promptText="Description" styleClass="input-field" text="" />
                 <TextField fx:id="amountField" promptText="Amount" styleClass="input-field" text="" />
-                <Button fx:id="addTransactionButton" onAction="#handleAddTransactionButtonAction" text="Add Transaction" />
+                <Button fx:id="addTransactionButton" onAction="#handleAddTransactionButtonAction" text="Add Adjustment" />
             </children>
         </HBox>
     </children>

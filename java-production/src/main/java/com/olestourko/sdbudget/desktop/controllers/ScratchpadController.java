@@ -5,7 +5,6 @@ import com.olestourko.sdbudget.core.models.Month;
 import com.olestourko.sdbudget.desktop.controls.CurrencyTableCell;
 import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
 import com.olestourko.sdbudget.desktop.models.MonthViewModel;
-import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.desktop.mappers.MonthMapper;
 import com.olestourko.sdbudget.desktop.models.Budget;
 import java.math.BigDecimal;
@@ -37,7 +36,7 @@ import org.mapstruct.factory.Mappers;
 public class ScratchpadController implements Initializable {
 
     @FXML
-    private TableView scratchPadTable;
+    private TableView scratchpadTable;
     @FXML
     private TableView totalsTable;
     @FXML
@@ -130,11 +129,11 @@ public class ScratchpadController implements Initializable {
         periodDate.setText(dateFormat.format(this.monthViewModel.get().calendar.getTime()));
 
         // Remove adjusments when DELETE key is pressed
-        scratchPadTable.setOnKeyPressed(new EventHandler<KeyEvent>() {
+        scratchpadTable.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
                 if (event.getCode().equals(KeyCode.DELETE)) {
-                    BudgetItemViewModel selectedItem = (BudgetItemViewModel) scratchPadTable.getSelectionModel().getSelectedItem();
+                    BudgetItemViewModel selectedItem = (BudgetItemViewModel) scratchpadTable.getSelectionModel().getSelectedItem();
                     if (selectedItem == totalAdjustments) {
                         return;
                     }
@@ -160,9 +159,9 @@ public class ScratchpadController implements Initializable {
         this.month.set(month);
         this.monthViewModel.set(monthViewModel);
         
-        scratchPadTable.getItems().removeListener(listChangeListener);
-        scratchPadTable.setItems(monthViewModel.getAdjustments());
-        scratchPadTable.getItems().addListener(listChangeListener);
+        scratchpadTable.getItems().removeListener(listChangeListener);
+        scratchpadTable.setItems(monthViewModel.getAdjustments());
+        scratchpadTable.getItems().addListener(listChangeListener);
         totalAdjustments.setAmount(month.getTotalAdjustments());
     }
 }
