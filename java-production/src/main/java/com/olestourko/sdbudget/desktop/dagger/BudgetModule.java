@@ -11,9 +11,4 @@ import dagger.Provides;
 @Module
 public class BudgetModule {
 
-    @Provides
-    @DesktopApplicationScope
-    Budget provideBudget() {
-        return new Budget();
-    }
 }

@@ -29,7 +29,7 @@ public class MonthCalculationServices {
         );
 
         month.getClosingBalanceTarget().setAmount(result.expectedBalance);
-        month.getEstimatedClosingBalance().setAmount(result.estimatedBalance);
+        month.getEstimatedClosingBalance().setAmount(result.estimatedBalance.subtract(month.getOpeningSurplus().getAmount())); // Adding the opening surplus doesn't make sense in the context of multiple months
         month.getClosingSurplus().setAmount(result.surplus);
 
         if (month.getIsClosed()) {

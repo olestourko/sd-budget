@@ -67,23 +67,18 @@ public class ThreeMonthController implements Initializable {
         Callback<MonthControl, Month> monthModifiedCallback = new Callback<MonthControl, Month>() {
             @Override
             public Month call(MonthControl monthControl) {
-                Month month = monthControl.getMonth();
-
+                monthMapper.updateMonthFromMonthViewModel(monthControl.getMonthViewModel(), monthControl.getMonth());
+                budget.recalculateMonths(monthControl.getMonth());
+                
                 for (MonthControl mc : monthControls) {
                     Month mcMonth = mc.getMonth();
                     if (mcMonth != null) {
-                        Month previousMonth = monthRepository.getPrevious(mc.getMonth());
-                        if (previousMonth != null) {
-                            mc.getMonth().getOpeningBalance().setAmount(previousMonth.getClosingBalance().getAmount());
-                            mc.getMonth().getOpeningSurplus().setAmount(previousMonth.getClosingSurplus().getAmount());
-                        }
-                        monthCalculationServices.calculateMonthTotals(mc.getMonth());
                         monthMapper.updateMonthViewModelFromMonth(mc.getMonth(), mc.getMonthViewModel());
                         mc.populateTables();
                     }
                 }
 
-                return month;
+                return monthControl.getMonth();
             }
         };
         

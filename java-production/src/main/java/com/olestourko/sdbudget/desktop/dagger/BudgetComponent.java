@@ -19,7 +19,7 @@ import com.olestourko.sdbudget.core.dagger.CoreComponent;
 @Component(modules = {BudgetModule.class}, dependencies = {CoreComponent.class})
 public interface BudgetComponent {
 
-    Budget budget();
+    Provider<Budget> budget();
     
     Provider<MainController> mainController();
     

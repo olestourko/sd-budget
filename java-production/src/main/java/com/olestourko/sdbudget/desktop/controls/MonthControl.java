@@ -37,7 +37,6 @@ import javafx.util.Callback;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
 import org.mapstruct.factory.Mappers;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  *

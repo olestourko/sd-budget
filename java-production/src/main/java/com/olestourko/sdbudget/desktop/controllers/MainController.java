@@ -85,7 +85,9 @@ public class MainController implements Initializable {
                 monthRepository.putMonth(nextMonth3);
             }
 
+            budget.recalculateMonths(budget.getCurrentMonth());
             budget.setCurrentMonth(nextMonth);
+            
             previousMonthButton.disableProperty().set(false);
         });
     }

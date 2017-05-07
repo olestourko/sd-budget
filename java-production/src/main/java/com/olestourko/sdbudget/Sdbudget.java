@@ -1,7 +1,6 @@
 package com.olestourko.sdbudget;
 
 import com.olestourko.sdbudget.core.models.Month;
-import com.olestourko.sdbudget.core.persistence.MonthPersistence;
 import com.olestourko.sdbudget.desktop.controllers.OneMonthController;
 import com.olestourko.sdbudget.desktop.controllers.ThreeMonthController;
 import com.olestourko.sdbudget.desktop.controllers.ScratchpadController;
@@ -13,7 +12,6 @@ import javafx.scene.layout.AnchorPane;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.desktop.models.Budget;
 import com.olestourko.sdbudget.desktop.controllers.MainController;
-import java.util.ArrayList;
 import javafx.scene.control.RadioMenuItem;
 import com.olestourko.sdbudget.core.dagger.CoreComponent;
 import com.olestourko.sdbudget.core.dagger.DaggerCoreComponent;
@@ -43,8 +41,7 @@ public class Sdbudget extends Application {
 
         final CoreComponent coreComponent = DaggerCoreComponent.builder().build();
         final BudgetComponent budgetComponent = DaggerBudgetComponent.builder().coreComponent(coreComponent).build();
-        final Budget budget = budgetComponent.budget();
-        final MonthPersistence monthPersistence = coreComponent.monthPersistenceProvider().get();
+        final Budget budget = budgetComponent.budget().get();
 
         // Populate the month repository
         MonthRepository monthRepository = coreComponent.monthRepository();
@@ -67,6 +64,7 @@ public class Sdbudget extends Application {
         }
 
         budget.setCurrentMonth(monthRepository.getMonth((short) calendar.get(Calendar.MONTH), (short) calendar.get(Calendar.YEAR)));
+        budget.recalculateMonths(budget.getCurrentMonth());
 
         OneMonthController oneMonthController = budgetComponent.oneMonthController().get();
         FXMLLoader oneMonthLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/BudgetScene_OneMonth.fxml"));
