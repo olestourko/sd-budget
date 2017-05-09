@@ -18,7 +18,6 @@ import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 import javax.inject.Inject;
 import org.mapstruct.factory.Mappers;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class ThreeMonthController implements Initializable {
 
@@ -68,7 +67,7 @@ public class ThreeMonthController implements Initializable {
             @Override
             public Month call(MonthControl monthControl) {
                 monthMapper.updateMonthFromMonthViewModel(monthControl.getMonthViewModel(), monthControl.getMonth());
-                budget.recalculateMonths(monthControl.getMonth());
+                monthCalculationServices.recalculateMonths(monthControl.getMonth());
                 
                 for (MonthControl mc : monthControls) {
                     Month mcMonth = mc.getMonth();

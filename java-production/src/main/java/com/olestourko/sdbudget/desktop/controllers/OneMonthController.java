@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
+import com.olestourko.sdbudget.core.services.MonthCalculationServices;
 import com.olestourko.sdbudget.desktop.models.Budget;
 import com.olestourko.sdbudget.core.services.MonthCopyService;
 import com.olestourko.sdbudget.core.services.MonthLogicServices;
@@ -20,6 +21,7 @@ public class OneMonthController implements Initializable {
     @FXML
     public MonthControl monthControl;
 
+    private final MonthCalculationServices monthCalculationServices;
     private final MonthLogicServices monthLogicServices;
     private final MonthCopyService monthCopyService;
     private final MonthRepository monthRepository;
@@ -28,10 +30,12 @@ public class OneMonthController implements Initializable {
 
     @Inject
     OneMonthController(
+            MonthCalculationServices monthCalculationServices,
             MonthLogicServices monthLogicServices,
             MonthCopyService monthCopyService,
             MonthRepository monthRepository,
             Budget budget) {
+        this.monthCalculationServices = monthCalculationServices;
         this.monthLogicServices = monthLogicServices;
         this.monthCopyService = monthCopyService;
         this.monthRepository = monthRepository;
@@ -51,7 +55,7 @@ public class OneMonthController implements Initializable {
         monthControl.setOnMonthModified(event -> {
             Month month = monthControl.getMonth();
             this.monthMapper.updateMonthFromMonthViewModel(monthControl.getMonthViewModel(), month);
-            budget.recalculateMonths(month);
+            monthCalculationServices.recalculateMonths(month);
             this.monthMapper.updateMonthViewModelFromMonth(month, monthControl.getMonthViewModel());
             return month;
         });

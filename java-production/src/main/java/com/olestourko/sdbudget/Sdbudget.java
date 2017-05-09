@@ -64,7 +64,7 @@ public class Sdbudget extends Application {
         }
 
         budget.setCurrentMonth(monthRepository.getMonth((short) calendar.get(Calendar.MONTH), (short) calendar.get(Calendar.YEAR)));
-        budget.recalculateMonths(budget.getCurrentMonth());
+        coreComponent.monthServices().recalculateMonths(budget.getCurrentMonth());
 
         OneMonthController oneMonthController = budgetComponent.oneMonthController().get();
         FXMLLoader oneMonthLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/BudgetScene_OneMonth.fxml"));

@@ -4,6 +4,7 @@ import com.olestourko.sdbudget.core.models.Month;
 import com.olestourko.sdbudget.core.models.factories.MonthFactory;
 import com.olestourko.sdbudget.desktop.models.Budget;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
+import com.olestourko.sdbudget.core.services.MonthCalculationServices;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -35,16 +36,19 @@ public class MainController implements Initializable {
     @FXML
     public RadioMenuItem threeMonthViewMenuItem;
 
+    private final MonthCalculationServices monthCalculationServices;
     private final MonthRepository monthRepository;
     private final MonthFactory monthFactory;
     private final Budget budget;
 
     @Inject
     MainController(
+            MonthCalculationServices monthCalculationServices,
             MonthRepository monthRepository,
             MonthFactory monthFactory,
             Budget budget
     ) {
+        this.monthCalculationServices = monthCalculationServices;
         this.monthRepository = monthRepository;
         this.monthFactory = monthFactory;
         this.budget = budget;
@@ -85,7 +89,7 @@ public class MainController implements Initializable {
                 monthRepository.putMonth(nextMonth3);
             }
 
-            budget.recalculateMonths(budget.getCurrentMonth());
+            monthCalculationServices.recalculateMonths(budget.getCurrentMonth());
             budget.setCurrentMonth(nextMonth);
             
             previousMonthButton.disableProperty().set(false);

@@ -28,6 +28,15 @@ public class Month extends Model implements Serializable {
     private BudgetItem closingBalanceTarget = new BudgetItem("Closing Balance Target", BigDecimal.ZERO);
     private BudgetItem estimatedClosingBalance = new BudgetItem("Estimated Closing Balance", BigDecimal.ZERO);
 
+    // Static factory method
+    // https://dzone.com/articles/consider-static-factory-methods-instead-of-constru
+    public static Month createMonth(int number, int year) {
+        Month month = new Month();
+        month.setNumber((short) number);
+        month.setYear((short) year);
+        return month;
+    }
+
     public short getNumber() {
         return number;
     }
@@ -93,19 +102,19 @@ public class Month extends Model implements Serializable {
     public BudgetItem getDebtRepayments() {
         return debtRepayments;
     }
-    
+
     public void setDebtRepayments(BudgetItem debtRepayments) {
         this.debtRepayments = debtRepayments;
     }
-    
+
     public BudgetItem getInvestmentOutflows() {
         return this.investmentOutflows;
     }
-    
+
     public void setInvestmentOutflows(BudgetItem investmentOutflows) {
         this.investmentOutflows = investmentOutflows;
     }
-    
+
     public BudgetItem getNetIncomeTarget() {
         return netIncomeTarget;
     }

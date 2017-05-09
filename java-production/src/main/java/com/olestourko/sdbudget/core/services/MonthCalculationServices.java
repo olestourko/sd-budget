@@ -1,6 +1,7 @@
 package com.olestourko.sdbudget.core.services;
 
 import com.olestourko.sdbudget.core.models.Month;
+import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import javax.inject.Inject;
 
 /**
@@ -10,10 +11,12 @@ import javax.inject.Inject;
 public class MonthCalculationServices {
 
     private final PeriodCalculationServices periodCalculationServices;
+    private final MonthRepository monthRepository;
 
     @Inject
-    public MonthCalculationServices(PeriodCalculationServices periodServices) {
+    public MonthCalculationServices(PeriodCalculationServices periodServices, MonthRepository monthRepository) {
         this.periodCalculationServices = periodServices;
+        this.monthRepository = monthRepository;
     }
 
     public Month calculateMonthTotals(Month month) {
@@ -43,5 +46,22 @@ public class MonthCalculationServices {
         }
 
         return month;
+    }
+
+    public void recalculateMonths(Month startingMonth) {
+        Month currentMonth = startingMonth;
+        while (currentMonth != null) {
+            Month previousMonth = monthRepository.getPrevious(currentMonth);
+            if (previousMonth != null) {
+                if (previousMonth.getIsClosed()) {
+                    currentMonth.getOpeningBalance().setAmount(previousMonth.getClosingBalance().getAmount());
+                } else {
+                    currentMonth.getOpeningBalance().setAmount(previousMonth.getEstimatedClosingBalance().getAmount());
+                }
+                currentMonth.getOpeningSurplus().setAmount(previousMonth.getClosingSurplus().getAmount());
+            }
+            calculateMonthTotals(currentMonth);
+            currentMonth = monthRepository.getNext(currentMonth);
+        }
     }
 }

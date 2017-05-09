@@ -16,6 +16,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import com.olestourko.sdbudget.core.dagger.CoreComponent;
+import com.olestourko.sdbudget.core.repositories.MonthRepository;
 
 /**
  *
@@ -93,4 +94,43 @@ public class MonthServicesTest {
         assertEquals(expClosingSurplus, month.getClosingSurplus().getAmount());
     }
 
+    @Test
+    public void testRecalculateMonths() {
+        CoreComponent coreComponent = DaggerCoreComponent.create();
+        MonthRepository monthRepository = coreComponent.monthRepository();
+        MonthCalculationServices monthServices = coreComponent.monthServices();
+
+        Month month1 = Month.createMonth(1, 2017);
+        month1.getRevenues().add(new BudgetItem("", new BigDecimal(1000)));
+        month1.getExpenses().add(new BudgetItem("", new BigDecimal(500)));
+        month1.getNetIncomeTarget().setAmount(new BigDecimal(400));
+
+        Month month2 = Month.createMonth(2, 2017);
+        month2.getRevenues().add(new BudgetItem("", new BigDecimal(1000)));
+        month2.getExpenses().add(new BudgetItem("", new BigDecimal(500)));
+        month2.getNetIncomeTarget().setAmount(new BigDecimal(400));
+
+        Month month3 = Month.createMonth(3, 2017);
+
+        monthRepository.putMonth(month1);
+        monthRepository.putMonth(month2);
+        monthRepository.putMonth(month3);
+
+        monthServices.recalculateMonths(month1);
+
+        // Test that Month 1 is calculated correctly
+        assertEquals(new BigDecimal(0), month1.getOpeningBalance().getAmount());
+        assertEquals(new BigDecimal(0), month1.getOpeningSurplus().getAmount());
+        assertEquals(new BigDecimal(100), month1.getClosingSurplus().getAmount());
+
+        // Test that Month 2 is calculated correctly
+        assertEquals(new BigDecimal(500), month2.getOpeningBalance().getAmount());
+        assertEquals(new BigDecimal(100), month2.getOpeningSurplus().getAmount());
+        assertEquals(new BigDecimal(200), month2.getClosingSurplus().getAmount());
+
+        // Test that Month 3 is calculated correctly
+        assertEquals(new BigDecimal(1000), month3.getOpeningBalance().getAmount());
+        assertEquals(new BigDecimal(200), month3.getOpeningSurplus().getAmount());
+        assertEquals(new BigDecimal(200), month3.getClosingSurplus().getAmount());
+    }
 }
