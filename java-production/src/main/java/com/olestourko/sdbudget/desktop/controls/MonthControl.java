@@ -42,8 +42,8 @@ import org.mapstruct.factory.Mappers;
  *
  * @author oles
  */
-public class MonthControl extends AnchorPane {
-    
+public class MonthControl extends AnchorPane implements IMonthControl {
+
     @FXML
     private Label dateLabel;
     @FXML
@@ -56,23 +56,23 @@ public class MonthControl extends AnchorPane {
     public CheckBox closeMonthCheckBox;
     @FXML
     private Button copyToNext;
-    
+
     private final TreeItem<BudgetItemViewModel> budgetTableRoot = new TreeItem<>(new BudgetItemViewModel("Budget", BigDecimal.ZERO));
     private final TreeItem<BudgetItemViewModel> revenuesRoot = new TreeItem<>(new BudgetItemViewModel("Revenues", BigDecimal.ZERO));
     private final TreeItem<BudgetItemViewModel> expensesRoot = new TreeItem<>(new BudgetItemViewModel("Expenses", BigDecimal.ZERO));
     private final TreeItem<BudgetItemViewModel> adjustmentsRoot = new TreeItem<>(new BudgetItemViewModel("Adjustments", BigDecimal.ZERO));
-    
+
     private final TreeItem<BudgetItemViewModel> debtRepaymentsTreeItem = new TreeItem<>();
     private final TreeItem<BudgetItemViewModel> investmentOutflowsTreeItem = new TreeItem<>();
     private final TreeItem<BudgetItemViewModel> netIncomeTargetTreeItem = new TreeItem<>();
     private final TreeItem<BudgetItemViewModel> openingBalanceTreeItem = new TreeItem<>();
-    
+
     private final SimpleObjectProperty<Month> month = new SimpleObjectProperty<>();
     private final SimpleObjectProperty<MonthViewModel> monthViewModel = new SimpleObjectProperty<MonthViewModel>();
     private final MonthMapper monthMapper;
-    
+
     private MonthLogicServices monthLogicServices;
-    
+
     public void setMonthLogicServices(MonthLogicServices monthLogicServices) {
         this.monthLogicServices = monthLogicServices;
     }
@@ -80,11 +80,11 @@ public class MonthControl extends AnchorPane {
     // <editor-fold defaultstate="collapsed" desc="Month modified callback">
     // This callback should be called (passing the Month) when and only when the month's items are changed or updated through the Control UI ONLY
     private Callback<MonthControl, Month> monthModifiedCallback;
-    
+
     public void setOnMonthModified(Callback<MonthControl, Month> callback) {
         this.monthModifiedCallback = callback;
     }
-    
+
     protected void callMonthModifiedCallback() {
         monthMapper.updateMonthFromMonthViewModel(monthViewModel.getValue(), month.getValue()); // Update the Month instance with the monthViewModel
         if (monthModifiedCallback != null) {
@@ -109,7 +109,7 @@ public class MonthControl extends AnchorPane {
             }
         }
     };
-    
+
     private final ListChangeListener<BudgetItemViewModel> expensesListChangeListener = new ListChangeListener<BudgetItemViewModel>() {
         @Override
         public void onChanged(ListChangeListener.Change<? extends BudgetItemViewModel> change) {
@@ -120,7 +120,7 @@ public class MonthControl extends AnchorPane {
             }
         }
     };
-    
+
     private final ListChangeListener<BudgetItemViewModel> adjustmentsListChangeListener = new ListChangeListener<BudgetItemViewModel>() {
         @Override
         public void onChanged(ListChangeListener.Change<? extends BudgetItemViewModel> change) {
@@ -143,7 +143,7 @@ public class MonthControl extends AnchorPane {
             throw new RuntimeException(ex);
         }
         this.monthMapper = Mappers.getMapper(MonthMapper.class);
-        
+
         setupBudgetTable();
         setupTotalsTable();
         setupClosingTable();
@@ -155,7 +155,7 @@ public class MonthControl extends AnchorPane {
             callMonthModifiedCallback();
             updateTableStyles();
         });
-        
+
         updateTableStyles();
 
         // Repopulates the tables when the reference to the month instance changes
@@ -197,23 +197,14 @@ public class MonthControl extends AnchorPane {
         }
     }
 
-    // Month property
-    public Month getMonth() {
-        return this.month.get();
-    }
-    
-    public void setMonth(Month month) {
-        this.month.set(month);
-    }
-    
     public MonthViewModel getMonthViewModel() {
         return this.monthViewModel.get();
     }
-    
+
     public void setMonthViewModel(MonthViewModel monthViewModel) {
         this.monthViewModel.set(monthViewModel);
     }
-    
+
     public SimpleObjectProperty<Month> monthProperty() {
         return this.month;
     }
@@ -223,20 +214,20 @@ public class MonthControl extends AnchorPane {
         TreeTableColumn nameColumn = (TreeTableColumn) budgetTable.getColumns().get(0);
         TreeTableColumn amountColumn = (TreeTableColumn) budgetTable.getColumns().get(1);
         TreeTableColumn actionColumn = (TreeTableColumn) budgetTable.getColumns().get(2);
-        
+
         nameColumn.prefWidthProperty().bind(budgetTable.widthProperty().multiply(0.6).subtract(28));
         amountColumn.prefWidthProperty().bind(budgetTable.widthProperty().multiply(0.4));
         actionColumn.prefWidthProperty().set(24);
         nameColumn.setResizable(false);
         amountColumn.setResizable(false);
         actionColumn.setResizable(false);
-        
+
         nameColumn.setCellValueFactory(new Callback<CellDataFeatures<BudgetItemViewModel, String>, ObservableValue<String>>() {
             public ObservableValue<String> call(CellDataFeatures<BudgetItemViewModel, String> p) {
                 return p.getValue().getValue().nameProperty();
             }
         });
-        
+
         nameColumn.setCellFactory(new Callback<TreeTableColumn<BudgetItemViewModel, BigDecimal>, TreeTableCell<BudgetItemViewModel, BigDecimal>>() {
             @Override
             public TreeTableCell<BudgetItemViewModel, BigDecimal> call(TreeTableColumn<BudgetItemViewModel, BigDecimal> param) {
@@ -244,7 +235,7 @@ public class MonthControl extends AnchorPane {
                 return cell;
             }
         });
-        
+
         nameColumn.setOnEditCommit(new EventHandler<TreeTableColumn.CellEditEvent<BudgetItemViewModel, String>>() {
             @Override
             public void handle(TreeTableColumn.CellEditEvent<BudgetItemViewModel, String> t) {
@@ -257,7 +248,7 @@ public class MonthControl extends AnchorPane {
                     callMonthModifiedCallback();
                 }
             }
-            
+
         });
 
         // This draws the textfield when editing a table cell
@@ -272,19 +263,19 @@ public class MonthControl extends AnchorPane {
         // Initializes the currency-formated cells for the amount column
         amountColumn.setCellFactory(new Callback<TreeTableColumn<BudgetItemViewModel, BigDecimal>, TreeTableCell<BudgetItemViewModel, BigDecimal>>() {
             StringConverter<BigDecimal> converter;
-            
+
             @Override
             public TreeTableCell<BudgetItemViewModel, BigDecimal> call(TreeTableColumn<BudgetItemViewModel, BigDecimal> param) {
                 CurrencyTreeTableCell cell = new CurrencyTreeTableCell("$");
                 return cell;
             }
         });
-        
+
         amountColumn.setOnEditCommit(new EventHandler<TreeTableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal>>() {
             @Override
             public void handle(TreeTableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal> t) {
                 TreeItem treeItem = t.getTreeTablePosition().getTreeItem();
-                
+
                 if (treeItem.getChildren().size() == 0) {
                     BudgetItemViewModel budgetItem = (BudgetItemViewModel) treeItem.getValue();
 
@@ -301,7 +292,7 @@ public class MonthControl extends AnchorPane {
                 }
             }
         });
-        
+
         actionColumn.setCellFactory(new Callback<TreeTableColumn<BudgetItemViewModel, String>, TreeTableCell<BudgetItemViewModel, String>>() {
             @Override
             public TreeTableCell<BudgetItemViewModel, String> call(TreeTableColumn<BudgetItemViewModel, String> p) {
@@ -318,7 +309,7 @@ public class MonthControl extends AnchorPane {
                         return false;
                     }
                 });
-                
+
                 cell.button.setOnAction(event -> {
                     BudgetItemViewModel newBudgetItem = new BudgetItemViewModel("New Item", BigDecimal.ZERO);
                     newBudgetItem.setModel(new BudgetItem());
@@ -333,58 +324,58 @@ public class MonthControl extends AnchorPane {
                     treeItem.setExpanded(true);
                     callMonthModifiedCallback();
                 });
-                
+
                 return cell;
             }
         });
-        
+
         budgetTableRoot.getChildren().addAll(revenuesRoot, expensesRoot, adjustmentsRoot, debtRepaymentsTreeItem, investmentOutflowsTreeItem, netIncomeTargetTreeItem, openingBalanceTreeItem);
         budgetTableRoot.setExpanded(true);
         budgetTable.setEditable(true);
         budgetTable.setRoot(budgetTableRoot);
     }
-    
+
     protected void setupTotalsTable() {
         TableColumn nameColumn = (TableColumn) totalsTable.getColumns().get(0);
         TableColumn amountColumn = (TableColumn) totalsTable.getColumns().get(1);
-        
+
         nameColumn.prefWidthProperty().bind(totalsTable.widthProperty().multiply(0.6).subtract(28));
         amountColumn.prefWidthProperty().bind(totalsTable.widthProperty().multiply(0.4));
         nameColumn.setResizable(false);
         amountColumn.setResizable(false);
-        
+
         amountColumn.setCellFactory(new Callback<TableColumn<BudgetItemViewModel, BigDecimal>, TableCell<BudgetItemViewModel, BigDecimal>>() {
             StringConverter<BigDecimal> converter;
-            
+
             @Override
             public TableCell<BudgetItemViewModel, BigDecimal> call(TableColumn<BudgetItemViewModel, BigDecimal> param) {
                 CurrencyTableCell cell = new CurrencyTableCell("$");
                 return cell;
             }
         });
-        
+
         totalsTable.setSelectionModel(null);
     }
-    
+
     protected void setupClosingTable() {
         TableColumn nameColumn = (TableColumn) closingTable.getColumns().get(0);
         TableColumn amountColumn = (TableColumn) closingTable.getColumns().get(1);
-        
+
         nameColumn.prefWidthProperty().bind(closingTable.widthProperty().multiply(0.6).subtract(28));
         amountColumn.prefWidthProperty().bind(closingTable.widthProperty().multiply(0.4));
         nameColumn.setResizable(false);
         amountColumn.setResizable(false);
-        
+
         amountColumn.setCellFactory(new Callback<TableColumn<BudgetItemViewModel, BigDecimal>, TableCell<BudgetItemViewModel, BigDecimal>>() {
             StringConverter<BigDecimal> converter;
-            
+
             @Override
             public TableCell<BudgetItemViewModel, BigDecimal> call(TableColumn<BudgetItemViewModel, BigDecimal> param) {
                 CurrencyTableCell cell = new CurrencyTableCell("$");
                 return cell;
             }
         });
-        
+
         amountColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal>>() {
             @Override
             public void handle(TableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal> t) {
@@ -394,17 +385,17 @@ public class MonthControl extends AnchorPane {
             }
         });
     }
-    
+
     protected void preventMultipleRowSelection() {
         budgetTable.getSelectionModel().selectedItemProperty().addListener(objectProperty -> {
             closingTable.getSelectionModel().clearSelection();
         });
-                
+
         closingTable.getSelectionModel().selectedItemProperty().addListener(objectProperty -> {
             budgetTable.getSelectionModel().clearSelection();
         });
     }
-    
+
     public void populateTables() {
         MonthViewModel monthViewModel = monthMapper.mapMonthToMonthViewModel(getMonth());
         if (this.monthViewModel.getValue() != null) {
@@ -412,32 +403,32 @@ public class MonthControl extends AnchorPane {
             this.monthViewModel.getValue().getExpenses().removeListener(expensesListChangeListener);
             this.monthViewModel.getValue().getAdjustments().removeListener(adjustmentsListChangeListener);
         }
-        
+
         this.monthViewModel.set(monthViewModel);
         monthViewModel.getRevenues().addListener(revenuesListChangeListener);
         monthViewModel.getExpenses().addListener(expensesListChangeListener);
         monthViewModel.getAdjustments().addListener(adjustmentsListChangeListener);
-        
+
         revenuesRoot.getChildren().clear();
         revenuesRoot.getValue().setAmount(monthViewModel.getTotalRevenues());
         expensesRoot.getChildren().clear();
         expensesRoot.getValue().setAmount(monthViewModel.getTotalExpenses());
         adjustmentsRoot.getChildren().clear();
         adjustmentsRoot.getValue().setAmount(monthViewModel.getTotalAdjustments());
-        
+
         for (BudgetItemViewModel revenue : monthViewModel.getRevenues()) {
             revenuesRoot.getChildren().add(new TreeItem<BudgetItemViewModel>(revenue));
         }
-        
+
         for (BudgetItemViewModel expense : monthViewModel.getExpenses()) {
             expensesRoot.getChildren().add(new TreeItem<BudgetItemViewModel>(expense));
         }
-        
+
         debtRepaymentsTreeItem.setValue(monthViewModel.getDebtRepayments());
         investmentOutflowsTreeItem.setValue(monthViewModel.getInvestmentOutflows());
         netIncomeTargetTreeItem.setValue(monthViewModel.getNetIncomeTarget());
         openingBalanceTreeItem.setValue(monthViewModel.getOpeningBalance());
-        
+
         totalsTable.getItems().clear();
         totalsTable.getItems().addAll(
                 monthViewModel.getClosingBalanceTarget(),
@@ -459,4 +450,81 @@ public class MonthControl extends AnchorPane {
         // Enable/Disable month closing button
         copyToNext.setDisable(!monthLogicServices.isMonthCloneable(month.getValue()));
     }
+
+    @Override
+    public Month getMonth() {
+        return this.month.get();
+    }
+
+    @Override
+    public void setMonth(Month month) {
+        this.month.set(month);
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="Callbacks">
+    private Callback<BudgetItemViewModel, Month> onItemAddedCallback;
+
+    @Override
+    public void onItemAdded(Callback<BudgetItemViewModel, Month> callback) {
+        this.onItemAddedCallback = callback;
+    }
+
+    private void callOnItemAdded(BudgetItemViewModel item) {
+        if (onItemAddedCallback != null) {
+            onItemAddedCallback.call(item);
+        }
+    }
+
+    private Callback<BudgetItemViewModel, Month> onItemRemovedCallback;
+
+    @Override
+    public void onItemRemoved(Callback<BudgetItemViewModel, Month> callback) {
+        this.onItemRemovedCallback = callback;
+    }
+
+    private void callOnItemRemoved(BudgetItemViewModel item) {
+        if (onItemRemovedCallback != null) {
+            onItemRemovedCallback.call(item);
+        }
+    }
+
+    private Callback<BudgetItemViewModel, Month> onItemModifiedCallback;
+
+    @Override
+    public void onItemModified(Callback<BudgetItemViewModel, Month> callback) {
+        this.onItemModifiedCallback = callback;
+    }
+
+    private void callOnItemModified(BudgetItemViewModel item) {
+        if (onItemModifiedCallback != null) {
+            onItemModifiedCallback.call(item);
+        }
+    }
+
+    private Callback<MonthViewModel, Month> onMonthCloseModifiedCallback;
+
+    @Override
+    public void onMonthCloseModified(Callback<MonthViewModel, Month> callback) {
+        this.onMonthCloseModifiedCallback = callback;
+    }
+
+    private void callOnMonthCloseModified(MonthViewModel monthViewModel) {
+        if (onMonthCloseModifiedCallback != null) {
+            onMonthCloseModifiedCallback.call(monthViewModel);
+        }
+    }
+
+    private Callback<MonthViewModel, Month> onMonthCopyCallback;
+
+    @Override
+    public void onMonthCopy(Callback<MonthViewModel, Month> callback) {
+        this.onMonthCopyCallback = callback;
+    }
+
+    private void callOnMonthCopyCallback(MonthViewModel monthViewModel) {
+        if (onMonthCopyCallback != null) {
+            onMonthCopyCallback.call(monthViewModel);
+        }
+    }
+    // </editor-fold>
 }
