@@ -16,12 +16,16 @@ import javafx.scene.control.RadioMenuItem;
 import com.olestourko.sdbudget.core.dagger.CoreComponent;
 import com.olestourko.sdbudget.core.dagger.DaggerCoreComponent;
 import com.olestourko.sdbudget.core.models.factories.MonthFactory;
+import com.olestourko.sdbudget.desktop.controllers.IScratchpad;
 import com.olestourko.sdbudget.desktop.dagger.BudgetComponent;
 import com.olestourko.sdbudget.desktop.dagger.DaggerBudgetComponent;
+import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
 import java.util.Calendar;
 import java.util.List;
 import org.flywaydb.core.Flyway;
 import javafx.application.Application.Parameters;
+import javafx.util.Callback;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class Sdbudget extends Application {
 
@@ -46,18 +50,18 @@ public class Sdbudget extends Application {
         // Populate the month repository
         MonthRepository monthRepository = coreComponent.monthRepository();
         MonthFactory monthFactory = coreComponent.monthFactory();
-        
+
         monthRepository.fetchMonths();
         Calendar calendar = Calendar.getInstance();
-        
+
         Month month = monthRepository.getMonth((short) calendar.get(Calendar.MONTH), (short) calendar.get(Calendar.YEAR));
-        if(month == null) {
+        if (month == null) {
             month = monthFactory.createCurrentMonth();
             monthRepository.putMonth(month);
         }
-        
+
         for (int i = 0; i < 2; i++) {
-            if(monthRepository.getNext(month) == null) {
+            if (monthRepository.getNext(month) == null) {
                 monthRepository.putMonth(monthFactory.createNextMonth(month));
             }
             month = monthRepository.getNext(month);
@@ -140,6 +144,28 @@ public class Sdbudget extends Application {
                 mainController.scratchpadViewButton.setText("Scratchpad");
                 mainController.contentContainer.getChildren().clear();
                 mainController.contentContainer.getChildren().add(currentRoot);
+            }
+        });
+
+        // Link Scratchpad to other views
+        scratchpadController.onAdjustmentAdded(new Callback<BudgetItemViewModel, Month>() {
+            @Override
+            public Month call(BudgetItemViewModel item) {
+                throw new NotImplementedException();
+            }
+        });
+
+        scratchpadController.onAdjustmentRemoved(new Callback<BudgetItemViewModel, Month>() {
+            @Override
+            public Month call(BudgetItemViewModel item) {
+                throw new NotImplementedException();
+            }
+        });
+
+        scratchpadController.onAdjustmentModified(new Callback<BudgetItemViewModel, Month>() {
+            @Override
+            public Month call(BudgetItemViewModel item) {
+                throw new NotImplementedException();
             }
         });
     }

@@ -35,7 +35,7 @@ import javafx.util.converter.DefaultStringConverter;
 import javax.inject.Inject;
 import org.mapstruct.factory.Mappers;
 
-public class ScratchpadController implements Initializable {
+public class ScratchpadController implements Initializable, IScratchpad {
 
     @FXML
     private TableView scratchpadTable;
@@ -104,8 +104,9 @@ public class ScratchpadController implements Initializable {
         nameColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<BudgetItemViewModel, String>>() {
             @Override
             public void handle(TableColumn.CellEditEvent<BudgetItemViewModel, String> t) {
-                BudgetItemViewModel budgetItem = (BudgetItemViewModel) t.getTableView().getItems().get(t.getTablePosition().getRow());
-                budgetItem.setName(t.getNewValue());
+                BudgetItemViewModel item = (BudgetItemViewModel) t.getTableView().getItems().get(t.getTablePosition().getRow());
+                item.setName(t.getNewValue());
+                callOnAdjustmentModifiedCallback(item);
             }
         });
 
@@ -121,9 +122,9 @@ public class ScratchpadController implements Initializable {
         amountColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal>>() {
             @Override
             public void handle(TableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal> t) {
-                BudgetItemViewModel budgetItem = (BudgetItemViewModel) t.getTableView().getItems().get(t.getTablePosition().getRow());
-                budgetItem.setAmount(t.getNewValue());
-                totalAdjustments.setAmount(budget.getCurrentMonth().getTotalAdjustments());
+                BudgetItemViewModel item = (BudgetItemViewModel) t.getTableView().getItems().get(t.getTablePosition().getRow());
+                item.setAmount(t.getNewValue());
+                callOnAdjustmentModifiedCallback(item);
             }
         });
 
@@ -152,12 +153,12 @@ public class ScratchpadController implements Initializable {
             @Override
             public void handle(KeyEvent event) {
                 if (event.getCode().equals(KeyCode.DELETE)) {
-                    BudgetItemViewModel selectedItem = (BudgetItemViewModel) scratchpadTable.getSelectionModel().getSelectedItem();
-                    if (selectedItem == totalAdjustments) {
+                    BudgetItemViewModel item = (BudgetItemViewModel) scratchpadTable.getSelectionModel().getSelectedItem();
+                    if (item == totalAdjustments) {
                         return;
                     }
-                    MonthViewModel monthViewModel = monthMapper.mapMonthToMonthViewModel(budget.getCurrentMonth());
-                    monthViewModel.removeAdjustment(selectedItem);
+                    ScratchpadController.this.monthViewModel.getValue().removeAdjustment(item);
+                    callOnAdjustmentRemovedCallback(item);
                 }
             }
         });
@@ -166,14 +167,17 @@ public class ScratchpadController implements Initializable {
     public void handleAddTransactionButtonAction(ActionEvent event) {
         String name = nameField.getText();
         BigDecimal amount = new BigDecimal(amountField.getText());
-        BudgetItem newItem = new BudgetItem(name, amount);
+        BudgetItemViewModel newItem = new BudgetItemViewModel(name, amount);
         nameField.setText("");
         amountField.setText("");
-        this.month.getValue().getAdjustments().add(newItem);
-        this.monthMapper.updateMonthViewModelFromMonth(this.month.getValue(), this.monthViewModel.getValue());
+        callOnAdjustmentAddedCallback(newItem);
     }
 
-    protected void setMonth(Month month) {
+    public Month getMonth() {
+        return month.getValue();
+    }
+
+    public void setMonth(Month month) {
         MonthViewModel monthViewModel = monthMapper.mapMonthToMonthViewModel(month);
         this.month.set(month);
         this.monthViewModel.set(monthViewModel);
@@ -183,4 +187,45 @@ public class ScratchpadController implements Initializable {
         scratchpadTable.getItems().addListener(listChangeListener);
         totalAdjustments.setAmount(month.getTotalAdjustments());
     }
+
+    // <editor-fold defaultstate="collapsed" desc="Callbacks">
+    private Callback<BudgetItemViewModel, Month> onAdjustmentAddedCallback;
+
+    @Override
+    public void onAdjustmentAdded(Callback<BudgetItemViewModel, Month> callback) {
+        this.onAdjustmentAddedCallback = callback;
+    }
+
+    private void callOnAdjustmentAddedCallback(BudgetItemViewModel item) {
+        if (onAdjustmentAddedCallback != null) {
+            onAdjustmentAddedCallback.call(item);
+        }
+    }
+
+    private Callback<BudgetItemViewModel, Month> onAdjustmentRemovedCallback;
+
+    @Override
+    public void onAdjustmentRemoved(Callback<BudgetItemViewModel, Month> callback) {
+        this.onAdjustmentRemovedCallback = callback;
+    }
+
+    private void callOnAdjustmentRemovedCallback(BudgetItemViewModel item) {
+        if (onAdjustmentRemovedCallback != null) {
+            onAdjustmentRemovedCallback.call(item);
+        }
+    }
+
+    private Callback<BudgetItemViewModel, Month> onAdjustmentModifiedCallback;
+
+    @Override
+    public void onAdjustmentModified(Callback<BudgetItemViewModel, Month> callback) {
+        this.onAdjustmentModifiedCallback = callback;
+    }
+
+    private void callOnAdjustmentModifiedCallback(BudgetItemViewModel item) {
+        if (onAdjustmentModifiedCallback != null) {
+            onAdjustmentModifiedCallback.call(item);
+        }
+    }
+    // </editor-fold>
 }
