@@ -10,6 +10,7 @@ import com.olestourko.sdbudget.desktop.controls.MonthControl;
 import dagger.Component;
 import javax.inject.Provider;
 import com.olestourko.sdbudget.core.dagger.CoreComponent;
+import com.olestourko.sdbudget.desktop.Frontend;
 
 /**
  *
@@ -19,6 +20,8 @@ import com.olestourko.sdbudget.core.dagger.CoreComponent;
 @Component(modules = {BudgetModule.class}, dependencies = {CoreComponent.class})
 public interface BudgetComponent {
 
+    Provider<Frontend> frontend();
+    
     Provider<Budget> budget();
     
     Provider<MainController> mainController();

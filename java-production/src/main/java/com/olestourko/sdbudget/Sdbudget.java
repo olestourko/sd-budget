@@ -12,11 +12,10 @@ import javafx.scene.layout.AnchorPane;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.desktop.models.Budget;
 import com.olestourko.sdbudget.desktop.controllers.MainController;
-import javafx.scene.control.RadioMenuItem;
 import com.olestourko.sdbudget.core.dagger.CoreComponent;
 import com.olestourko.sdbudget.core.dagger.DaggerCoreComponent;
 import com.olestourko.sdbudget.core.models.factories.MonthFactory;
-import com.olestourko.sdbudget.desktop.controllers.IScratchpad;
+import com.olestourko.sdbudget.desktop.Frontend;
 import com.olestourko.sdbudget.desktop.dagger.BudgetComponent;
 import com.olestourko.sdbudget.desktop.dagger.DaggerBudgetComponent;
 import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
@@ -46,6 +45,7 @@ public class Sdbudget extends Application {
         final CoreComponent coreComponent = DaggerCoreComponent.builder().build();
         final BudgetComponent budgetComponent = DaggerBudgetComponent.builder().coreComponent(coreComponent).build();
         final Budget budget = budgetComponent.budget().get();
+        final Frontend frontend = budgetComponent.frontend().get();
 
         // Populate the month repository
         MonthRepository monthRepository = coreComponent.monthRepository();
@@ -69,105 +69,9 @@ public class Sdbudget extends Application {
 
         budget.setCurrentMonth(monthRepository.getMonth((short) calendar.get(Calendar.MONTH), (short) calendar.get(Calendar.YEAR)));
         coreComponent.monthServices().recalculateMonths(budget.getCurrentMonth());
+        
+        frontend.load(stage);
 
-        OneMonthController oneMonthController = budgetComponent.oneMonthController().get();
-        FXMLLoader oneMonthLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/BudgetScene_OneMonth.fxml"));
-        oneMonthLoader.setController(oneMonthController);
-        AnchorPane oneMonthRoot = oneMonthLoader.load();
-        oneMonthController.load();
-
-        ThreeMonthController threeMonthController = budgetComponent.threeMonthController().get();
-        FXMLLoader threeMonthLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/BudgetScene_ThreeMonth.fxml"));
-        threeMonthLoader.setController(threeMonthController);
-        AnchorPane threeMonthRoot = threeMonthLoader.load();
-        threeMonthController.load();
-
-        ScratchpadController scratchpadController = budgetComponent.scratchpadController().get();
-        FXMLLoader scratchpadLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/ScratchpadScene.fxml"));
-        scratchpadLoader.setController(scratchpadController);
-        AnchorPane scratchPadRoot = scratchpadLoader.load();
-        scratchpadController.load();
-
-        MainController mainController = budgetComponent.mainController().get();
-        FXMLLoader mainLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/MainScene.fxml"));
-        mainLoader.setController(mainController);
-        AnchorPane mainRoot = mainLoader.load();
-
-        currentRoot = oneMonthRoot;
-        mainController.contentContainer.getChildren().addAll(currentRoot); // Set the month view
-        Scene mainScene = new Scene(mainRoot);
-        mainScene.getStylesheets().add("/desktop/styles/css/styles.css");
-
-        // Register handler for save menu item
-        mainController.mainMenu.getMenus().get(0).getItems().get(0).setOnAction(event -> {
-            coreComponent.monthRepository().storeMonths();
-        });
-
-        // Register handler for view switching menu item
-        mainController.oneMonthViewMenuItem.setOnAction(event -> {
-            RadioMenuItem menuItem = (RadioMenuItem) event.getSource();
-            if (menuItem.isSelected()) {
-                currentRoot = oneMonthRoot;
-                if (!mainController.contentContainer.getChildren().contains(scratchPadRoot)) {
-                    mainController.contentContainer.getChildren().remove(threeMonthRoot);
-                    mainController.contentContainer.getChildren().add(oneMonthRoot);
-                    stage.setWidth(400);
-                }
-            }
-        });
-
-        mainController.threeMonthViewMenuItem.setOnAction(event -> {
-            RadioMenuItem menuItem = (RadioMenuItem) event.getSource();
-            if (menuItem.isSelected()) {
-                currentRoot = threeMonthRoot;
-                if (!mainController.contentContainer.getChildren().contains(scratchPadRoot)) {
-                    mainController.contentContainer.getChildren().remove(oneMonthRoot);
-                    mainController.contentContainer.getChildren().add(threeMonthRoot);
-                    stage.setWidth(920);
-                }
-
-            }
-        });
-
-        stage.setTitle("SDBudget");
-        stage.setWidth(400);
-        stage.setHeight(580);
-        stage.setScene(mainScene);
-        stage.show();
-
-        mainController.scratchpadViewButton.setOnAction(event -> {
-            if (!mainController.contentContainer.getChildren().contains(scratchPadRoot)) {
-                mainController.scratchpadViewButton.setText("Budget");
-                mainController.contentContainer.getChildren().clear();
-                mainController.contentContainer.getChildren().add(scratchPadRoot);
-            } else {
-                mainController.scratchpadViewButton.setText("Scratchpad");
-                mainController.contentContainer.getChildren().clear();
-                mainController.contentContainer.getChildren().add(currentRoot);
-            }
-        });
-
-        // Link Scratchpad to other views
-        scratchpadController.onAdjustmentAdded(new Callback<BudgetItemViewModel, Month>() {
-            @Override
-            public Month call(BudgetItemViewModel item) {
-                throw new NotImplementedException();
-            }
-        });
-
-        scratchpadController.onAdjustmentRemoved(new Callback<BudgetItemViewModel, Month>() {
-            @Override
-            public Month call(BudgetItemViewModel item) {
-                throw new NotImplementedException();
-            }
-        });
-
-        scratchpadController.onAdjustmentModified(new Callback<BudgetItemViewModel, Month>() {
-            @Override
-            public Month call(BudgetItemViewModel item) {
-                throw new NotImplementedException();
-            }
-        });
     }
 
     /**
