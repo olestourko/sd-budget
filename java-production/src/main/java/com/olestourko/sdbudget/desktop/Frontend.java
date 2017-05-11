@@ -1,11 +1,13 @@
 package com.olestourko.sdbudget.desktop;
 
+import com.olestourko.sdbudget.core.models.BudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.desktop.controllers.MainController;
 import com.olestourko.sdbudget.desktop.controllers.OneMonthController;
 import com.olestourko.sdbudget.desktop.controllers.ScratchpadController;
 import com.olestourko.sdbudget.desktop.controllers.ThreeMonthController;
+import com.olestourko.sdbudget.desktop.mappers.BudgetItemMapper;
 import com.olestourko.sdbudget.desktop.models.Budget;
 import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
 import java.io.IOException;
@@ -18,6 +20,7 @@ import javafx.scene.control.RadioMenuItem;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javax.inject.Inject;
+import org.mapstruct.factory.Mappers;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
@@ -135,22 +138,34 @@ public class Frontend {
         // Link Scratchpad to other views
         scratchpadController.onAdjustmentAdded(new Callback<BudgetItemViewModel, Month>() {
             @Override
-            public Month call(BudgetItemViewModel item) {
-                throw new NotImplementedException();
+            public Month call(BudgetItemViewModel itemViewModel) {
+                Month month = Frontend.this.scratchpadController.getMonth();
+                BudgetItemMapper mapper = Mappers.getMapper(BudgetItemMapper.class);
+                BudgetItem item = mapper.mapBudgetItemViewModelToBudgetItem(itemViewModel);
+                month.getAdjustments().add(item);
+                Frontend.this.scratchpadController.setMonth(month);
+                return month;
             }
         });
 
         scratchpadController.onAdjustmentRemoved(new Callback<BudgetItemViewModel, Month>() {
             @Override
-            public Month call(BudgetItemViewModel item) {
-                throw new NotImplementedException();
+            public Month call(BudgetItemViewModel itemViewModel) {
+                Month month = Frontend.this.scratchpadController.getMonth();
+                month.getAdjustments().remove(itemViewModel.getModel());
+                Frontend.this.scratchpadController.setMonth(month);
+                return month;
             }
         });
 
         scratchpadController.onAdjustmentModified(new Callback<BudgetItemViewModel, Month>() {
             @Override
-            public Month call(BudgetItemViewModel item) {
-                throw new NotImplementedException();
+            public Month call(BudgetItemViewModel itemViewModel) {
+                Month month = Frontend.this.scratchpadController.getMonth();
+                BudgetItemMapper mapper = Mappers.getMapper(BudgetItemMapper.class);
+                mapper.updateBudgetItemFromBudgetItemViewModel(itemViewModel.getModel(), itemViewModel);
+                Frontend.this.scratchpadController.setMonth(month);
+                return month;
             }
         });
     }

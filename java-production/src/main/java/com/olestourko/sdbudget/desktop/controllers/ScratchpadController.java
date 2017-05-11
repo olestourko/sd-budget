@@ -167,10 +167,10 @@ public class ScratchpadController implements Initializable, IScratchpad {
     public void handleAddTransactionButtonAction(ActionEvent event) {
         String name = nameField.getText();
         BigDecimal amount = new BigDecimal(amountField.getText());
-        BudgetItemViewModel newItem = new BudgetItemViewModel(name, amount);
+        BudgetItemViewModel item = new BudgetItemViewModel(name, amount);
         nameField.setText("");
         amountField.setText("");
-        callOnAdjustmentAddedCallback(newItem);
+        callOnAdjustmentAddedCallback(item);
     }
 
     public Month getMonth() {
