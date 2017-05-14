@@ -10,8 +10,6 @@ import com.olestourko.sdbudget.desktop.controllers.ThreeMonthController;
 import com.olestourko.sdbudget.desktop.mappers.BudgetItemMapper;
 import com.olestourko.sdbudget.desktop.models.Budget;
 import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
-import java.io.IOException;
-import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -21,7 +19,6 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import javax.inject.Inject;
 import org.mapstruct.factory.Mappers;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  *
@@ -144,6 +141,9 @@ public class Frontend {
                 BudgetItem item = mapper.mapBudgetItemViewModelToBudgetItem(itemViewModel);
                 month.getAdjustments().add(item);
                 Frontend.this.scratchpadController.setMonth(month);
+                // Update the other controllers
+                Frontend.this.oneMonthController.refresh();
+                Frontend.this.threeMonthController.refresh();
                 return month;
             }
         });
@@ -154,6 +154,9 @@ public class Frontend {
                 Month month = Frontend.this.scratchpadController.getMonth();
                 month.getAdjustments().remove(itemViewModel.getModel());
                 Frontend.this.scratchpadController.setMonth(month);
+                // Update the other controllers
+                Frontend.this.oneMonthController.refresh();
+                Frontend.this.threeMonthController.refresh();
                 return month;
             }
         });
@@ -165,6 +168,9 @@ public class Frontend {
                 BudgetItemMapper mapper = Mappers.getMapper(BudgetItemMapper.class);
                 mapper.updateBudgetItemFromBudgetItemViewModel(itemViewModel.getModel(), itemViewModel);
                 Frontend.this.scratchpadController.setMonth(month);
+                // Update the other controllers
+                Frontend.this.oneMonthController.refresh();
+                Frontend.this.threeMonthController.refresh();
                 return month;
             }
         });
