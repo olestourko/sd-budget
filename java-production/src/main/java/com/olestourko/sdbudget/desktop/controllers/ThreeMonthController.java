@@ -19,7 +19,7 @@ import javafx.util.Callback;
 import javax.inject.Inject;
 import org.mapstruct.factory.Mappers;
 
-public class ThreeMonthController implements Initializable {
+public class ThreeMonthController implements Initializable, INMonthController {
 
     @FXML
     public Pane monthControlContainer;
@@ -68,29 +68,29 @@ public class ThreeMonthController implements Initializable {
             public Month call(MonthControl monthControl) {
                 monthMapper.updateMonthFromMonthViewModel(monthControl.getMonthViewModel(), monthControl.getMonth());
                 monthCalculationServices.recalculateMonths(monthControl.getMonth());
-                
+
                 for (MonthControl mc : monthControls) {
                     Month mcMonth = mc.getMonth();
                     if (mcMonth != null) {
                         monthMapper.updateMonthViewModelFromMonth(mc.getMonth(), mc.getMonthViewModel());
-                        mc.populateTables();
+                        mc.refresh();
                     }
                 }
 
                 return monthControl.getMonth();
             }
         };
-        
+
         // Set event handlers for all the month components
         for (MonthControl monthControl : monthControls) {
             monthControl.setOnMonthModified(monthModifiedCallback);
         }
-        
+
         // Month cloning
         for (MonthControl monthControl : monthControls) {
             monthControl.getCopyToNextButton().setOnAction(event -> {
                 Month nextMonth = monthRepository.getNext(monthControl.getMonth());
-                if(nextMonth != null) {
+                if (nextMonth != null) {
                     monthCopyService.cloneMonth(monthControl.getMonth(), nextMonth);
                     populateMonthControls();
                 }
@@ -107,10 +107,17 @@ public class ThreeMonthController implements Initializable {
         this.monthControls.get(1).setMonth(monthRepository.getNext(this.monthControls.get(0).getMonth()));
         this.monthControls.get(2).setMonth(monthRepository.getNext(this.monthControls.get(1).getMonth()));
     }
-    
+
     private void populateMonthControls() {
         for (MonthControl monthControl : monthControls) {
-            monthControl.populateTables();
-        }        
+            monthControl.refresh();
+        }
+    }
+
+    @Override
+    public void refresh() {
+        for (MonthControl monthControl : monthControls) {
+            monthControl.refresh();
+        }
     }
 }

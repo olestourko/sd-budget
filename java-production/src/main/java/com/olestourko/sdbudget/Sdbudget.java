@@ -1,34 +1,23 @@
 package com.olestourko.sdbudget;
 
 import com.olestourko.sdbudget.core.models.Month;
-import com.olestourko.sdbudget.desktop.controllers.OneMonthController;
-import com.olestourko.sdbudget.desktop.controllers.ThreeMonthController;
-import com.olestourko.sdbudget.desktop.controllers.ScratchpadController;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.layout.AnchorPane;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.desktop.models.Budget;
-import com.olestourko.sdbudget.desktop.controllers.MainController;
 import com.olestourko.sdbudget.core.dagger.CoreComponent;
 import com.olestourko.sdbudget.core.dagger.DaggerCoreComponent;
 import com.olestourko.sdbudget.core.models.factories.MonthFactory;
 import com.olestourko.sdbudget.desktop.Frontend;
 import com.olestourko.sdbudget.desktop.dagger.BudgetComponent;
 import com.olestourko.sdbudget.desktop.dagger.DaggerBudgetComponent;
-import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
 import java.util.Calendar;
 import java.util.List;
 import org.flywaydb.core.Flyway;
 import javafx.application.Application.Parameters;
-import javafx.util.Callback;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class Sdbudget extends Application {
-
-    private AnchorPane currentRoot;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -69,7 +58,7 @@ public class Sdbudget extends Application {
 
         budget.setCurrentMonth(monthRepository.getMonth((short) calendar.get(Calendar.MONTH), (short) calendar.get(Calendar.YEAR)));
         coreComponent.monthServices().recalculateMonths(budget.getCurrentMonth());
-        
+
         frontend.load(stage);
 
     }

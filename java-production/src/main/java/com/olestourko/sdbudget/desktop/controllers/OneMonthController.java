@@ -16,7 +16,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javax.inject.Inject;
 import org.mapstruct.factory.Mappers;
 
-public class OneMonthController implements Initializable {
+public class OneMonthController implements Initializable, INMonthController {
 
     @FXML
     public MonthControl monthControl;
@@ -65,12 +65,17 @@ public class OneMonthController implements Initializable {
             Month nextMonth = monthRepository.getNext(monthControl.getMonth());
             if (nextMonth != null) {
                 monthCopyService.cloneMonth(monthControl.getMonth(), nextMonth);
-                monthControl.populateTables();
+                monthControl.refresh();
             }
         });
     }
 
     public void load() {
         this.monthControl.setMonth(budget.getCurrentMonth());
+    }
+
+    @Override
+    public void refresh() {
+        monthControl.refresh();
     }
 }

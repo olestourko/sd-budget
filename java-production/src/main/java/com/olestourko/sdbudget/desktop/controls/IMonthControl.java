@@ -11,6 +11,8 @@ import javafx.util.Callback;
  */
 public interface IMonthControl {
 
+    public void refresh();
+    
     public Month getMonth();
 
     public void setMonth(Month month);

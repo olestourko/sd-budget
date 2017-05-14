@@ -160,7 +160,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
 
         // Repopulates the tables when the reference to the month instance changes
         this.monthProperty().addListener(property -> {
-            this.populateTables();
+            this.refresh();
         });
 
         // Remove item when DELETE key is pressed
@@ -173,8 +173,10 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                     MonthViewModel month = MonthControl.this.monthViewModel.get();
                     if (month.getRevenues().contains(selectedItem)) {
                         month.getRevenues().remove(selectedItem);
+                        callOnItemRemoved(selectedItem);
                     } else if (month.getExpenses().contains(selectedItem)) {
                         month.getExpenses().remove(selectedItem);
+                        callOnItemRemoved(selectedItem);
                     }
                     callMonthModifiedCallback();
                 }
@@ -246,6 +248,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                     // Update the month model
                     monthMapper.updateMonthFromMonthViewModel(monthViewModel.getValue(), month.getValue());
                     callMonthModifiedCallback();
+                    callOnItemModified(budgetItem);
                 }
             }
 
@@ -288,6 +291,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                     } else {
                         budgetItem.setAmount(t.getNewValue());
                         callMonthModifiedCallback();
+                        callOnItemModified(budgetItem);
                     }
                 }
             }
@@ -311,18 +315,19 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                 });
 
                 cell.button.setOnAction(event -> {
-                    BudgetItemViewModel newBudgetItem = new BudgetItemViewModel("New Item", BigDecimal.ZERO);
-                    newBudgetItem.setModel(new BudgetItem());
+                    BudgetItemViewModel budgetItem = new BudgetItemViewModel("New Item", BigDecimal.ZERO);
+                    budgetItem.setModel(new BudgetItem());
                     TreeItem<BudgetItemViewModel> treeItem = cell.getTreeTableRow().getTreeItem();
                     if (treeItem.getValue() == revenuesRoot.getValue()) {
-                        monthViewModel.getValue().getRevenues().add(newBudgetItem);
+                        monthViewModel.getValue().getRevenues().add(budgetItem);
                     } else if (treeItem.getValue() == expensesRoot.getValue()) {
-                        monthViewModel.getValue().getExpenses().add(newBudgetItem);
+                        monthViewModel.getValue().getExpenses().add(budgetItem);
                     }
                     // Update the month model
                     monthMapper.updateMonthFromMonthViewModel(monthViewModel.getValue(), month.getValue());
                     treeItem.setExpanded(true);
                     callMonthModifiedCallback();
+                    callOnItemAdded(budgetItem);
                 });
 
                 return cell;
@@ -396,7 +401,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
         });
     }
 
-    public void populateTables() {
+    public void refresh() {
         MonthViewModel monthViewModel = monthMapper.mapMonthToMonthViewModel(getMonth());
         if (this.monthViewModel.getValue() != null) {
             this.monthViewModel.getValue().getRevenues().removeListener(revenuesListChangeListener);
