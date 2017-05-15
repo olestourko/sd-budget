@@ -3,7 +3,6 @@ package com.olestourko.sdbudget;
 import com.olestourko.sdbudget.core.models.Month;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import javafx.scene.layout.AnchorPane;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.desktop.models.Budget;
 import com.olestourko.sdbudget.core.dagger.CoreComponent;
@@ -19,13 +18,15 @@ import javafx.application.Application.Parameters;
 
 public class Sdbudget extends Application {
 
+    private boolean ALWAYS_MIGRATE = true;
+    
     @Override
     public void start(Stage stage) throws Exception {
 
         // Migrate DB if the migrate flag is set
         Parameters parameters = getParameters();
         List<String> unnamedParamers = parameters.getUnnamed();
-        if (unnamedParamers.contains("migrate")) {
+        if (unnamedParamers.contains("migrate") || ALWAYS_MIGRATE) {
             Flyway flyway = new Flyway();
             flyway.setDataSource("jdbc:h2:~/test", "sa", "");
             flyway.migrate();
