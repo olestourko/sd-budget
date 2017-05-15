@@ -3,33 +3,49 @@
 * http://ethanschoonover.com/solarized
 */
 
+$base03:    #002b36;
+$base02:    #073642;
+$base01:    #586e75;
+$base00:    #657b83;
+$base0:     #839496;
+$base1:     #93a1a1;
+$base2:     #eee8d5;
+$base3:     #fdf6e3;
+$yellow:    #b58900;
+$orange:    #cb4b16;
+$red:       #dc322f;
+$magenta:   #d33682;
+$violet:    #6c71c4;
+$blue:      #268bd2;
+$cyan:      #2aa198;
+$green:     #859900;
+
 .root {
-    -fx-background-color: #fdf6e3;
+    -fx-background-color: $base3;
 }
 /* Menubar */
 .menu-bar {
-    -fx-background-color: #eee8d5;
-}
-.menu-bar .context-menu {
-    -fx-effect: none;
-    -fx-background-color: #eee8d5;
-    -fx-border-color: #657b83;
-    -fx-border-width: 1;
-}
-.menu-bar .menu:hover > .label,
-.menu-bar .menu:showing > .label,
-.menu-bar .menu-item:focused .label {
-    -fx-text-fill: #ffffff;
+    -fx-background-color: $base2;
+    .context-menu {
+        -fx-effect: none;
+        -fx-background-color: $base2;
+        -fx-border-color: $base00;
+        -fx-border-width: 1;       
+    }
+
+    .menu:hover > .label, .menu:showing > .label, .menu-item:focused .label {
+        -fx-text-fill: #ffffff;
+    }
 }
 
 .label {
-    -fx-text-fill: #657b83;
+    -fx-text-fill: $base00;
 }
 
 .button {
     -fx-background-color: none;
-    -fx-border-color: #b58900;
-    -fx-text-fill: #b58900;
+    -fx-border-color: $yellow;
+    -fx-text-fill: $yellow;
     -fx-cursor: hand;
 }
 .button:hover {
@@ -37,105 +53,107 @@
 }
 
 .check-box {
-    -fx-text-fill: #657b83;
-}
-.check-box .box {
-    -fx-border-color: #657b83;
-    -fx-background-color: none;
-    -fx-border-radius: 0;
+    -fx-text-fill: $base00;
+
+    .box {
+        -fx-border-color: $base00;
+        -fx-background-color: none;
+        -fx-border-radius: 0;        
+    }
 }
 
 .text-field {
-    -fx-border-color: #b58900;
+    -fx-border-color: $yellow;
     -fx-border-width: 1;
     -fx-border-radius: 0;
-    -fx-background-color: #eee8d5;
+    -fx-background-color: $base2;
 }
 
-.text-field-tree-table-cell > *,
-.text-field-table-cell > * {
-    -fx-padding: 0;
-    -fx-focus-color: -fx-control-inner-background;
-    -fx-faint-focus-color: -fx-control-inner-background;
-    -fx-background-radius: 0;
-}
-
-/*Basic Table Styles*/
-.table-view .column-header-background,
-.table-view .column-header-background .table-column,
-.table-view .column-header-background .filler,
-.tree-table-view .column-header-background,
-.tree-table-view .column-header-background .table-column,
-.tree-table-view .column-header-background .filler {
-    -fx-background-color: #eee8d5;
-}
-
-.table-view .column-header-background .table-column .label,
-.tree-table-view .column-header-background .table-column .label {
-    -fx-alignment: CENTER_LEFT;
-}
-.tree-table-view .tree-table-row-cell .tree-disclosure-node .arrow {
-    -fx-background-color: #657b83;
-}
-
-.tree-table-row-cell,
-.table-row-cell {
-    -fx-background-color: #fdf6e3;
-}
-
-.tree-table-cell,
-.table-cell {
-    -fx-background-color: #fdf6e3;
-    -fx-text-fill: #657b83;
-}
-
-/* Button cells */
-.tree-table-view .button {
-    -fx-padding: 0 2 0 2;
-}
-
-.tree-table-row-cell:selected .tree-table-cell,
-.table-row-cell:selected .table-cell {
-    -fx-background-color: #eee8d5;
-}
-
-.table-view,
-.tree-table-view {
-    -fx-background-color: #fdf6e3;
-    -fx-border-color: #657b83;
+/* Basic Table Styles */
+.table-view, .tree-table-view {
+    -fx-background-color: $base3;
+    -fx-border-color: $base00;
     -fx-border-width: 1;
+
+    .column-header-background,
+    .column-header-background .table-column,
+    .column-header-background .filler {
+        -fx-background-color: $base2;
+    }
+
+    .table-column {
+        -fx-border: none;
+        -fx-background-color: $base3;
+    }
+
+    .column-header-background .table-column .label,
+    .column-header-background .table-column .label {
+        -fx-alignment: CENTER_LEFT;
+    }
+
+    .tree-table-row-cell,
+    .table-row-cell {
+        -fx-background-color: $base3;
+
+        &:selected .tree-table-cell, &:selected .table-cell {
+            -fx-background-color: $base2;
+        }
+    }
+
+    .tree-table-cell,
+    .table-cell {
+        -fx-background-color: $base3;
+        -fx-text-fill: $base00;
+    }
+
+    &.disabled .tree-table-cell,
+    &.disabled .table-cell {
+        -fx-text-fill: darkgray;
+    }
+
+    /* Button cells */
+    .button {
+        -fx-padding: 0 2 0 2;
+    }
+
+
+    .text-field-tree-table-cell > *,
+    .text-field-table-cell > * {
+        -fx-padding: 0;
+        -fx-focus-color: -fx-control-inner-background;
+        -fx-faint-focus-color: -fx-control-inner-background;
+        -fx-background-radius: 0;
+    }
 }
 
-.table-column {
-    -fx-border: none;
-    -fx-background-color: #fdf6e3;
+.tree-table-view {
+    .tree-table-row-cell .tree-disclosure-node .arrow {
+        -fx-background-color: $base00;        
+    }
 }
 
 .input-field {
     -fx-pref-width: 120;
 }
 
-.tree-table-view.disabled .tree-table-cell,
-.table-view.disabled .table-cell {
-    -fx-text-fill: darkgray;
+/* MonthControl */
+.month-control {
+    .table-view .column-header-background {
+        -fx-max-height: 0;
+        -fx-pref-height: 0;
+        -fx-min-height: 0;
+    }
+
+    #budgetTable, #totalsTable {
+        -fx-border-width: 1 1 0 1;
+    }
+
+    #copyToNext {
+        -fx-padding: 1 4 1 4;
+    }
 }
 
-/* MonthControl specific */
-.month-control .table-view .column-header-background {
-    -fx-max-height: 0;
-    -fx-pref-height: 0;
-    -fx-min-height: 0;
-}
-
-.month-control #budgetTable,
-.month-control #totalsTable {
-    -fx-border-width: 1 1 0 1;
-}
-
-.month-control #copyToNext {
-    -fx-padding: 1 4 1 4;
-}
-
+/* Scratchpad */
 .scratchpad {
     #scratchpadTable {
         -fx-border-width: 1 1 0 1;
