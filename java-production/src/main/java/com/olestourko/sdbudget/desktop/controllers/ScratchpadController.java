@@ -7,6 +7,7 @@ import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
 import com.olestourko.sdbudget.desktop.models.MonthViewModel;
 import com.olestourko.sdbudget.desktop.mappers.MonthMapper;
 import com.olestourko.sdbudget.desktop.models.Budget;
+import com.sun.javafx.scene.control.skin.TableHeaderRow;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -160,6 +161,21 @@ public class ScratchpadController implements Initializable, IScratchpad {
                     ScratchpadController.this.monthViewModel.getValue().removeAdjustment(item);
                     callOnAdjustmentRemovedCallback(item);
                 }
+            }
+        });
+
+        // Disable Drag & Drop on headers
+        // http://stackoverflow.com/questions/22202782/how-to-prevent-tableview-from-doing-tablecolumn-re-order-in-javafx-8
+        scratchpadTable.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> source, Number oldWidth, Number newWidth) {
+                TableHeaderRow header = (TableHeaderRow) scratchpadTable.lookup("TableHeaderRow");
+                header.reorderingProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                        header.setReordering(false);
+                    }
+                });
             }
         });
     }

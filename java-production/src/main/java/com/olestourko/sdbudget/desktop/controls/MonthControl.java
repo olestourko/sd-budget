@@ -11,12 +11,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import com.olestourko.sdbudget.desktop.models.MonthViewModel;
+import com.sun.javafx.scene.control.skin.TableHeaderRow;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
@@ -338,6 +340,21 @@ public class MonthControl extends AnchorPane implements IMonthControl {
         budgetTableRoot.setExpanded(true);
         budgetTable.setEditable(true);
         budgetTable.setRoot(budgetTableRoot);
+
+        // Disable Drag & Drop on headers
+        // http://stackoverflow.com/questions/22202782/how-to-prevent-tableview-from-doing-tablecolumn-re-order-in-javafx-8
+        budgetTable.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> source, Number oldWidth, Number newWidth) {
+                TableHeaderRow header = (TableHeaderRow) budgetTable.lookup("TableHeaderRow");
+                header.reorderingProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                        header.setReordering(false);
+                    }
+                });
+            }
+        });
     }
 
     protected void setupTotalsTable() {
