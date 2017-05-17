@@ -119,4 +119,20 @@ public class MonthRepositoryTest {
         assertEquals(nextMonth, result);
     }
 
+    /**
+     * Test of getFirst method, of class MonthRepository.
+     */
+    @Test
+    public void testGetFirst() {
+        Month month1 = Month.createMonth((short) 1, (short) 2017);
+        Month month2 = Month.createMonth((short) 2, (short) 2017);
+        
+        CoreComponent injector = DaggerCoreComponent.create();
+        MonthRepository repository = injector.monthRepository();
+        repository.putMonth(month2);
+        repository.putMonth(month1);
+
+        Month result = repository.getFirst();
+        assertEquals(month1, result);
+    }    
 }

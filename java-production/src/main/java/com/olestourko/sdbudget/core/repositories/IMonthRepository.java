@@ -1,12 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.olestourko.sdbudget.core.repositories;
 
 import com.olestourko.sdbudget.core.models.Month;
-import java.util.Calendar;
 
 /**
  *
@@ -25,4 +19,6 @@ public interface IMonthRepository {
     public void fetchMonths();
     
     public void storeMonths();
+    
+    public Month getFirst();
 }

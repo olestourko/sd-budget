@@ -19,7 +19,7 @@ import javafx.application.Application.Parameters;
 public class Sdbudget extends Application {
 
     private boolean ALWAYS_MIGRATE = true;
-    
+
     @Override
     public void start(Stage stage) throws Exception {
 
@@ -57,8 +57,8 @@ public class Sdbudget extends Application {
             month = monthRepository.getNext(month);
         }
 
+        Month firstMonth = monthRepository.getFirst();
         budget.setCurrentMonth(monthRepository.getMonth((short) calendar.get(Calendar.MONTH), (short) calendar.get(Calendar.YEAR)));
-        coreComponent.monthServices().recalculateMonths(budget.getCurrentMonth());
 
         frontend.load(stage);
 

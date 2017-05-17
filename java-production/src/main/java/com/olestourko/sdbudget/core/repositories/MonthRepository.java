@@ -7,7 +7,11 @@ import com.olestourko.sdbudget.core.persistence.MonthPersistence;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import javax.inject.Inject;
 
 /**
@@ -16,7 +20,7 @@ import javax.inject.Inject;
  */
 public class MonthRepository implements IMonthRepository {
 
-    private final HashMap<String, Month> months = new HashMap<>();
+    private final Map<String, Month> months = new TreeMap<>();
     private final MonthPersistence monthPersistence;
     private final BudgetItemPersistence budgetItemPersistence;
 
@@ -128,6 +132,32 @@ public class MonthRepository implements IMonthRepository {
 
         // Relationships don't clean up orphans on dissociation, so run a query to find orphans and delete them
         monthPersistence.removeUnusedBudgetItems();
+    }
+
+    @Override
+    public Month getFirst() {
+        // http://www.baeldung.com/java-8-sort-lambda
+        List<Month> monthsList = new ArrayList<>(months.values());
+        Collections.sort(monthsList, new Comparator<Month>() {
+            @Override
+            public int compare(Month month1, Month month2) {
+                if (month1.getYear() == month2.getYear()) {
+                    if (month1.getNumber() == month2.getNumber()) {
+                        return 0;
+                    } else if (month1.getNumber() < month2.getNumber()) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+                } else if (month1.getYear() < month2.getYear()) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+        });
+
+        return (Month) monthsList.get(0);
     }
 
 }
