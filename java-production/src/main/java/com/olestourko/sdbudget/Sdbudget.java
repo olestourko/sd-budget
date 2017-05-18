@@ -57,7 +57,7 @@ public class Sdbudget extends Application {
             month = monthRepository.getNext(month);
         }
 
-        Month firstMonth = monthRepository.getFirst();
+        coreComponent.monthServices().recalculateMonths(monthRepository.getFirst());
         budget.setCurrentMonth(monthRepository.getMonth((short) calendar.get(Calendar.MONTH), (short) calendar.get(Calendar.YEAR)));
 
         frontend.load(stage);

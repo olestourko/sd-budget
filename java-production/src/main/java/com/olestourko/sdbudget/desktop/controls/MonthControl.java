@@ -68,7 +68,8 @@ public class MonthControl extends AnchorPane implements IMonthControl {
     private final TreeItem<BudgetItemViewModel> investmentOutflowsTreeItem = new TreeItem<>();
     private final TreeItem<BudgetItemViewModel> netIncomeTargetTreeItem = new TreeItem<>();
     private final TreeItem<BudgetItemViewModel> openingBalanceTreeItem = new TreeItem<>();
-
+    private final TreeItem<BudgetItemViewModel> openingSurplusTreeItem = new TreeItem<>();
+    
     private final SimpleObjectProperty<Month> month = new SimpleObjectProperty<>();
     private final SimpleObjectProperty<MonthViewModel> monthViewModel = new SimpleObjectProperty<MonthViewModel>();
     private final MonthMapper monthMapper;
@@ -336,7 +337,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
             }
         });
 
-        budgetTableRoot.getChildren().addAll(revenuesRoot, expensesRoot, adjustmentsRoot, debtRepaymentsTreeItem, investmentOutflowsTreeItem, netIncomeTargetTreeItem, openingBalanceTreeItem);
+        budgetTableRoot.getChildren().addAll(revenuesRoot, expensesRoot, adjustmentsRoot, debtRepaymentsTreeItem, investmentOutflowsTreeItem, netIncomeTargetTreeItem, openingBalanceTreeItem, openingSurplusTreeItem);
         budgetTableRoot.setExpanded(true);
         budgetTable.setEditable(true);
         budgetTable.setRoot(budgetTableRoot);
@@ -450,12 +451,12 @@ public class MonthControl extends AnchorPane implements IMonthControl {
         investmentOutflowsTreeItem.setValue(monthViewModel.getInvestmentOutflows());
         netIncomeTargetTreeItem.setValue(monthViewModel.getNetIncomeTarget());
         openingBalanceTreeItem.setValue(monthViewModel.getOpeningBalance());
+        openingSurplusTreeItem.setValue(monthViewModel.getOpeningSurplus());
 
         totalsTable.getItems().clear();
         totalsTable.getItems().addAll(
                 monthViewModel.getClosingBalanceTarget(),
                 monthViewModel.getEstimatedClosingBalance(),
-                monthViewModel.getOpeningSurplus(),
                 monthViewModel.getClosingSurplus()
         );
         closingTable.getItems().clear();

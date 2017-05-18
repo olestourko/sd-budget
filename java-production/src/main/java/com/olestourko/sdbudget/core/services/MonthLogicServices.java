@@ -21,6 +21,10 @@ public class MonthLogicServices {
 
         return previousMonth.getIsClosed();
     }
+    
+    public boolean isMonthFirst(Month month) {
+        return monthRepository.getFirst() == month;
+    }
 
     public boolean canEditOpeningBalance(Month month) {
         Month previousMonth = monthRepository.getPrevious(month);
