@@ -24,6 +24,7 @@
                     <items>
                         <RadioMenuItem fx:id="oneMonthViewMenuItem" text="1-Month View" toggleGroup="$monthViewToggleGroup" selected="true" />
                         <RadioMenuItem fx:id="threeMonthViewMenuItem" text="3-Month View" toggleGroup="$monthViewToggleGroup"/>
+                        <RadioMenuItem fx:id="scratchpadViewMenuItem" text="Scratchpad" toggleGroup="$monthViewToggleGroup"/>
                     </items>
                 </Menu>
             </menus>

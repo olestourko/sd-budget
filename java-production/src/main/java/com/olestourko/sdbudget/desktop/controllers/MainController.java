@@ -35,6 +35,8 @@ public class MainController implements Initializable {
     public RadioMenuItem oneMonthViewMenuItem;
     @FXML
     public RadioMenuItem threeMonthViewMenuItem;
+    @FXML
+    public RadioMenuItem scratchpadViewMenuItem;
 
     private final MonthCalculationServices monthCalculationServices;
     private final MonthRepository monthRepository;

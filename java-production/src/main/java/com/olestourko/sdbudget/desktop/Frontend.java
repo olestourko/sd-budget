@@ -26,6 +26,15 @@ import org.mapstruct.factory.Mappers;
  */
 public class Frontend {
 
+    protected static final int ONE_MONTH_WIDTH = 400;
+    protected static final int THREE_MONTH_WIDTH = 920;
+    protected static final int SCRATCHPAD_WIDTH = 400;
+    protected static final int DEFAULT_HEIGHT = 600;
+
+    protected double lastOneMonthWidth;
+    protected double lastThreeMonthWidth;
+    protected double lastScratchpadWidth;
+
     protected final Budget budget;
     protected final MonthRepository monthRepository;
     protected final MainController mainController;
@@ -33,6 +42,7 @@ public class Frontend {
     protected final ThreeMonthController threeMonthController;
     protected final ScratchpadController scratchpadController;
 
+    protected Stage stage;
     protected Node currentRoot;
     protected Node mainControllerRoot;
     protected Node oneMonthControllerRoot;
@@ -57,6 +67,8 @@ public class Frontend {
     }
 
     public void load(Stage stage) throws Exception {
+        this.stage = stage;
+
         // <editor-fold defaultstate="collapsed" desc="Load FXML and initialize controller">
         FXMLLoader mainLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/MainScene.fxml"));
         mainLoader.setController(mainController);
@@ -92,43 +104,40 @@ public class Frontend {
         mainController.oneMonthViewMenuItem.setOnAction(event -> {
             RadioMenuItem menuItem = (RadioMenuItem) event.getSource();
             if (menuItem.isSelected()) {
-                currentRoot = oneMonthControllerRoot;
-                if (!mainController.contentContainer.getChildren().contains(scratchpadControllerRoot)) {
-                    mainController.contentContainer.getChildren().remove(threeMonthControllerRoot);
-                    mainController.contentContainer.getChildren().add(oneMonthControllerRoot);
-                    stage.setWidth(400);
-                }
+                switchToOneMonthView();
             }
         });
 
         mainController.threeMonthViewMenuItem.setOnAction(event -> {
             RadioMenuItem menuItem = (RadioMenuItem) event.getSource();
             if (menuItem.isSelected()) {
-                currentRoot = threeMonthControllerRoot;
-                if (!mainController.contentContainer.getChildren().contains(scratchpadControllerRoot)) {
-                    mainController.contentContainer.getChildren().remove(oneMonthControllerRoot);
-                    mainController.contentContainer.getChildren().add(threeMonthControllerRoot);
-                    stage.setWidth(920);
-                }
-
+                switchToThreeMonthView();
+            }
+        });
+        mainController.scratchpadViewMenuItem.setOnAction(event -> {
+            RadioMenuItem menuItem = (RadioMenuItem) event.getSource();
+            if (menuItem.isSelected()) {
+                switchToScratchpadView();
             }
         });
 
         stage.setTitle("SDBudget");
-        stage.setWidth(400);
-        stage.setHeight(580);
+        stage.setWidth(ONE_MONTH_WIDTH);
+        stage.setHeight(DEFAULT_HEIGHT);
         stage.setScene(mainScene);
         stage.show();
 
         mainController.scratchpadViewButton.setOnAction(event -> {
             if (!mainController.contentContainer.getChildren().contains(scratchpadControllerRoot)) {
-                mainController.scratchpadViewButton.setText("Budget");
-                mainController.contentContainer.getChildren().clear();
-                mainController.contentContainer.getChildren().add(scratchpadControllerRoot);
+                switchToScratchpadView();
             } else {
                 mainController.scratchpadViewButton.setText("Scratchpad");
                 mainController.contentContainer.getChildren().clear();
-                mainController.contentContainer.getChildren().add(currentRoot);
+                if (currentRoot == oneMonthControllerRoot) {
+                    switchToOneMonthView();
+                } else {
+                    switchToThreeMonthView();
+                }
             }
         });
 
@@ -174,5 +183,46 @@ public class Frontend {
                 return month;
             }
         });
+    }
+
+    protected void rememberCurrentWidth() {
+        if (mainController.contentContainer.getChildren().contains(oneMonthControllerRoot)) {
+            lastOneMonthWidth = stage.getWidth();
+        } else if (mainController.contentContainer.getChildren().contains(threeMonthControllerRoot)) {
+            lastThreeMonthWidth = stage.getWidth();
+        } else if (mainController.contentContainer.getChildren().contains(scratchpadController)) {
+            lastScratchpadWidth = stage.getWidth();
+        }
+    }
+
+    protected void switchToOneMonthView() {
+        rememberCurrentWidth();
+        currentRoot = oneMonthControllerRoot;
+        mainController.oneMonthViewMenuItem.setSelected(true);
+        mainController.contentContainer.getChildren().clear();
+        if (!mainController.contentContainer.getChildren().contains(oneMonthControllerRoot)) {
+            mainController.contentContainer.getChildren().add(oneMonthControllerRoot);
+        }
+        stage.setWidth(Math.max(lastOneMonthWidth, ONE_MONTH_WIDTH));
+    }
+
+    protected void switchToThreeMonthView() {
+        rememberCurrentWidth();
+        currentRoot = threeMonthControllerRoot;
+        mainController.threeMonthViewMenuItem.setSelected(true);
+        mainController.contentContainer.getChildren().clear();
+        if (!mainController.contentContainer.getChildren().contains(threeMonthControllerRoot)) {
+            mainController.contentContainer.getChildren().add(threeMonthControllerRoot);
+        }
+        stage.setWidth(Math.max(lastThreeMonthWidth, THREE_MONTH_WIDTH));
+    }
+
+    protected void switchToScratchpadView() {
+        rememberCurrentWidth();
+        mainController.scratchpadViewMenuItem.setSelected(true);
+        mainController.scratchpadViewButton.setText("Budget");
+        mainController.contentContainer.getChildren().clear();
+        mainController.contentContainer.getChildren().add(scratchpadControllerRoot);
+        stage.setWidth(Math.max(lastScratchpadWidth, SCRATCHPAD_WIDTH));
     }
 }
