@@ -2,8 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.olestourko</groupId>
-    <artifactId>java-production</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>sdbudget</artifactId>
+    <version>0.1.0</version>
     <packaging>jar</packaging>
     
     <name>sdbudget</name>
@@ -13,8 +13,8 @@
         <mainClass>com.olestourko.sdbudget.Sdbudget</mainClass>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <db.url>jdbc:h2:~/test</db.url>
-        <db.username>sa</db.username>
+        <db.url>jdbc:h2:~/sdbudget</db.url>
+        <db.username>sdbudget</db.username>
         <org.mapstruct.version>1.1.0.Final</org.mapstruct.version>
     </properties>
     
@@ -126,6 +126,33 @@
                     </additionalClasspathElements>
                 </configuration>
             </plugin>
+            
+            <!-- Flyway database migrations
+            https://blog.jooq.org/2014/06/25/flyway-and-jooq-for-unbeatable-sql-development-productivity/ -->
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>4.2.0</version>
+ 
+                <!-- Note that we're executing the Flyway
+                plugin in the "generate-sources" phase -->
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>migrate</goal>
+                        </goals>
+                        <configuration>
+                            <url>${db.url}</url>
+                            <user>${db.username}</user>
+                            <locations>
+                                <location>filesystem:src/main/resources/db/migration</location>
+                            </locations>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
             <!-- JOOQ code generator
             https://www.jooq.org/doc/3.6/manual/code-generation/codegen-configuration/ -->
             <plugin>
@@ -169,32 +196,6 @@
                         </target>
                     </generator>
                 </configuration>
-            </plugin>
-            
-            <!-- Flyway database migrations
-            https://blog.jooq.org/2014/06/25/flyway-and-jooq-for-unbeatable-sql-development-productivity/ -->
-            <plugin>
-                <groupId>org.flywaydb</groupId>
-                <artifactId>flyway-maven-plugin</artifactId>
-                <version>4.2.0</version>
- 
-                <!-- Note that we're executing the Flyway
-                plugin in the "generate-sources" phase -->
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>migrate</goal>
-                        </goals>
-                        <configuration>
-                            <url>${db.url}</url>
-                            <user>${db.username}</user>
-                            <locations>
-                                <location>filesystem:src/main/resources/db/migration</location>
-                            </locations>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
  
             <!-- SASS plugin

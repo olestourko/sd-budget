@@ -28,7 +28,7 @@ public class Sdbudget extends Application {
         List<String> unnamedParamers = parameters.getUnnamed();
         if (unnamedParamers.contains("migrate") || ALWAYS_MIGRATE) {
             Flyway flyway = new Flyway();
-            flyway.setDataSource("jdbc:h2:~/test", "sa", "");
+            flyway.setDataSource("jdbc:h2:~/sdbudget", "sdbudget", "");
             flyway.migrate();
         }
 

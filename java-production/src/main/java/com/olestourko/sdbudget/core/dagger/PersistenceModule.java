@@ -29,8 +29,8 @@ public class PersistenceModule {
          */
         try {
             Class.forName("org.h2.Driver");
-            String url = "jdbc:h2:~/test";
-            String userName = "sa";
+            String url = "jdbc:h2:~/sdbudget";
+            String userName = "sdbudget";
             Connection connection = DriverManager.getConnection(url, userName, "");
             DSLContext create = DSL.using(connection, SQLDialect.H2);
             return create;
