@@ -146,8 +146,10 @@ public class ScratchpadController implements Initializable, IScratchpad {
         totalsTable.setSelectionModel(null);
 
         //Set the date on the label
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
-        periodDate.setText(dateFormat.format(this.monthViewModel.get().calendar.getTime()));
+        if (this.month != null) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
+            periodDate.setText(dateFormat.format(this.monthViewModel.get().calendar.getTime()));
+        }
 
         // Remove adjusments when DELETE key is pressed
         scratchpadTable.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -197,6 +199,10 @@ public class ScratchpadController implements Initializable, IScratchpad {
         MonthViewModel monthViewModel = monthMapper.mapMonthToMonthViewModel(month);
         this.month.set(month);
         this.monthViewModel.set(monthViewModel);
+
+        //Set the date on the label
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
+        periodDate.setText(dateFormat.format(this.monthViewModel.get().calendar.getTime()));
 
         scratchpadTable.getItems().removeListener(listChangeListener);
         scratchpadTable.setItems(monthViewModel.getAdjustments());

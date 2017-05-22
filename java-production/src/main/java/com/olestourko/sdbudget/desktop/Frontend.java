@@ -3,6 +3,7 @@ package com.olestourko.sdbudget.desktop;
 import com.olestourko.sdbudget.core.models.BudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
+import com.olestourko.sdbudget.core.services.MonthCalculationServices;
 import com.olestourko.sdbudget.desktop.controllers.MainController;
 import com.olestourko.sdbudget.desktop.controllers.OneMonthController;
 import com.olestourko.sdbudget.desktop.controllers.ScratchpadController;
@@ -36,6 +37,7 @@ public class Frontend {
     protected double lastScratchpadWidth;
 
     protected final Budget budget;
+    protected final MonthCalculationServices monthCalculationServices;
     protected final MonthRepository monthRepository;
     protected final MainController mainController;
     protected final OneMonthController oneMonthController;
@@ -52,6 +54,7 @@ public class Frontend {
     @Inject
     public Frontend(
             Budget budget,
+            MonthCalculationServices monthCalculationServices,
             MonthRepository monthRepository,
             MainController mainController,
             OneMonthController oneMonthController,
@@ -59,6 +62,7 @@ public class Frontend {
             ScratchpadController scratchpadController
     ) {
         this.budget = budget;
+        this.monthCalculationServices = monthCalculationServices;
         this.monthRepository = monthRepository;
         this.mainController = mainController;
         this.oneMonthController = oneMonthController;
@@ -149,6 +153,7 @@ public class Frontend {
                 BudgetItemMapper mapper = Mappers.getMapper(BudgetItemMapper.class);
                 BudgetItem item = mapper.mapBudgetItemViewModelToBudgetItem(itemViewModel);
                 month.getAdjustments().add(item);
+                monthCalculationServices.recalculateMonths(month);
                 Frontend.this.scratchpadController.setMonth(month);
                 // Update the other controllers
                 Frontend.this.oneMonthController.refresh();
@@ -162,6 +167,7 @@ public class Frontend {
             public Month call(BudgetItemViewModel itemViewModel) {
                 Month month = Frontend.this.scratchpadController.getMonth();
                 month.getAdjustments().remove(itemViewModel.getModel());
+                monthCalculationServices.recalculateMonths(month);
                 Frontend.this.scratchpadController.setMonth(month);
                 // Update the other controllers
                 Frontend.this.oneMonthController.refresh();
@@ -176,6 +182,7 @@ public class Frontend {
                 Month month = Frontend.this.scratchpadController.getMonth();
                 BudgetItemMapper mapper = Mappers.getMapper(BudgetItemMapper.class);
                 mapper.updateBudgetItemFromBudgetItemViewModel(itemViewModel.getModel(), itemViewModel);
+                monthCalculationServices.recalculateMonths(month);
                 Frontend.this.scratchpadController.setMonth(month);
                 // Update the other controllers
                 Frontend.this.oneMonthController.refresh();

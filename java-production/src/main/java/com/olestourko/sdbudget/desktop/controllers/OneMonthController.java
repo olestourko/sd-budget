@@ -65,6 +65,7 @@ public class OneMonthController implements Initializable, INMonthController {
             Month nextMonth = monthRepository.getNext(monthControl.getMonth());
             if (nextMonth != null) {
                 monthCopyService.cloneMonth(monthControl.getMonth(), nextMonth);
+                monthCalculationServices.recalculateMonths(nextMonth);
                 monthControl.refresh();
             }
         });

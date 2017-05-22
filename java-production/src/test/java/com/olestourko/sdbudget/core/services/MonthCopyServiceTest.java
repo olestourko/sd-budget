@@ -76,6 +76,6 @@ public class MonthCopyServiceTest {
         monthCopyService.cloneMonth(from, to);
         assertEquals(to.getRevenues().size(), from.getRevenues().size());
         assertEquals(to.getExpenses().size(), from.getExpenses().size());
-        assertEquals(to.getAdjustments().size(), from.getAdjustments().size());
+        assertNotEquals(to.getAdjustments().size(), from.getAdjustments().size()); // Adjustments should not be cloned
     }
 }
