@@ -157,6 +157,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
             this.monthViewModel.get().setIsClosed(this.closeMonthCheckBox.isSelected());
             callMonthModifiedCallback();
             updateTableStyles();
+            budgetTable.refresh();
         });
 
         updateTableStyles();
@@ -309,7 +310,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                     public Boolean call(ButtonTreeTableCell cell) {
                         TreeItem treeItem = cell.getTreeTableRow().getTreeItem();
                         try {
-                            return (treeItem == revenuesRoot || treeItem == expensesRoot);
+                            return ((treeItem == revenuesRoot || treeItem == expensesRoot) && !monthViewModel.getValue().getIsClosed());
                         } catch (NullPointerException exception) {
                             // Do nothing
                         }
@@ -336,7 +337,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                 return cell;
             }
         });
-
+        
         budgetTableRoot.getChildren().addAll(revenuesRoot, expensesRoot, adjustmentsRoot, debtRepaymentsTreeItem, investmentOutflowsTreeItem, netIncomeTargetTreeItem, openingBalanceTreeItem, openingSurplusTreeItem);
         budgetTableRoot.setExpanded(true);
         budgetTable.setEditable(true);

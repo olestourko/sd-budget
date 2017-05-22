@@ -113,9 +113,9 @@ $green:     #859900;
 
     /* Button cells */
     .button {
-        -fx-padding: 0 2 0 2;
+        -fx-font-size: 11;
+        -fx-padding: 0 1 0 1 !important;
     }
-
 
     .text-field-tree-table-cell > *,
     .text-field-table-cell > * {

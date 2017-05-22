@@ -1,7 +1,6 @@
 package com.olestourko.sdbudget.desktop.controls;
 
 import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
-import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.util.Callback;
