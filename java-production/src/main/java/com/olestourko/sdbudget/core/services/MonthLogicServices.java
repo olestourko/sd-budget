@@ -21,7 +21,16 @@ public class MonthLogicServices {
 
         return previousMonth.getIsClosed();
     }
-    
+
+    public boolean isMonthOpenable(Month month) {
+        Month nextMonth = monthRepository.getNext(month);
+        if (nextMonth == null) {
+            return true;
+        }
+
+        return !nextMonth.getIsClosed();
+    }
+
     public boolean isMonthFirst(Month month) {
         return monthRepository.getFirst() == month;
     }

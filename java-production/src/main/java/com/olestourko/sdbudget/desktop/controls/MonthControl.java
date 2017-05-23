@@ -69,7 +69,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
     private final TreeItem<BudgetItemViewModel> netIncomeTargetTreeItem = new TreeItem<>();
     private final TreeItem<BudgetItemViewModel> openingBalanceTreeItem = new TreeItem<>();
     private final TreeItem<BudgetItemViewModel> openingSurplusTreeItem = new TreeItem<>();
-    
+
     private final SimpleObjectProperty<Month> month = new SimpleObjectProperty<>();
     private final SimpleObjectProperty<MonthViewModel> monthViewModel = new SimpleObjectProperty<MonthViewModel>();
     private final MonthMapper monthMapper;
@@ -337,7 +337,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                 return cell;
             }
         });
-        
+
         budgetTableRoot.getChildren().addAll(revenuesRoot, expensesRoot, adjustmentsRoot, debtRepaymentsTreeItem, investmentOutflowsTreeItem, netIncomeTargetTreeItem, openingBalanceTreeItem, openingSurplusTreeItem);
         budgetTableRoot.setExpanded(true);
         budgetTable.setEditable(true);
@@ -469,7 +469,11 @@ public class MonthControl extends AnchorPane implements IMonthControl {
 
         // Set the closing checkbox value
         closeMonthCheckBox.setSelected(monthViewModel.getIsClosed());
-        closeMonthCheckBox.setDisable(!monthLogicServices.isMonthClosable(month.getValue()));
+        if (!month.getValue().getIsClosed()) {
+            closeMonthCheckBox.setDisable(!monthLogicServices.isMonthClosable(month.getValue()));
+        } else {
+            closeMonthCheckBox.setDisable(!monthLogicServices.isMonthOpenable(month.getValue()));
+        }
 
         // Enable/Disable month closing button
         copyToNext.setDisable(!monthLogicServices.isMonthCloneable(month.getValue()));
