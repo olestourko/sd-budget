@@ -357,6 +357,10 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                 });
             }
         });
+
+        month.addListener(event -> {
+            budgetTable.getSelectionModel().clearSelection();
+        });
     }
 
     protected void setupTotalsTable() {
@@ -407,6 +411,10 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                 budgetItem.setAmount(t.getNewValue());
                 callMonthModifiedCallback();
             }
+        });
+
+        month.addListener(event -> {
+            closingTable.getSelectionModel().clearSelection();
         });
     }
 
