@@ -208,6 +208,7 @@ public class Frontend {
         mainController.oneMonthViewMenuItem.setSelected(true);
         mainController.contentContainer.getChildren().clear();
         if (!mainController.contentContainer.getChildren().contains(oneMonthControllerRoot)) {
+            oneMonthController.refresh();
             mainController.contentContainer.getChildren().add(oneMonthControllerRoot);
         }
         stage.setWidth(Math.max(lastOneMonthWidth, ONE_MONTH_WIDTH));
@@ -219,6 +220,7 @@ public class Frontend {
         mainController.threeMonthViewMenuItem.setSelected(true);
         mainController.contentContainer.getChildren().clear();
         if (!mainController.contentContainer.getChildren().contains(threeMonthControllerRoot)) {
+            threeMonthController.refresh();
             mainController.contentContainer.getChildren().add(threeMonthControllerRoot);
         }
         stage.setWidth(Math.max(lastThreeMonthWidth, THREE_MONTH_WIDTH));

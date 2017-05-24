@@ -290,6 +290,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                     List<TreeItem> allowNegative = new ArrayList<>();
                     allowNegative.add(openingBalanceTreeItem);
                     allowNegative.add(netIncomeTargetTreeItem);
+                    allowNegative.add(investmentOutflowsTreeItem);
                     if (!allowNegative.contains(treeItem) && t.getNewValue().compareTo(BigDecimal.ZERO) == -1) {
                         budgetTable.refresh();
                     } else {

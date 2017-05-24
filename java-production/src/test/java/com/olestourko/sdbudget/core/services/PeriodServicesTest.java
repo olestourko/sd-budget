@@ -15,6 +15,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 /**
  *
@@ -50,11 +51,11 @@ public class PeriodServicesTest {
         BigDecimal revenue = new BigDecimal("2000.0");
         BigDecimal expenses = new BigDecimal("1000.0");
         BigDecimal adjustments = new BigDecimal("-250.0");
-        BigDecimal debtRepayments = new BigDecimal("0.0");
-        BigDecimal investmentOutflows = new BigDecimal("0.0");
+        BigDecimal debtRepayments = new BigDecimal(BigInteger.ZERO);
+        BigDecimal investmentOutflows = new BigDecimal(BigInteger.ZERO);
         BigDecimal incomeTarget = new BigDecimal("500.0");
-        BigDecimal openingBalance = new BigDecimal("0.0");
-        BigDecimal carriedSurplus = new BigDecimal("0.0");
+        BigDecimal openingBalance = new BigDecimal(BigInteger.ZERO);
+        BigDecimal carriedSurplus = new BigDecimal(BigInteger.ZERO);
         PeriodCalculationServices instance = new PeriodCalculationServices();
         EstimateResult result = instance.calculateEstimate(
                 revenue,
@@ -66,10 +67,10 @@ public class PeriodServicesTest {
                 openingBalance,
                 carriedSurplus
         );
-        assertEquals(result.netIncome, new BigDecimal("750.0"));
-        assertEquals(result.estimatedBalance, new BigDecimal("750.0"));
-        assertEquals(result.expectedBalance, new BigDecimal("500.0"));
-        assertEquals(result.surplus, new BigDecimal("250.0"));
+        assertEquals(new BigDecimal("750.0").compareTo(result.netIncome), 0);
+        assertEquals(new BigDecimal("750.0").compareTo(result.estimatedBalance), 0);
+        assertEquals(new BigDecimal("500.0").compareTo(result.expectedBalance), 0);
+        assertEquals(new BigDecimal("250.0").compareTo(result.surplus), 0);
     }
 
     /**
@@ -79,13 +80,22 @@ public class PeriodServicesTest {
     public void testCalculateClosing() {
         System.out.println("calculateClosing");
         BigDecimal incomeTarget = new BigDecimal("500.0");
-        BigDecimal openingBalance = new BigDecimal("0.0");
+        BigDecimal openingBalance = new BigDecimal(BigInteger.ZERO);
+        BigDecimal debtRepayments = new BigDecimal(BigInteger.ZERO);
+        BigDecimal investmentOutflows = new BigDecimal(BigInteger.ZERO);
         BigDecimal closingBalance = new BigDecimal("600.0");
-        BigDecimal carriedSurplus = new BigDecimal("0.0");
+        BigDecimal carriedSurplus = new BigDecimal(BigInteger.ZERO);
         PeriodCalculationServices instance = new PeriodCalculationServices();
-        ClosingResult result = instance.calculateClosing(incomeTarget, openingBalance, closingBalance, carriedSurplus);
-        assertEquals(result.closingSurplus, new BigDecimal("100.0"));
-        assertEquals(result.closingAdjustment, new BigDecimal("100.0"));
+        ClosingResult result = instance.calculateClosing(
+                incomeTarget,
+                debtRepayments,
+                investmentOutflows,
+                openingBalance,
+                closingBalance,
+                carriedSurplus
+        );
+        assertEquals(new BigDecimal("100.0").compareTo(result.closingSurplus), 0);
+        assertEquals(new BigDecimal("100.0").compareTo(result.closingAdjustment), 0);
     }
 
     /**
@@ -97,10 +107,10 @@ public class PeriodServicesTest {
         BigDecimal revenue = new BigDecimal("2000.0");
         BigDecimal expenses = new BigDecimal("1000.0");
         BigDecimal adjustments = new BigDecimal("-250.0");
-        BigDecimal debtRepayments = new BigDecimal("0.0");
-        BigDecimal investmentOutflows = new BigDecimal("0.0");
+        BigDecimal debtRepayments = new BigDecimal(BigInteger.ZERO);
+        BigDecimal investmentOutflows = new BigDecimal(BigInteger.ZERO);
         BigDecimal incomeTarget = new BigDecimal("500.0");
-        BigDecimal openingBalance = new BigDecimal("0.0");
+        BigDecimal openingBalance = new BigDecimal(BigInteger.ZERO);
         BigDecimal carriedSurplus = new BigDecimal("100.0");
         PeriodCalculationServices instance = new PeriodCalculationServices();
         EstimateResult result = instance.calculateEstimate(
@@ -113,10 +123,10 @@ public class PeriodServicesTest {
                 openingBalance,
                 carriedSurplus
         );
-        assertEquals(result.netIncome, new BigDecimal("750.0"));
-        assertEquals(result.estimatedBalance, new BigDecimal("850.0"));
-        assertEquals(result.expectedBalance, new BigDecimal("500.0"));
-        assertEquals(result.surplus, new BigDecimal("350.0"));
+        assertEquals(new BigDecimal("750.0").compareTo(result.netIncome), 0);
+        assertEquals(new BigDecimal("850.0").compareTo(result.estimatedBalance), 0);
+        assertEquals(new BigDecimal("500.0").compareTo(result.expectedBalance), 0);
+        assertEquals(new BigDecimal("350.0").compareTo(result.surplus), 0);
     }
 
     /**
@@ -126,13 +136,79 @@ public class PeriodServicesTest {
     public void testClosing_CarriedSurplus() {
         System.out.println("calculateClosing");
         BigDecimal incomeTarget = new BigDecimal("500.0");
-        BigDecimal openingBalance = new BigDecimal("0.0");
+        BigDecimal debtRepayments = new BigDecimal(BigInteger.ZERO);
+        BigDecimal investmentOutflows = new BigDecimal(BigInteger.ZERO);
+        BigDecimal openingBalance = new BigDecimal(BigInteger.ZERO);
         BigDecimal closingBalance = new BigDecimal("600.0");
         BigDecimal carriedSurplus = new BigDecimal("100.0");
         PeriodCalculationServices instance = new PeriodCalculationServices();
-        ClosingResult result = instance.calculateClosing(incomeTarget, openingBalance, closingBalance, carriedSurplus);
-        assertEquals(result.closingSurplus, new BigDecimal("200.0"));
-        assertEquals(result.closingAdjustment, new BigDecimal("100.0"));
+        ClosingResult result = instance.calculateClosing(
+                incomeTarget,
+                debtRepayments,
+                investmentOutflows,
+                openingBalance,
+                closingBalance,
+                carriedSurplus
+        );
+        assertEquals(new BigDecimal("200.0").compareTo(result.closingSurplus), 0);
+        assertEquals(new BigDecimal("100.0").compareTo(result.closingAdjustment), 0);
     }
 
+    /**
+     * Test of investment outflows on estimate calculation
+     */
+    @Test
+    public void testEstimate_InvestmentOutflows() {
+        BigDecimal revenues = new BigDecimal(BigInteger.ZERO);
+        BigDecimal expenses = new BigDecimal(BigInteger.ZERO);
+        BigDecimal adjustments = new BigDecimal(BigInteger.ZERO);
+        BigDecimal incomeTarget = new BigDecimal(BigInteger.ZERO);
+        BigDecimal openingBalance = new BigDecimal(BigInteger.ZERO);
+        BigDecimal investmentOutflows = new BigDecimal("100.0");
+        BigDecimal debtRepayments = new BigDecimal(BigInteger.ZERO);
+        BigDecimal carriedSurplus = new BigDecimal(BigInteger.ZERO);
+        PeriodCalculationServices instance = new PeriodCalculationServices();
+        EstimateResult result = instance.calculateEstimate(
+                revenues,
+                expenses,
+                adjustments,
+                debtRepayments,
+                investmentOutflows,
+                incomeTarget,
+                openingBalance,
+                carriedSurplus
+        );
+        assertEquals(new BigDecimal("-100.0").compareTo(result.expectedBalance), 0);
+        assertEquals(new BigDecimal("-100.0").compareTo(result.estimatedBalance), 0);
+        assertEquals(new BigDecimal("0.0").compareTo(result.surplus), 0);
+    }
+
+    /**
+     * Test of investment outflows on estimate calculation
+     */
+    @Test
+    public void testEstimate_DebtRepayments() {
+        BigDecimal revenues = new BigDecimal(BigInteger.ZERO);
+        BigDecimal expenses = new BigDecimal(BigInteger.ZERO);
+        BigDecimal adjustments = new BigDecimal(BigInteger.ZERO);
+        BigDecimal incomeTarget = new BigDecimal(BigInteger.ZERO);
+        BigDecimal openingBalance = new BigDecimal(BigInteger.ZERO);
+        BigDecimal investmentOutflows = new BigDecimal(BigInteger.ZERO);
+        BigDecimal debtRepayments = new BigDecimal("100.00");
+        BigDecimal carriedSurplus = new BigDecimal(BigInteger.ZERO);
+        PeriodCalculationServices instance = new PeriodCalculationServices();
+        EstimateResult result = instance.calculateEstimate(
+                revenues,
+                expenses,
+                adjustments,
+                debtRepayments,
+                investmentOutflows,
+                incomeTarget,
+                openingBalance,
+                carriedSurplus
+        );
+        assertEquals(new BigDecimal("-100.0").compareTo(result.expectedBalance), 0);
+        assertEquals(new BigDecimal("-100.00").compareTo(result.estimatedBalance), 0);
+        assertEquals(new BigDecimal("0.0").compareTo(result.surplus), 0);
+    }
 }

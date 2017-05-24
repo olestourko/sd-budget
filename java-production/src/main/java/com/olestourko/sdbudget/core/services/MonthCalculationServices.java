@@ -38,6 +38,8 @@ public class MonthCalculationServices {
         if (month.getIsClosed()) {
             ClosingResult closingResult = periodCalculationServices.calculateClosing(
                     month.getNetIncomeTarget().getAmount(),
+                    month.getDebtRepayments().getAmount(),
+                    month.getInvestmentOutflows().getAmount(),
                     month.getOpeningBalance().getAmount(),
                     month.getClosingBalance().getAmount(),
                     month.getOpeningSurplus().getAmount()
