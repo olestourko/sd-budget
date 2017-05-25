@@ -1,6 +1,5 @@
 package com.olestourko.sdbudget.desktop.controllers;
 
-import com.olestourko.sdbudget.core.models.BudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
 import com.olestourko.sdbudget.desktop.controls.CurrencyTableCell;
 import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
@@ -23,6 +22,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.event.EventHandler;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
@@ -52,6 +52,8 @@ public class ScratchpadController implements Initializable, IScratchpad {
     private TextField nameField;
     @FXML
     private TextField amountField;
+    @FXML
+    private Button addTransactionButton;
 
     private final BudgetItemViewModel totalAdjustments = new BudgetItemViewModel("Total Adjustments", BigDecimal.ZERO);
     private final MonthMapper monthMapper;
@@ -155,6 +157,11 @@ public class ScratchpadController implements Initializable, IScratchpad {
         scratchpadTable.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
+                // Don't allow deleting if the month is closed
+                if (month.getValue().getIsClosed()) {
+                    return;
+                }
+
                 if (event.getCode().equals(KeyCode.DELETE)) {
                     BudgetItemViewModel item = (BudgetItemViewModel) scratchpadTable.getSelectionModel().getSelectedItem();
                     if (item == totalAdjustments) {
@@ -200,7 +207,7 @@ public class ScratchpadController implements Initializable, IScratchpad {
         this.month.set(month);
         this.monthViewModel.set(monthViewModel);
 
-        //Set the date on the label
+        // Set the date on the label
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
         periodDate.setText(dateFormat.format(this.monthViewModel.get().calendar.getTime()));
 
@@ -208,6 +215,23 @@ public class ScratchpadController implements Initializable, IScratchpad {
         scratchpadTable.setItems(monthViewModel.getAdjustments());
         scratchpadTable.getItems().addListener(listChangeListener);
         totalAdjustments.setAmount(month.getTotalAdjustments());
+    }
+    
+    public void refresh() {
+        scratchpadTable.refresh();
+        totalsTable.refresh();
+        
+        if (month.getValue().getIsClosed()) {
+            scratchpadTable.setEditable(false);
+            addTransactionButton.setDisable(true);
+            nameField.setDisable(true);
+            amountField.setDisable(true);
+        } else {
+            scratchpadTable.setEditable(true);
+            addTransactionButton.setDisable(false);
+            nameField.setDisable(false);
+            amountField.setDisable(false);
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="Callbacks">

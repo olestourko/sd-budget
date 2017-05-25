@@ -231,6 +231,7 @@ public class Frontend {
         mainController.scratchpadViewMenuItem.setSelected(true);
         mainController.scratchpadViewButton.setText("Budget");
         mainController.contentContainer.getChildren().clear();
+        scratchpadController.refresh();
         mainController.contentContainer.getChildren().add(scratchpadControllerRoot);
         stage.setWidth(Math.max(lastScratchpadWidth, SCRATCHPAD_WIDTH));
     }
