@@ -84,6 +84,11 @@ $green:     #859900;
     .table-column {
         -fx-border: none;
         -fx-background-color: $base3;
+        
+        // Do this so that cells being edited don't push items below them down
+        -fx-min-height: 26px; 
+        -fx-padding: 0 4px 0 4px;
+        -fx-alignment: center-left;
     }
 
     .column-header-background .table-column .label,

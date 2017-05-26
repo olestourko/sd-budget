@@ -221,8 +221,8 @@ public class MonthControl extends AnchorPane implements IMonthControl {
         TreeTableColumn amountColumn = (TreeTableColumn) budgetTable.getColumns().get(1);
         TreeTableColumn actionColumn = (TreeTableColumn) budgetTable.getColumns().get(2);
 
-        nameColumn.prefWidthProperty().bind(budgetTable.widthProperty().multiply(0.6).subtract(28));
-        amountColumn.prefWidthProperty().bind(budgetTable.widthProperty().multiply(0.4));
+        nameColumn.prefWidthProperty().bind(budgetTable.widthProperty().multiply(0.7).subtract(28));
+        amountColumn.prefWidthProperty().bind(budgetTable.widthProperty().multiply(0.3));
         actionColumn.prefWidthProperty().set(24);
         nameColumn.setResizable(false);
         amountColumn.setResizable(false);
@@ -368,8 +368,8 @@ public class MonthControl extends AnchorPane implements IMonthControl {
         TableColumn nameColumn = (TableColumn) totalsTable.getColumns().get(0);
         TableColumn amountColumn = (TableColumn) totalsTable.getColumns().get(1);
 
-        nameColumn.prefWidthProperty().bind(totalsTable.widthProperty().multiply(0.6).subtract(28));
-        amountColumn.prefWidthProperty().bind(totalsTable.widthProperty().multiply(0.4));
+        nameColumn.prefWidthProperty().bind(totalsTable.widthProperty().multiply(0.7).subtract(28));
+        amountColumn.prefWidthProperty().bind(totalsTable.widthProperty().multiply(0.3));
         nameColumn.setResizable(false);
         amountColumn.setResizable(false);
 
@@ -390,8 +390,8 @@ public class MonthControl extends AnchorPane implements IMonthControl {
         TableColumn nameColumn = (TableColumn) closingTable.getColumns().get(0);
         TableColumn amountColumn = (TableColumn) closingTable.getColumns().get(1);
 
-        nameColumn.prefWidthProperty().bind(closingTable.widthProperty().multiply(0.6).subtract(28));
-        amountColumn.prefWidthProperty().bind(closingTable.widthProperty().multiply(0.4));
+        nameColumn.prefWidthProperty().bind(closingTable.widthProperty().multiply(0.7).subtract(28));
+        amountColumn.prefWidthProperty().bind(closingTable.widthProperty().multiply(0.3));
         nameColumn.setResizable(false);
         amountColumn.setResizable(false);
 
