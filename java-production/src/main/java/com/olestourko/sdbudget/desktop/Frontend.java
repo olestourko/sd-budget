@@ -11,12 +11,20 @@ import com.olestourko.sdbudget.desktop.controllers.ThreeMonthController;
 import com.olestourko.sdbudget.desktop.mappers.BudgetItemMapper;
 import com.olestourko.sdbudget.desktop.models.Budget;
 import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
+import java.util.Optional;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.RadioMenuItem;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import javax.inject.Inject;
 import org.mapstruct.factory.Mappers;
@@ -31,6 +39,8 @@ public class Frontend {
     protected static final int THREE_MONTH_WIDTH = 920;
     protected static final int SCRATCHPAD_WIDTH = 400;
     protected static final int DEFAULT_HEIGHT = 600;
+    protected static final String baseTitle = "SDBudget 0.1.0";
+    protected static final String thumbUri = "/desktop/images/thumb.png";
 
     protected double lastOneMonthWidth;
     protected double lastThreeMonthWidth;
@@ -125,7 +135,8 @@ public class Frontend {
             }
         });
 
-        stage.setTitle("SDBudget");
+        stage.setTitle(baseTitle);
+        stage.getIcons().add(new Image(getClass().getResourceAsStream(thumbUri)));
         stage.setWidth(ONE_MONTH_WIDTH);
         stage.setHeight(DEFAULT_HEIGHT);
         stage.setScene(mainScene);
@@ -188,6 +199,35 @@ public class Frontend {
                 Frontend.this.oneMonthController.refresh();
                 Frontend.this.threeMonthController.refresh();
                 return month;
+            }
+        });
+
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+
+                //http://code.makery.ch/blog/javafx-dialogs-official/
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle(baseTitle + " - Exit");
+                alert.setHeaderText("Do you want to save any changes?");
+                alert.setContentText(null);
+                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                stage.getIcons().add(new Image(getClass().getResourceAsStream(thumbUri)));
+                
+                ButtonType saveAndExitButton = new ButtonType("Save & Exit");
+                ButtonType exitButton = new ButtonType("Exit");
+                ButtonType cancelButton = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+
+                alert.getButtonTypes().setAll(saveAndExitButton, exitButton, cancelButton);
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == saveAndExitButton) {
+                    monthRepository.storeMonths();
+                } else if (result.get() == exitButton) {
+
+                } else if (result.get() == cancelButton) {
+                    event.consume();
+                }
             }
         });
     }

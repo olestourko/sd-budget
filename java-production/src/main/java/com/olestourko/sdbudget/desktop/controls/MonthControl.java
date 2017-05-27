@@ -332,6 +332,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                     callOnItemAdded(budgetItemVM);
 
                     // Select the newly created item
+                    // https://www.mkyong.com/java8/java-8-streams-filter-examples/
                     treeItem.setExpanded(true);
                     TreeItem<BudgetItemViewModel> newTreeItem = treeItem.getChildren().stream().filter(item -> {
                         return ((TreeItem<BudgetItemViewModel>) item).getValue().getModel() == budgetItem;
@@ -374,7 +375,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
         TableColumn amountColumn = (TableColumn) totalsTable.getColumns().get(1);
 
         nameColumn.prefWidthProperty().bind(totalsTable.widthProperty().multiply(0.7).subtract(28));
-        amountColumn.prefWidthProperty().bind(totalsTable.widthProperty().multiply(0.3));
+        amountColumn.prefWidthProperty().bind(totalsTable.widthProperty().multiply(0.3).add(24));
         nameColumn.setResizable(false);
         amountColumn.setResizable(false);
 
@@ -396,7 +397,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
         TableColumn amountColumn = (TableColumn) closingTable.getColumns().get(1);
 
         nameColumn.prefWidthProperty().bind(closingTable.widthProperty().multiply(0.7).subtract(28));
-        amountColumn.prefWidthProperty().bind(closingTable.widthProperty().multiply(0.3));
+        amountColumn.prefWidthProperty().bind(closingTable.widthProperty().multiply(0.3).add(24));
         nameColumn.setResizable(false);
         amountColumn.setResizable(false);
 
