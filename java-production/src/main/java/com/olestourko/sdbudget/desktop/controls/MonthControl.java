@@ -128,10 +128,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
         @Override
         public void onChanged(ListChangeListener.Change<? extends BudgetItemViewModel> change) {
             adjustmentsRoot.getValue().setAmount(monthViewModel.getValue().getTotalAdjustments());
-            adjustmentsRoot.getChildren().clear();
-            for (BudgetItemViewModel adjustment : monthViewModel.getValue().getAdjustments()) {
-                adjustmentsRoot.getChildren().add(new TreeItem<BudgetItemViewModel>(adjustment));
-            }
+            budgetTable.refresh();
         }
     };
     // </editor-fold>
@@ -172,15 +169,20 @@ public class MonthControl extends AnchorPane implements IMonthControl {
             @Override
             public void handle(KeyEvent event) {
                 if (event.getCode().equals(KeyCode.DELETE)) {
-                    TreeItem treeItem = (TreeItem) budgetTable.getSelectionModel().getSelectedItem();
+                    TreeItem <BudgetItemViewModel> treeItem = (TreeItem) budgetTable.getSelectionModel().getSelectedItem();
+                    TreeItem<BudgetItemViewModel> parentTreeItem = treeItem.getParent();
                     BudgetItemViewModel selectedItem = (BudgetItemViewModel) treeItem.getValue();
                     MonthViewModel month = MonthControl.this.monthViewModel.get();
                     if (month.getRevenues().contains(selectedItem)) {
                         month.getRevenues().remove(selectedItem);
                         callOnItemRemoved(selectedItem);
+                        
+                        budgetTable.getSelectionModel().select(parentTreeItem);
                     } else if (month.getExpenses().contains(selectedItem)) {
                         month.getExpenses().remove(selectedItem);
                         callOnItemRemoved(selectedItem);
+                        
+                        budgetTable.getSelectionModel().select(parentTreeItem);
                     }
                     callMonthModifiedCallback();
                 }
@@ -245,14 +247,25 @@ public class MonthControl extends AnchorPane implements IMonthControl {
         nameColumn.setOnEditCommit(new EventHandler<TreeTableColumn.CellEditEvent<BudgetItemViewModel, String>>() {
             @Override
             public void handle(TreeTableColumn.CellEditEvent<BudgetItemViewModel, String> t) {
-                TreeItem treeItem = t.getTreeTablePosition().getTreeItem();
+                TreeItem<BudgetItemViewModel> treeItem = t.getTreeTablePosition().getTreeItem();
+                TreeItem<BudgetItemViewModel> parentTreeItem = treeItem.getParent();
+                BudgetItemViewModel budgetItemVM = (BudgetItemViewModel) treeItem.getValue();
                 if (treeItem.getChildren().size() == 0) {
-                    BudgetItemViewModel budgetItem = (BudgetItemViewModel) treeItem.getValue();
-                    budgetItem.setName(t.getNewValue());
+                    budgetItemVM.setName(t.getNewValue());
                     // Update the month model
-                    monthMapper.updateMonthFromMonthViewModel(monthViewModel.getValue(), month.getValue());
                     callMonthModifiedCallback();
-                    callOnItemModified(budgetItem);
+                    callOnItemModified(budgetItemVM);
+                    
+                    // Select the edited item
+                    // https://www.mkyong.com/java8/java-8-streams-filter-examples/
+                    if (parentTreeItem != null) {
+                        treeItem.setExpanded(true);
+                        TreeItem<BudgetItemViewModel> newTreeItem = parentTreeItem.getChildren().stream().filter(item -> {
+                            return ((TreeItem<BudgetItemViewModel>) item).getValue().getModel() == budgetItemVM.getModel();
+                        }).findFirst().orElse(null);
+                        int row = budgetTable.getRow(newTreeItem);
+                        budgetTable.getSelectionModel().select(row);
+                    }
                 }
             }
 
@@ -282,9 +295,10 @@ public class MonthControl extends AnchorPane implements IMonthControl {
             @Override
             public void handle(TreeTableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal> t) {
                 TreeItem treeItem = t.getTreeTablePosition().getTreeItem();
+                TreeItem<BudgetItemViewModel> parentTreeItem = treeItem.getParent();
 
                 if (treeItem.getChildren().size() == 0) {
-                    BudgetItemViewModel budgetItem = (BudgetItemViewModel) treeItem.getValue();
+                    BudgetItemViewModel budgetItemVM = (BudgetItemViewModel) treeItem.getValue();
 
                     // Don't allow negative numbers for revenues, expenses, debt repayments, investment outflows
                     List<TreeItem> allowNegative = new ArrayList<>();
@@ -294,9 +308,20 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                     if (!allowNegative.contains(treeItem) && t.getNewValue().compareTo(BigDecimal.ZERO) == -1) {
                         budgetTable.refresh();
                     } else {
-                        budgetItem.setAmount(t.getNewValue());
+                        budgetItemVM.setAmount(t.getNewValue());
                         callMonthModifiedCallback();
-                        callOnItemModified(budgetItem);
+                        callOnItemModified(budgetItemVM);
+                    }
+
+                    // Select the edited item
+                    // https://www.mkyong.com/java8/java-8-streams-filter-examples/
+                    if (parentTreeItem != null) {
+                        treeItem.setExpanded(true);
+                        TreeItem<BudgetItemViewModel> newTreeItem = parentTreeItem.getChildren().stream().filter(item -> {
+                            return ((TreeItem<BudgetItemViewModel>) item).getValue().getModel() == budgetItemVM.getModel();
+                        }).findFirst().orElse(null);
+                        int row = budgetTable.getRow(newTreeItem);
+                        budgetTable.getSelectionModel().select(row);
                     }
                 }
             }
@@ -452,7 +477,6 @@ public class MonthControl extends AnchorPane implements IMonthControl {
         revenuesRoot.getValue().setAmount(monthViewModel.getTotalRevenues());
         expensesRoot.getChildren().clear();
         expensesRoot.getValue().setAmount(monthViewModel.getTotalExpenses());
-        adjustmentsRoot.getChildren().clear();
         adjustmentsRoot.getValue().setAmount(monthViewModel.getTotalAdjustments());
 
         for (BudgetItemViewModel revenue : monthViewModel.getRevenues()) {

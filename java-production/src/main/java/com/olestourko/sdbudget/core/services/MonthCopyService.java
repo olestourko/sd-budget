@@ -36,9 +36,8 @@ public class MonthCopyService {
             to.getExpenses().add(cloneBudgetItem(expense));
         }
 
-        MonthCopyService.this.cloneBudgetItem(from.getDebtRepayments(), to.getDebtRepayments());
-        MonthCopyService.this.cloneBudgetItem(from.getInvestmentOutflows(), to.getInvestmentOutflows());
         MonthCopyService.this.cloneBudgetItem(from.getNetIncomeTarget(), to.getNetIncomeTarget());
-        return null;
+        
+        return to;
     }
 }
