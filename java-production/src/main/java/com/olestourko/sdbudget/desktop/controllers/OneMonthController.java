@@ -54,7 +54,6 @@ public class OneMonthController implements Initializable, INMonthController {
         monthControl.setMonthLogicServices(monthLogicServices);
         monthControl.setOnMonthModified(event -> {
             Month month = monthControl.getMonth();
-            this.monthMapper.updateMonthFromMonthViewModel(monthControl.getMonthViewModel(), month);
             monthCalculationServices.recalculateMonths(month);
             this.monthMapper.updateMonthViewModelFromMonth(month, monthControl.getMonthViewModel());
             return month;

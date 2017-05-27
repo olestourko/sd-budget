@@ -320,19 +320,24 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                 });
 
                 cell.button.setOnAction(event -> {
-                    BudgetItemViewModel budgetItem = new BudgetItemViewModel("New Item", BigDecimal.ZERO);
-                    budgetItem.setModel(new BudgetItem());
+                    BudgetItemViewModel budgetItemVM = new BudgetItemViewModel("New Item", BigDecimal.ZERO);
+                    BudgetItem budgetItem = budgetItemVM.getModel();
                     TreeItem<BudgetItemViewModel> treeItem = cell.getTreeTableRow().getTreeItem();
                     if (treeItem.getValue() == revenuesRoot.getValue()) {
-                        monthViewModel.getValue().getRevenues().add(budgetItem);
+                        monthViewModel.getValue().getRevenues().add(budgetItemVM);
                     } else if (treeItem.getValue() == expensesRoot.getValue()) {
-                        monthViewModel.getValue().getExpenses().add(budgetItem);
+                        monthViewModel.getValue().getExpenses().add(budgetItemVM);
                     }
-                    // Update the month model
-                    monthMapper.updateMonthFromMonthViewModel(monthViewModel.getValue(), month.getValue());
-                    treeItem.setExpanded(true);
                     callMonthModifiedCallback();
-                    callOnItemAdded(budgetItem);
+                    callOnItemAdded(budgetItemVM);
+
+                    // Select the newly created item
+                    treeItem.setExpanded(true);
+                    TreeItem<BudgetItemViewModel> newTreeItem = treeItem.getChildren().stream().filter(item -> {
+                        return ((TreeItem<BudgetItemViewModel>) item).getValue().getModel() == budgetItem;
+                    }).findFirst().orElse(null);
+                    int row = budgetTable.getRow(newTreeItem);
+                    budgetTable.getSelectionModel().select(row);
                 });
 
                 return cell;

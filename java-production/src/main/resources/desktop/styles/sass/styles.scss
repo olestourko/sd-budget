@@ -132,8 +132,11 @@ $green:     #859900;
 }
 
 .tree-table-view {
+    .tree-table-row-cell .tree-disclosure-node {
+        -fx-padding: 8px 2px 8px 6px;
+    }
     .tree-table-row-cell .tree-disclosure-node .arrow {
-        -fx-background-color: $base00;        
+        -fx-background-color: $base00;
     }
 }
 
