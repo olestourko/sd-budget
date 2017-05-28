@@ -21,6 +21,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
@@ -169,19 +170,19 @@ public class MonthControl extends AnchorPane implements IMonthControl {
             @Override
             public void handle(KeyEvent event) {
                 if (event.getCode().equals(KeyCode.DELETE)) {
-                    TreeItem <BudgetItemViewModel> treeItem = (TreeItem) budgetTable.getSelectionModel().getSelectedItem();
+                    TreeItem<BudgetItemViewModel> treeItem = (TreeItem) budgetTable.getSelectionModel().getSelectedItem();
                     TreeItem<BudgetItemViewModel> parentTreeItem = treeItem.getParent();
                     BudgetItemViewModel selectedItem = (BudgetItemViewModel) treeItem.getValue();
                     MonthViewModel month = MonthControl.this.monthViewModel.get();
                     if (month.getRevenues().contains(selectedItem)) {
                         month.getRevenues().remove(selectedItem);
                         callOnItemRemoved(selectedItem);
-                        
+
                         budgetTable.getSelectionModel().select(parentTreeItem);
                     } else if (month.getExpenses().contains(selectedItem)) {
                         month.getExpenses().remove(selectedItem);
                         callOnItemRemoved(selectedItem);
-                        
+
                         budgetTable.getSelectionModel().select(parentTreeItem);
                     }
                     callMonthModifiedCallback();
@@ -255,7 +256,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                     // Update the month model
                     callMonthModifiedCallback();
                     callOnItemModified(budgetItemVM);
-                    
+
                     // Select the edited item
                     // https://www.mkyong.com/java8/java-8-streams-filter-examples/
                     if (parentTreeItem != null) {
@@ -330,40 +331,71 @@ public class MonthControl extends AnchorPane implements IMonthControl {
         actionColumn.setCellFactory(new Callback<TreeTableColumn<BudgetItemViewModel, String>, TreeTableCell<BudgetItemViewModel, String>>() {
             @Override
             public TreeTableCell<BudgetItemViewModel, String> call(TreeTableColumn<BudgetItemViewModel, String> p) {
-                ButtonTreeTableCell cell = new ButtonTreeTableCell("+");
+                ButtonTreeTableCell cell = new ButtonTreeTableCell("");
+
+                final EventHandler<ActionEvent> addHandler = new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent e) {
+                        BudgetItemViewModel budgetItemVM = new BudgetItemViewModel("New Item", BigDecimal.ZERO);
+                        BudgetItem budgetItem = budgetItemVM.getModel();
+                        TreeItem<BudgetItemViewModel> treeItem = cell.getTreeTableRow().getTreeItem();
+                        if (treeItem.getValue() == revenuesRoot.getValue()) {
+                            monthViewModel.getValue().getRevenues().add(budgetItemVM);
+                        } else if (treeItem.getValue() == expensesRoot.getValue()) {
+                            monthViewModel.getValue().getExpenses().add(budgetItemVM);
+                        }
+                        callMonthModifiedCallback();
+                        callOnItemAdded(budgetItemVM);
+
+                        // Select the newly created item
+                        // https://www.mkyong.com/java8/java-8-streams-filter-examples/
+                        treeItem.setExpanded(true);
+                        TreeItem<BudgetItemViewModel> newTreeItem = treeItem.getChildren().stream().filter(item -> {
+                            return ((TreeItem<BudgetItemViewModel>) item).getValue().getModel() == budgetItem;
+                        }).findFirst().orElse(null);
+                        int row = budgetTable.getRow(newTreeItem);
+                        budgetTable.getSelectionModel().select(row);
+                    }
+                };
+
+                final EventHandler<ActionEvent> deleteHandler = new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent e) {
+                        TreeItem<BudgetItemViewModel> treeItem = cell.getTreeTableRow().getTreeItem();
+                        TreeItem<BudgetItemViewModel> parentTreeItem = treeItem.getParent();
+                        BudgetItemViewModel selectedItem = (BudgetItemViewModel) treeItem.getValue();
+                        MonthViewModel month = MonthControl.this.monthViewModel.get();
+                        if (month.getRevenues().contains(selectedItem)) {
+                            month.getRevenues().remove(selectedItem);
+                            callOnItemRemoved(selectedItem);
+
+                            budgetTable.getSelectionModel().select(parentTreeItem);
+                        } else if (month.getExpenses().contains(selectedItem)) {
+                            month.getExpenses().remove(selectedItem);
+                            callOnItemRemoved(selectedItem);
+
+                            budgetTable.getSelectionModel().select(parentTreeItem);
+                        }
+                        callMonthModifiedCallback();
+                    }
+                };
+
                 cell.setShowButtonCondition(new Callback<ButtonTreeTableCell, Boolean>() {
                     @Override
                     public Boolean call(ButtonTreeTableCell cell) {
                         TreeItem treeItem = cell.getTreeTableRow().getTreeItem();
-                        try {
-                            return ((treeItem == revenuesRoot || treeItem == expensesRoot) && !monthViewModel.getValue().getIsClosed());
-                        } catch (NullPointerException exception) {
-                            // Do nothing
+                        if ((treeItem == revenuesRoot || treeItem == expensesRoot) && !monthViewModel.getValue().getIsClosed()) {
+                            cell.button.setText("+");
+                            cell.button.setOnAction(addHandler);
+                            return true;
+                        } else if (treeItem != null && (treeItem.getParent() == revenuesRoot || treeItem.getParent() == expensesRoot) && !monthViewModel.getValue().getIsClosed()) {
+                            cell.button.setText("\u00D7");
+                            cell.button.setOnAction(deleteHandler);
+                            return true;
                         }
+
                         return false;
                     }
-                });
-
-                cell.button.setOnAction(event -> {
-                    BudgetItemViewModel budgetItemVM = new BudgetItemViewModel("New Item", BigDecimal.ZERO);
-                    BudgetItem budgetItem = budgetItemVM.getModel();
-                    TreeItem<BudgetItemViewModel> treeItem = cell.getTreeTableRow().getTreeItem();
-                    if (treeItem.getValue() == revenuesRoot.getValue()) {
-                        monthViewModel.getValue().getRevenues().add(budgetItemVM);
-                    } else if (treeItem.getValue() == expensesRoot.getValue()) {
-                        monthViewModel.getValue().getExpenses().add(budgetItemVM);
-                    }
-                    callMonthModifiedCallback();
-                    callOnItemAdded(budgetItemVM);
-
-                    // Select the newly created item
-                    // https://www.mkyong.com/java8/java-8-streams-filter-examples/
-                    treeItem.setExpanded(true);
-                    TreeItem<BudgetItemViewModel> newTreeItem = treeItem.getChildren().stream().filter(item -> {
-                        return ((TreeItem<BudgetItemViewModel>) item).getValue().getModel() == budgetItem;
-                    }).findFirst().orElse(null);
-                    int row = budgetTable.getRow(newTreeItem);
-                    budgetTable.getSelectionModel().select(row);
                 });
 
                 return cell;
