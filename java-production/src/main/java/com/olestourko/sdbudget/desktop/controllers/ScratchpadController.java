@@ -1,6 +1,7 @@
 package com.olestourko.sdbudget.desktop.controllers;
 
 import com.olestourko.sdbudget.core.models.Month;
+import com.olestourko.sdbudget.desktop.controls.ButtonTableCell;
 import com.olestourko.sdbudget.desktop.controls.CurrencyTableCell;
 import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
 import com.olestourko.sdbudget.desktop.models.MonthViewModel;
@@ -49,6 +50,8 @@ public class ScratchpadController implements Initializable, IScratchpad {
     @FXML
     private TableColumn amountColumn;
     @FXML
+    private TableColumn actionColumn;
+    @FXML
     private TextField nameField;
     @FXML
     private TextField amountField;
@@ -80,6 +83,10 @@ public class ScratchpadController implements Initializable, IScratchpad {
     }
 
     public void load() {
+        nameColumn.prefWidthProperty().bind(scratchpadTable.widthProperty().multiply(0.7).subtract(28));
+        amountColumn.prefWidthProperty().bind(scratchpadTable.widthProperty().multiply(0.3));
+        actionColumn.prefWidthProperty().set(24);
+
         //Set the month and add callback for when the month property in the Budget model changes       
         this.setMonth(budget.getCurrentMonth());
         budget.currentMonthProperty().addListener(event -> {
@@ -131,8 +138,41 @@ public class ScratchpadController implements Initializable, IScratchpad {
             }
         });
 
+        actionColumn.setCellFactory(new Callback<TableColumn<BudgetItemViewModel, String>, TableCell<BudgetItemViewModel, String>>() {
+            @Override
+            public TableCell<BudgetItemViewModel, String> call(TableColumn<BudgetItemViewModel, String> p) {
+                ButtonTableCell cell = new ButtonTableCell("\u00D7");
+
+                final EventHandler<ActionEvent> deleteHandler = new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent e) {
+                        // Don't allow deleting if the month is closed
+                        if (month.getValue().getIsClosed()) {
+                            return;
+                        }
+
+                        BudgetItemViewModel item = (BudgetItemViewModel) cell.getTableRow().getItem();
+                        ScratchpadController.this.monthViewModel.getValue().removeAdjustment(item);
+                        callOnAdjustmentRemovedCallback(item);
+                    }
+                };
+
+                cell.button.setOnAction(deleteHandler);
+                cell.setShowButtonCondition(new Callback<ButtonTableCell, Boolean>() {
+                    @Override
+                    public Boolean call(ButtonTableCell cell) {
+                        return cell.getTableRow().getItem() != null && !monthViewModel.getValue().getIsClosed();
+                    }
+                });
+
+                return cell;
+            }
+        });
+
         //Set up the totals table
         totalsTable.getItems().add(totalAdjustments);
+        ((TableColumn) totalsTable.getColumns().get(0)).prefWidthProperty().bind(totalsTable.widthProperty().multiply(0.7).subtract(28));
+        ((TableColumn) totalsTable.getColumns().get(1)).prefWidthProperty().bind(totalsTable.widthProperty().multiply(0.3).add(24));
 
         ((TableColumn) totalsTable.getColumns().get(1)).setCellFactory(new Callback<TableColumn<BudgetItemViewModel, BigDecimal>, TableCell<BudgetItemViewModel, BigDecimal>>() {
             StringConverter<BigDecimal> converter;
@@ -216,11 +256,12 @@ public class ScratchpadController implements Initializable, IScratchpad {
         scratchpadTable.getItems().addListener(listChangeListener);
         totalAdjustments.setAmount(month.getTotalAdjustments());
     }
-    
+
     public void refresh() {
+        monthMapper.updateMonthViewModelFromMonth(month.getValue(), monthViewModel.getValue());
         scratchpadTable.refresh();
         totalsTable.refresh();
-        
+
         if (month.getValue().getIsClosed()) {
             scratchpadTable.setEditable(false);
             addTransactionButton.setDisable(true);

@@ -24,16 +24,17 @@
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
                     </columnResizePolicy>
                     <columns>
-                        <TableColumn fx:id="nameColumn" editable="true" text="Name">
+                        <TableColumn fx:id="nameColumn" editable="true" sortable="false" text="Name">
                             <cellValueFactory>
                                 <PropertyValueFactory property="name" />
                             </cellValueFactory>
                         </TableColumn>
-                        <TableColumn fx:id="amountColumn" editable="true" text="Amount">
+                        <TableColumn fx:id="amountColumn" editable="true" sortable="false" text="Amount">
                             <cellValueFactory>
                                 <PropertyValueFactory property="amount" />
                             </cellValueFactory>
                         </TableColumn>
+                        <TableColumn fx:id="actionColumn" editable="false" sortable="false" text=""/>
                     </columns>    
                 </TableView>
             </children>
