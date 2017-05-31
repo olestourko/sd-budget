@@ -1,8 +1,14 @@
 package com.olestourko.sdbudget.desktop.controls;
 
+import com.olestourko.sdbudget.desktop.controls.handlers.TreeTableViewEnterPressedHandler;
+import com.olestourko.sdbudget.desktop.controls.handlers.TableViewEnterPressedHandler;
 import com.olestourko.sdbudget.core.models.BudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
 import com.olestourko.sdbudget.core.services.MonthLogicServices;
+import com.olestourko.sdbudget.desktop.controls.ButtonTreeTableCell;
+import com.olestourko.sdbudget.desktop.controls.CurrencyTableCell;
+import com.olestourko.sdbudget.desktop.controls.CurrencyTreeTableCell;
+import com.olestourko.sdbudget.desktop.controls.IMonthControl;
 import com.olestourko.sdbudget.desktop.mappers.MonthMapper;
 import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
 import javafx.fxml.FXML;
@@ -165,10 +171,10 @@ public class MonthControl extends AnchorPane implements IMonthControl {
             this.refresh();
         });
 
-        // Remove item when DELETE key is pressed
-        budgetTable.setOnKeyPressed(new EventHandler<KeyEvent>() {
+        budgetTable.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
+                // Remove item when DELETE key is pressed
                 if (event.getCode().equals(KeyCode.DELETE)) {
                     TreeItem<BudgetItemViewModel> treeItem = (TreeItem) budgetTable.getSelectionModel().getSelectedItem();
                     TreeItem<BudgetItemViewModel> parentTreeItem = treeItem.getParent();
@@ -402,6 +408,9 @@ public class MonthControl extends AnchorPane implements IMonthControl {
             }
         });
 
+        // Edit item amount when pressing ENTER
+        budgetTable.addEventHandler(KeyEvent.KEY_PRESSED, new TreeTableViewEnterPressedHandler(budgetTable));
+
         budgetTableRoot.getChildren().addAll(revenuesRoot, expensesRoot, adjustmentsRoot, debtRepaymentsTreeItem, investmentOutflowsTreeItem, netIncomeTargetTreeItem, openingBalanceTreeItem, openingSurplusTreeItem);
         budgetTableRoot.setExpanded(true);
         budgetTable.setEditable(true);
@@ -476,6 +485,9 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                 callMonthModifiedCallback();
             }
         });
+
+        // Edit item amount when pressing ENTER
+        closingTable.addEventHandler(KeyEvent.KEY_PRESSED, new TableViewEnterPressedHandler(closingTable));
 
         month.addListener(event -> {
             closingTable.getSelectionModel().clearSelection();
