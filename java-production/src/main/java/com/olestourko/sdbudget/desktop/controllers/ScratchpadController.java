@@ -3,6 +3,7 @@ package com.olestourko.sdbudget.desktop.controllers;
 import com.olestourko.sdbudget.core.models.Month;
 import com.olestourko.sdbudget.desktop.controls.ButtonTableCell;
 import com.olestourko.sdbudget.desktop.controls.CurrencyTableCell;
+import com.olestourko.sdbudget.desktop.controls.handlers.TableViewEnterPressedHandler;
 import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
 import com.olestourko.sdbudget.desktop.models.MonthViewModel;
 import com.olestourko.sdbudget.desktop.mappers.MonthMapper;
@@ -212,6 +213,9 @@ public class ScratchpadController implements Initializable, IScratchpad {
                 }
             }
         });
+        
+        // Edit item amount when pressing ENTER
+        scratchpadTable.addEventHandler(KeyEvent.KEY_PRESSED, new TableViewEnterPressedHandler(scratchpadTable));
 
         // Disable Drag & Drop on headers
         // http://stackoverflow.com/questions/22202782/how-to-prevent-tableview-from-doing-tablecolumn-re-order-in-javafx-8
