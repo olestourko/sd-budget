@@ -1,6 +1,7 @@
 package com.olestourko.sdbudget.desktop.controllers;
 
 import com.olestourko.sdbudget.core.models.Month;
+import com.olestourko.sdbudget.desktop.controllers.IScratchpad;
 import com.olestourko.sdbudget.desktop.controls.ButtonTableCell;
 import com.olestourko.sdbudget.desktop.controls.CurrencyTableCell;
 import com.olestourko.sdbudget.desktop.controls.handlers.TableViewEnterPressedHandler;
@@ -114,10 +115,11 @@ public class ScratchpadController implements Initializable, IScratchpad {
         });
         nameColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<BudgetItemViewModel, String>>() {
             @Override
-            public void handle(TableColumn.CellEditEvent<BudgetItemViewModel, String> t) {
-                BudgetItemViewModel item = (BudgetItemViewModel) t.getTableView().getItems().get(t.getTablePosition().getRow());
-                item.setName(t.getNewValue());
+            public void handle(TableColumn.CellEditEvent<BudgetItemViewModel, String> event) {
+                BudgetItemViewModel item = (BudgetItemViewModel) event.getTableView().getItems().get(event.getTablePosition().getRow());
+                item.setName(event.getNewValue());
                 callOnAdjustmentModifiedCallback(item);
+                scratchpadTable.getSelectionModel().select(event.getTablePosition().getRow());
             }
         });
 
@@ -132,10 +134,11 @@ public class ScratchpadController implements Initializable, IScratchpad {
         });
         amountColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal>>() {
             @Override
-            public void handle(TableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal> t) {
-                BudgetItemViewModel item = (BudgetItemViewModel) t.getTableView().getItems().get(t.getTablePosition().getRow());
-                item.setAmount(t.getNewValue());
+            public void handle(TableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal> event) {
+                BudgetItemViewModel item = (BudgetItemViewModel) event.getTableView().getItems().get(event.getTablePosition().getRow());
+                item.setAmount(event.getNewValue());
                 callOnAdjustmentModifiedCallback(item);
+                scratchpadTable.getSelectionModel().select(event.getTablePosition().getRow());
             }
         });
 
@@ -147,14 +150,7 @@ public class ScratchpadController implements Initializable, IScratchpad {
                 final EventHandler<ActionEvent> deleteHandler = new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent e) {
-                        // Don't allow deleting if the month is closed
-                        if (month.getValue().getIsClosed()) {
-                            return;
-                        }
-
-                        BudgetItemViewModel item = (BudgetItemViewModel) cell.getTableRow().getItem();
-                        ScratchpadController.this.monthViewModel.getValue().removeAdjustment(item);
-                        callOnAdjustmentRemovedCallback(item);
+                        deleteItem((BudgetItemViewModel) cell.getTableRow().getItem());
                     }
                 };
 
@@ -198,22 +194,12 @@ public class ScratchpadController implements Initializable, IScratchpad {
         scratchpadTable.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                // Don't allow deleting if the month is closed
-                if (month.getValue().getIsClosed()) {
-                    return;
-                }
-
                 if (event.getCode().equals(KeyCode.DELETE)) {
-                    BudgetItemViewModel item = (BudgetItemViewModel) scratchpadTable.getSelectionModel().getSelectedItem();
-                    if (item == totalAdjustments) {
-                        return;
-                    }
-                    ScratchpadController.this.monthViewModel.getValue().removeAdjustment(item);
-                    callOnAdjustmentRemovedCallback(item);
+                    deleteItem((BudgetItemViewModel) scratchpadTable.getSelectionModel().getSelectedItem());
                 }
             }
         });
-        
+
         // Edit item amount when pressing ENTER
         scratchpadTable.addEventHandler(KeyEvent.KEY_PRESSED, new TableViewEnterPressedHandler(scratchpadTable));
 
@@ -231,6 +217,22 @@ public class ScratchpadController implements Initializable, IScratchpad {
                 });
             }
         });
+    }
+
+    private void deleteItem(BudgetItemViewModel item) {
+        if (month.getValue().getIsClosed()) {
+            return;
+        }
+
+        int deletedRow = scratchpadTable.getItems().indexOf(item);
+        ScratchpadController.this.monthViewModel.getValue().removeAdjustment(item);
+        callOnAdjustmentRemovedCallback(item);
+
+        if (scratchpadTable.getItems().size() >= deletedRow + 1) {
+            scratchpadTable.getSelectionModel().select(deletedRow);
+        } else {
+            scratchpadTable.getSelectionModel().select(deletedRow - 1);
+        }
     }
 
     public void handleAddTransactionButtonAction(ActionEvent event) {
@@ -318,5 +320,6 @@ public class ScratchpadController implements Initializable, IScratchpad {
             onAdjustmentModifiedCallback.call(item);
         }
     }
+
     // </editor-fold>
 }

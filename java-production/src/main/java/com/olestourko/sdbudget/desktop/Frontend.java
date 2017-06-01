@@ -39,7 +39,7 @@ public class Frontend {
     protected static final int THREE_MONTH_WIDTH = 920;
     protected static final int SCRATCHPAD_WIDTH = 400;
     protected static final int DEFAULT_HEIGHT = 600;
-    protected static final String baseTitle = "SDBudget 0.1.0";
+    protected static final String baseTitle = "SDBudget 0.1.2";
     protected static final String thumbUri = "/desktop/images/thumb.png";
 
     protected double lastOneMonthWidth;
@@ -146,7 +146,6 @@ public class Frontend {
             if (!mainController.contentContainer.getChildren().contains(scratchpadControllerRoot)) {
                 switchToScratchpadView();
             } else {
-                mainController.scratchpadViewButton.setText("Scratchpad");
                 mainController.contentContainer.getChildren().clear();
                 if (currentRoot == oneMonthControllerRoot) {
                     switchToOneMonthView();
@@ -246,6 +245,7 @@ public class Frontend {
         rememberCurrentWidth();
         currentRoot = oneMonthControllerRoot;
         mainController.oneMonthViewMenuItem.setSelected(true);
+        mainController.scratchpadViewButton.setText("Scratchpad");
         mainController.contentContainer.getChildren().clear();
         if (!mainController.contentContainer.getChildren().contains(oneMonthControllerRoot)) {
             oneMonthController.refresh();
@@ -258,6 +258,7 @@ public class Frontend {
         rememberCurrentWidth();
         currentRoot = threeMonthControllerRoot;
         mainController.threeMonthViewMenuItem.setSelected(true);
+        mainController.scratchpadViewButton.setText("Scratchpad");
         mainController.contentContainer.getChildren().clear();
         if (!mainController.contentContainer.getChildren().contains(threeMonthControllerRoot)) {
             threeMonthController.refresh();
