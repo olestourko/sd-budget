@@ -495,11 +495,11 @@ public class MonthControl extends AnchorPane implements IMonthControl {
     }
 
     protected void preventMultipleRowSelection() {
-        budgetTable.getSelectionModel().selectedItemProperty().addListener(objectProperty -> {
+        budgetTable.setOnMouseClicked(event -> {            
             closingTable.getSelectionModel().clearSelection();
         });
 
-        closingTable.getSelectionModel().selectedItemProperty().addListener(objectProperty -> {
+        closingTable.setOnMouseClicked(event -> {
             budgetTable.getSelectionModel().clearSelection();
         });
     }
