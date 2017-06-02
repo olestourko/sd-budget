@@ -19,6 +19,7 @@ import com.olestourko.sdbudget.core.services.PeriodCalculationServices;
 import dagger.Component;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import org.cfg4j.provider.ConfigurationProvider;
 
 /**
  *
@@ -26,9 +27,13 @@ import javax.inject.Singleton;
  */
 //@CoreApplicationScope
 @Singleton
-@Component(modules = {PersistenceModule.class, ServicesModule.class})
+@Component(modules = {PersistenceModule.class, ServicesModule.class, ConfigurationModule.class})
 public interface CoreComponent {
 
+    /* Configuration */
+    ConfigurationProvider configurationProvider();
+    
+    /* Persistence */
     Provider<MonthPersistence> monthPersistenceProvider();
 
     MonthRepository monthRepository();

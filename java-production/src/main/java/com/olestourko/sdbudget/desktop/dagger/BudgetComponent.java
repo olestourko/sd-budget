@@ -11,6 +11,7 @@ import dagger.Component;
 import javax.inject.Provider;
 import com.olestourko.sdbudget.core.dagger.CoreComponent;
 import com.olestourko.sdbudget.desktop.Frontend;
+import org.cfg4j.provider.ConfigurationProvider;
 
 /**
  *

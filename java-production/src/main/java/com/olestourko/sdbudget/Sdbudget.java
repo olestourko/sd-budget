@@ -11,6 +11,9 @@ import com.olestourko.sdbudget.core.models.factories.MonthFactory;
 import com.olestourko.sdbudget.desktop.Frontend;
 import com.olestourko.sdbudget.desktop.dagger.BudgetComponent;
 import com.olestourko.sdbudget.desktop.dagger.DaggerBudgetComponent;
+import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Calendar;
 import java.util.List;
 import org.flywaydb.core.Flyway;
@@ -32,11 +35,19 @@ public class Sdbudget extends Application {
             flyway.migrate();
         }
 
+        // Create configuration file if it doesn't exist
+        File configFile = new File("./configuration.yaml");
+        if (!configFile.exists()) {
+            InputStream link = (getClass().getResourceAsStream("/configuration/configuration.yaml"));
+            Files.copy(link, configFile.getAbsoluteFile().toPath());
+        };
+
         final CoreComponent coreComponent = DaggerCoreComponent.builder().build();
         final BudgetComponent budgetComponent = DaggerBudgetComponent.builder().coreComponent(coreComponent).build();
         final Budget budget = budgetComponent.budget().get();
         final Frontend frontend = budgetComponent.frontend().get();
 
+//        System.out.println(budgetComponent.configurationProvider().getProperty("currency", String.class));
         // Populate the month repository
         MonthRepository monthRepository = coreComponent.monthRepository();
         MonthFactory monthFactory = coreComponent.monthFactory();

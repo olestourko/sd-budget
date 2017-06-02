@@ -273,5 +273,11 @@
             <artifactId>flyway-core</artifactId>
             <version>4.2.0</version>
         </dependency>
+        <!-- cfg4j (for reading config file) -->
+        <dependency>
+            <groupId>org.cfg4j</groupId>
+            <artifactId>cfg4j-core</artifactId>
+            <version>4.4.0</version>
+        </dependency>
     </dependencies>
 </project>
