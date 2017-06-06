@@ -65,6 +65,7 @@ public class ScratchpadController implements Initializable, IScratchpad {
     private final Budget budget;
     private final SimpleObjectProperty<Month> month = new SimpleObjectProperty<>();
     private final SimpleObjectProperty<MonthViewModel> monthViewModel = new SimpleObjectProperty<>();
+    private final String currency;
 
     private final ListChangeListener<BudgetItemViewModel> listChangeListener = new ListChangeListener<BudgetItemViewModel>() {
         @Override
@@ -79,9 +80,10 @@ public class ScratchpadController implements Initializable, IScratchpad {
     }
 
     @Inject
-    public ScratchpadController(Budget budget) {
+    public ScratchpadController(Budget budget, String currency) {
         this.monthMapper = Mappers.getMapper(MonthMapper.class);
         this.budget = budget;
+        this.currency = currency;
     }
 
     public void load() {
@@ -128,7 +130,7 @@ public class ScratchpadController implements Initializable, IScratchpad {
 
             @Override
             public TableCell<BudgetItemViewModel, BigDecimal> call(TableColumn<BudgetItemViewModel, BigDecimal> param) {
-                CurrencyTableCell cell = new CurrencyTableCell("$");
+                CurrencyTableCell cell = new CurrencyTableCell(currency);
                 return cell;
             }
         });
@@ -176,7 +178,7 @@ public class ScratchpadController implements Initializable, IScratchpad {
 
             @Override
             public TableCell<BudgetItemViewModel, BigDecimal> call(TableColumn<BudgetItemViewModel, BigDecimal> param) {
-                CurrencyTableCell cell = new CurrencyTableCell("$");
+                CurrencyTableCell cell = new CurrencyTableCell(currency);
                 return cell;
             }
         });

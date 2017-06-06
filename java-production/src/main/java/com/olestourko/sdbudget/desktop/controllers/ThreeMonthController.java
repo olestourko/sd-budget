@@ -31,20 +31,24 @@ public class ThreeMonthController implements Initializable, INMonthController {
     private final MonthRepository monthRepository;
     private final Budget budget;
     private final MonthMapper monthMapper;
+    private final String currency;
 
     @Inject
-    ThreeMonthController(
+    public ThreeMonthController(
             MonthCalculationServices monthCalculationServices,
             MonthLogicServices monthLogicServices,
             MonthCopyService monthCopyService,
             MonthRepository monthRepository,
-            Budget budget) {
+            Budget budget,
+            String currency
+    ) {
         this.monthCalculationServices = monthCalculationServices;
         this.monthLogicServices = monthLogicServices;
         this.monthCopyService = monthCopyService;
         this.monthRepository = monthRepository;
         this.budget = budget;
         this.monthMapper = Mappers.getMapper(MonthMapper.class);
+        this.currency = currency;
     }
 
     @Override
@@ -81,13 +85,14 @@ public class ThreeMonthController implements Initializable, INMonthController {
             }
         };
 
-        // Set event handlers for all the month components
         for (MonthControl monthControl : monthControls) {
+            // Set currency for month control
+            monthControl.setCurrency(currency);
+            
+            // Set event handlers for all the month components
             monthControl.setOnMonthModified(monthModifiedCallback);
-        }
 
-        // Month cloning
-        for (MonthControl monthControl : monthControls) {
+            // Month cloning    
             monthControl.getCopyToNextButton().setOnAction(event -> {
                 Month nextMonth = monthRepository.getNext(monthControl.getMonth());
                 if (nextMonth != null) {

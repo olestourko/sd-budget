@@ -81,6 +81,8 @@ public class MonthControl extends AnchorPane implements IMonthControl {
     private final SimpleObjectProperty<MonthViewModel> monthViewModel = new SimpleObjectProperty<MonthViewModel>();
     private final MonthMapper monthMapper;
 
+    private final SimpleObjectProperty<String> currency = new SimpleObjectProperty<>("$");
+
     private MonthLogicServices monthLogicServices;
 
     public void setMonthLogicServices(MonthLogicServices monthLogicServices) {
@@ -293,7 +295,8 @@ public class MonthControl extends AnchorPane implements IMonthControl {
 
             @Override
             public TreeTableCell<BudgetItemViewModel, BigDecimal> call(TreeTableColumn<BudgetItemViewModel, BigDecimal> param) {
-                CurrencyTreeTableCell cell = new CurrencyTreeTableCell("$");
+                CurrencyTreeTableCell cell = new CurrencyTreeTableCell(currency.getValue());
+                cell.label.textProperty().bind(currency);
                 return cell;
             }
         });
@@ -450,7 +453,8 @@ public class MonthControl extends AnchorPane implements IMonthControl {
 
             @Override
             public TableCell<BudgetItemViewModel, BigDecimal> call(TableColumn<BudgetItemViewModel, BigDecimal> param) {
-                CurrencyTableCell cell = new CurrencyTableCell("$");
+                CurrencyTableCell cell = new CurrencyTableCell(currency.getValue());
+                cell.label.textProperty().bind(currency);
                 return cell;
             }
         });
@@ -472,7 +476,8 @@ public class MonthControl extends AnchorPane implements IMonthControl {
 
             @Override
             public TableCell<BudgetItemViewModel, BigDecimal> call(TableColumn<BudgetItemViewModel, BigDecimal> param) {
-                CurrencyTableCell cell = new CurrencyTableCell("$");
+                CurrencyTableCell cell = new CurrencyTableCell(currency.getValue());
+                cell.label.textProperty().bind(currency);
                 return cell;
             }
         });
@@ -495,7 +500,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
     }
 
     protected void preventMultipleRowSelection() {
-        budgetTable.setOnMouseClicked(event -> {            
+        budgetTable.setOnMouseClicked(event -> {
             closingTable.getSelectionModel().clearSelection();
         });
 
@@ -570,6 +575,14 @@ public class MonthControl extends AnchorPane implements IMonthControl {
     @Override
     public void setMonth(Month month) {
         this.month.set(month);
+    }
+
+    public String getCurruency() {
+        return this.currency.get();
+    }
+
+    public void setCurrency(String currency) {
+        this.currency.setValue(currency);
     }
 
     // <editor-fold defaultstate="collapsed" desc="Callbacks">

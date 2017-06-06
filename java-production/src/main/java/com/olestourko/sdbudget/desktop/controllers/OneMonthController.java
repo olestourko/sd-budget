@@ -27,20 +27,24 @@ public class OneMonthController implements Initializable, INMonthController {
     private final MonthRepository monthRepository;
     private final Budget budget;
     private final MonthMapper monthMapper;
+    private final String currency;
 
     @Inject
-    OneMonthController(
+    public OneMonthController(
             MonthCalculationServices monthCalculationServices,
             MonthLogicServices monthLogicServices,
             MonthCopyService monthCopyService,
             MonthRepository monthRepository,
-            Budget budget) {
+            Budget budget,
+            String currency
+    ) {
         this.monthCalculationServices = monthCalculationServices;
         this.monthLogicServices = monthLogicServices;
         this.monthCopyService = monthCopyService;
         this.monthRepository = monthRepository;
         this.budget = budget;
         this.monthMapper = Mappers.getMapper(MonthMapper.class);
+        this.currency = currency;
     }
 
     @Override
@@ -51,6 +55,7 @@ public class OneMonthController implements Initializable, INMonthController {
             this.monthControl.setMonth(monthProperty.getValue());
         });
 
+        monthControl.setCurrency(currency);
         monthControl.setMonthLogicServices(monthLogicServices);
         monthControl.setOnMonthModified(event -> {
             Month month = monthControl.getMonth();
