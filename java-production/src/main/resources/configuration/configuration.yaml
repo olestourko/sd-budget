@@ -1,2 +1,4 @@
+# DB pathname, excluding extension
 db_pathname: ~/sdbudget
+# Currency symbol that will be display in amount fields
 currency: $
