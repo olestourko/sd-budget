@@ -1,7 +1,7 @@
 package com.olestourko.sdbudget.desktop.controllers;
 
+import com.olestourko.sdbudget.core.models.BudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
-import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
 import javafx.util.Callback;
 
 /**
@@ -14,9 +14,9 @@ public interface IScratchpad {
     
     public void setMonth(Month month);
     
-    public void onAdjustmentAdded(Callback<BudgetItemViewModel, Month> callback);
+    public void onAdjustmentAdded(Callback<BudgetItem, Month> callback);
 
-    public void onAdjustmentRemoved(Callback<BudgetItemViewModel, Month> callback);
+    public void onAdjustmentRemoved(Callback<BudgetItem, Month> callback);
 
-    public void onAdjustmentModified(Callback<BudgetItemViewModel, Month> callback);
+    public void onAdjustmentModified(Callback<BudgetItem, Month> callback);
 }

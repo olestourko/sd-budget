@@ -1,5 +1,9 @@
 package com.olestourko.sdbudget.desktop.controls;
 
+import com.olestourko.sdbudget.core.commands.AddBudgetItem;
+import com.olestourko.sdbudget.core.commands.RemoveBudgetItem;
+import com.olestourko.sdbudget.core.commands.SetMonthClosed;
+import com.olestourko.sdbudget.core.commands.UpdateBudgetItem;
 import com.olestourko.sdbudget.desktop.controls.handlers.TreeTableViewEnterPressedHandler;
 import com.olestourko.sdbudget.desktop.controls.handlers.TableViewEnterPressedHandler;
 import com.olestourko.sdbudget.core.models.BudgetItem;
@@ -98,7 +102,6 @@ public class MonthControl extends AnchorPane implements IMonthControl {
     }
 
     protected void callMonthModifiedCallback() {
-        monthMapper.updateMonthFromMonthViewModel(monthViewModel.getValue(), month.getValue()); // Update the Month instance with the monthViewModel
         if (monthModifiedCallback != null) {
             monthModifiedCallback.call(this);
         }
@@ -160,7 +163,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
 
         // Set the handler for the "Close Month" checkbox
         this.closeMonthCheckBox.selectedProperty().addListener(checkbox -> {
-            this.monthViewModel.get().setIsClosed(this.closeMonthCheckBox.isSelected());
+            new SetMonthClosed(this.month.getValue(), this.closeMonthCheckBox.isSelected()).execute();
             callMonthModifiedCallback();
             updateTableStyles();
             budgetTable.refresh();
@@ -180,17 +183,12 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                 if (event.getCode().equals(KeyCode.DELETE)) {
                     TreeItem<BudgetItemViewModel> treeItem = (TreeItem) budgetTable.getSelectionModel().getSelectedItem();
                     TreeItem<BudgetItemViewModel> parentTreeItem = treeItem.getParent();
-                    BudgetItemViewModel selectedItem = (BudgetItemViewModel) treeItem.getValue();
-                    MonthViewModel month = MonthControl.this.monthViewModel.get();
-                    if (month.getRevenues().contains(selectedItem)) {
-                        month.getRevenues().remove(selectedItem);
-                        callOnItemRemoved(selectedItem);
-
+                    BudgetItem selectedItem = ((BudgetItemViewModel) treeItem.getValue()).getModel();
+                    if (month.getValue().getRevenues().contains(selectedItem)) {
+                        new RemoveBudgetItem(month.getValue(), selectedItem, RemoveBudgetItem.Type.REVENUE).execute();
                         budgetTable.getSelectionModel().select(parentTreeItem);
-                    } else if (month.getExpenses().contains(selectedItem)) {
-                        month.getExpenses().remove(selectedItem);
-                        callOnItemRemoved(selectedItem);
-
+                    } else if (month.getValue().getExpenses().contains(selectedItem)) {
+                        new RemoveBudgetItem(month.getValue(), selectedItem, RemoveBudgetItem.Type.EXPENSE).execute();
                         budgetTable.getSelectionModel().select(parentTreeItem);
                     }
                     callMonthModifiedCallback();
@@ -259,11 +257,11 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                 TreeItem<BudgetItemViewModel> treeItem = t.getTreeTablePosition().getTreeItem();
                 TreeItem<BudgetItemViewModel> parentTreeItem = treeItem.getParent();
                 BudgetItemViewModel budgetItemVM = (BudgetItemViewModel) treeItem.getValue();
+                BudgetItem budgetItem = budgetItemVM.getModel();
                 if (treeItem.getChildren().size() == 0) {
-                    budgetItemVM.setName(t.getNewValue());
+                    new UpdateBudgetItem(budgetItem, new BudgetItem(t.getNewValue(), budgetItem.getAmount())).execute();
                     // Update the month model
                     callMonthModifiedCallback();
-                    callOnItemModified(budgetItemVM);
 
                     // Select the edited item
                     // https://www.mkyong.com/java8/java-8-streams-filter-examples/
@@ -309,6 +307,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
 
                 if (treeItem.getChildren().size() == 0) {
                     BudgetItemViewModel budgetItemVM = (BudgetItemViewModel) treeItem.getValue();
+                    BudgetItem budgetItem = budgetItemVM.getModel();
 
                     // Don't allow negative numbers for revenues, expenses, debt repayments, investment outflows
                     List<TreeItem> allowNegative = new ArrayList<>();
@@ -318,9 +317,8 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                     if (!allowNegative.contains(treeItem) && t.getNewValue().compareTo(BigDecimal.ZERO) == -1) {
                         budgetTable.refresh();
                     } else {
-                        budgetItemVM.setAmount(t.getNewValue());
+                        new UpdateBudgetItem(budgetItem, new BudgetItem(budgetItem.getName(), t.getNewValue())).execute();
                         callMonthModifiedCallback();
-                        callOnItemModified(budgetItemVM);
                     }
 
                     // Select the edited item
@@ -345,16 +343,14 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                 final EventHandler<ActionEvent> addHandler = new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent e) {
-                        BudgetItemViewModel budgetItemVM = new BudgetItemViewModel("New Item", BigDecimal.ZERO);
-                        BudgetItem budgetItem = budgetItemVM.getModel();
+                        BudgetItem budgetItem = new BudgetItem("New Item", BigDecimal.ZERO);
                         TreeItem<BudgetItemViewModel> treeItem = cell.getTreeTableRow().getTreeItem();
                         if (treeItem.getValue() == revenuesRoot.getValue()) {
-                            monthViewModel.getValue().getRevenues().add(budgetItemVM);
+                            new AddBudgetItem(month.getValue(), budgetItem, AddBudgetItem.Type.REVENUE).execute();
                         } else if (treeItem.getValue() == expensesRoot.getValue()) {
-                            monthViewModel.getValue().getExpenses().add(budgetItemVM);
+                            new AddBudgetItem(month.getValue(), budgetItem, AddBudgetItem.Type.EXPENSE).execute();
                         }
                         callMonthModifiedCallback();
-                        callOnItemAdded(budgetItemVM);
 
                         // Select the newly created item
                         // https://www.mkyong.com/java8/java-8-streams-filter-examples/
@@ -372,17 +368,13 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                     public void handle(ActionEvent e) {
                         TreeItem<BudgetItemViewModel> treeItem = cell.getTreeTableRow().getTreeItem();
                         TreeItem<BudgetItemViewModel> parentTreeItem = treeItem.getParent();
-                        BudgetItemViewModel selectedItem = (BudgetItemViewModel) treeItem.getValue();
-                        MonthViewModel month = MonthControl.this.monthViewModel.get();
-                        if (month.getRevenues().contains(selectedItem)) {
-                            month.getRevenues().remove(selectedItem);
-                            callOnItemRemoved(selectedItem);
-
+                        BudgetItem selectedItem = ((BudgetItemViewModel) treeItem.getValue()).getModel();
+//                        MonthViewModel month = MonthControl.this.monthViewModel.get();
+                        if (month.getValue().getRevenues().contains(selectedItem)) {
+                            new RemoveBudgetItem(month.getValue(), selectedItem, RemoveBudgetItem.Type.REVENUE).execute();
                             budgetTable.getSelectionModel().select(parentTreeItem);
-                        } else if (month.getExpenses().contains(selectedItem)) {
-                            month.getExpenses().remove(selectedItem);
-                            callOnItemRemoved(selectedItem);
-
+                        } else if (month.getValue().getExpenses().contains(selectedItem)) {
+                            new RemoveBudgetItem(month.getValue(), selectedItem, RemoveBudgetItem.Type.EXPENSE).execute();
                             budgetTable.getSelectionModel().select(parentTreeItem);
                         }
                         callMonthModifiedCallback();
@@ -485,8 +477,8 @@ public class MonthControl extends AnchorPane implements IMonthControl {
         amountColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal>>() {
             @Override
             public void handle(TableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal> t) {
-                BudgetItemViewModel budgetItem = (BudgetItemViewModel) t.getTableView().getItems().get(t.getTablePosition().getRow());
-                budgetItem.setAmount(t.getNewValue());
+                BudgetItem budgetItem = ((BudgetItemViewModel) t.getTableView().getItems().get(t.getTablePosition().getRow())).getModel();
+                new UpdateBudgetItem(budgetItem, new BudgetItem(budgetItem.getName(), t.getNewValue())).execute();
                 callMonthModifiedCallback();
             }
         });
@@ -586,68 +578,68 @@ public class MonthControl extends AnchorPane implements IMonthControl {
     }
 
     // <editor-fold defaultstate="collapsed" desc="Callbacks">
-    private Callback<BudgetItemViewModel, Month> onItemAddedCallback;
+    private Callback<BudgetItem, Month> onItemAddedCallback;
 
     @Override
-    public void onItemAdded(Callback<BudgetItemViewModel, Month> callback) {
+    public void onItemAdded(Callback<BudgetItem, Month> callback) {
         this.onItemAddedCallback = callback;
     }
 
-    private void callOnItemAdded(BudgetItemViewModel item) {
+    private void callOnItemAdded(BudgetItem item) {
         if (onItemAddedCallback != null) {
             onItemAddedCallback.call(item);
         }
     }
 
-    private Callback<BudgetItemViewModel, Month> onItemRemovedCallback;
+    private Callback<BudgetItem, Month> onItemRemovedCallback;
 
     @Override
-    public void onItemRemoved(Callback<BudgetItemViewModel, Month> callback) {
+    public void onItemRemoved(Callback<BudgetItem, Month> callback) {
         this.onItemRemovedCallback = callback;
     }
 
-    private void callOnItemRemoved(BudgetItemViewModel item) {
+    private void callOnItemRemoved(BudgetItem item) {
         if (onItemRemovedCallback != null) {
             onItemRemovedCallback.call(item);
         }
     }
 
-    private Callback<BudgetItemViewModel, Month> onItemModifiedCallback;
+    private Callback<BudgetItem, Month> onItemModifiedCallback;
 
     @Override
-    public void onItemModified(Callback<BudgetItemViewModel, Month> callback) {
+    public void onItemModified(Callback<BudgetItem, Month> callback) {
         this.onItemModifiedCallback = callback;
     }
 
-    private void callOnItemModified(BudgetItemViewModel item) {
+    private void callOnItemModified(BudgetItem item) {
         if (onItemModifiedCallback != null) {
             onItemModifiedCallback.call(item);
         }
     }
 
-    private Callback<MonthViewModel, Month> onMonthCloseModifiedCallback;
+    private Callback<Month, Month> onMonthCloseModifiedCallback;
 
     @Override
-    public void onMonthCloseModified(Callback<MonthViewModel, Month> callback) {
+    public void onMonthCloseModified(Callback<Month, Month> callback) {
         this.onMonthCloseModifiedCallback = callback;
     }
 
-    private void callOnMonthCloseModified(MonthViewModel monthViewModel) {
+    private void callOnMonthCloseModified(Month month) {
         if (onMonthCloseModifiedCallback != null) {
-            onMonthCloseModifiedCallback.call(monthViewModel);
+            onMonthCloseModifiedCallback.call(month);
         }
     }
 
-    private Callback<MonthViewModel, Month> onMonthCopyCallback;
+    private Callback<Month, Month> onMonthCopyCallback;
 
     @Override
-    public void onMonthCopy(Callback<MonthViewModel, Month> callback) {
+    public void onMonthCopy(Callback<Month, Month> callback) {
         this.onMonthCopyCallback = callback;
     }
 
-    private void callOnMonthCopyCallback(MonthViewModel monthViewModel) {
+    private void callOnMonthCopyCallback(Month month) {
         if (onMonthCopyCallback != null) {
-            onMonthCopyCallback.call(monthViewModel);
+            onMonthCopyCallback.call(month);
         }
     }
     // </editor-fold>

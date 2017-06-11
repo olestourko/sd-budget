@@ -1,5 +1,9 @@
 package com.olestourko.sdbudget.desktop.controllers;
 
+import com.olestourko.sdbudget.core.commands.AddBudgetItem;
+import com.olestourko.sdbudget.core.commands.RemoveBudgetItem;
+import com.olestourko.sdbudget.core.commands.UpdateBudgetItem;
+import com.olestourko.sdbudget.core.models.BudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
 import com.olestourko.sdbudget.desktop.controllers.IScratchpad;
 import com.olestourko.sdbudget.desktop.controls.ButtonTableCell;
@@ -118,8 +122,8 @@ public class ScratchpadController implements Initializable, IScratchpad {
         nameColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<BudgetItemViewModel, String>>() {
             @Override
             public void handle(TableColumn.CellEditEvent<BudgetItemViewModel, String> event) {
-                BudgetItemViewModel item = (BudgetItemViewModel) event.getTableView().getItems().get(event.getTablePosition().getRow());
-                item.setName(event.getNewValue());
+                BudgetItem item = ((BudgetItemViewModel) event.getTableView().getItems().get(event.getTablePosition().getRow())).getModel();
+                new UpdateBudgetItem(item, new BudgetItem(event.getNewValue(), item.getAmount())).execute();
                 callOnAdjustmentModifiedCallback(item);
                 scratchpadTable.getSelectionModel().select(event.getTablePosition().getRow());
             }
@@ -137,8 +141,8 @@ public class ScratchpadController implements Initializable, IScratchpad {
         amountColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal>>() {
             @Override
             public void handle(TableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal> event) {
-                BudgetItemViewModel item = (BudgetItemViewModel) event.getTableView().getItems().get(event.getTablePosition().getRow());
-                item.setAmount(event.getNewValue());
+                BudgetItem item = ((BudgetItemViewModel) event.getTableView().getItems().get(event.getTablePosition().getRow())).getModel();
+                new UpdateBudgetItem(item, new BudgetItem(item.getName(), event.getNewValue())).execute();
                 callOnAdjustmentModifiedCallback(item);
                 scratchpadTable.getSelectionModel().select(event.getTablePosition().getRow());
             }
@@ -152,7 +156,7 @@ public class ScratchpadController implements Initializable, IScratchpad {
                 final EventHandler<ActionEvent> deleteHandler = new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent e) {
-                        deleteItem((BudgetItemViewModel) cell.getTableRow().getItem());
+                        deleteItem(((BudgetItemViewModel) cell.getTableRow().getItem()).getModel());
                     }
                 };
 
@@ -197,7 +201,7 @@ public class ScratchpadController implements Initializable, IScratchpad {
             @Override
             public void handle(KeyEvent event) {
                 if (event.getCode().equals(KeyCode.DELETE)) {
-                    deleteItem((BudgetItemViewModel) scratchpadTable.getSelectionModel().getSelectedItem());
+                    deleteItem(((BudgetItemViewModel) scratchpadTable.getSelectionModel().getSelectedItem()).getModel());
                 }
             }
         });
@@ -221,13 +225,13 @@ public class ScratchpadController implements Initializable, IScratchpad {
         });
     }
 
-    private void deleteItem(BudgetItemViewModel item) {
+    private void deleteItem(BudgetItem item) {
         if (month.getValue().getIsClosed()) {
             return;
         }
 
         int deletedRow = scratchpadTable.getItems().indexOf(item);
-        ScratchpadController.this.monthViewModel.getValue().removeAdjustment(item);
+        new RemoveBudgetItem(month.getValue(), item, RemoveBudgetItem.Type.ADJUSTMENT).execute();
         callOnAdjustmentRemovedCallback(item);
 
         if (scratchpadTable.getItems().size() >= deletedRow + 1) {
@@ -240,7 +244,8 @@ public class ScratchpadController implements Initializable, IScratchpad {
     public void handleAddTransactionButtonAction(ActionEvent event) {
         String name = nameField.getText();
         BigDecimal amount = new BigDecimal(amountField.getText());
-        BudgetItemViewModel item = new BudgetItemViewModel(name, amount);
+        BudgetItem item = new BudgetItem(name, amount);
+        new AddBudgetItem(month.getValue(), item, AddBudgetItem.Type.ADJUSTMENT).execute();
         nameField.setText("");
         amountField.setText("");
         callOnAdjustmentAddedCallback(item);
@@ -284,40 +289,40 @@ public class ScratchpadController implements Initializable, IScratchpad {
     }
 
     // <editor-fold defaultstate="collapsed" desc="Callbacks">
-    private Callback<BudgetItemViewModel, Month> onAdjustmentAddedCallback;
+    private Callback<BudgetItem, Month> onAdjustmentAddedCallback;
 
     @Override
-    public void onAdjustmentAdded(Callback<BudgetItemViewModel, Month> callback) {
+    public void onAdjustmentAdded(Callback<BudgetItem, Month> callback) {
         this.onAdjustmentAddedCallback = callback;
     }
 
-    private void callOnAdjustmentAddedCallback(BudgetItemViewModel item) {
+    private void callOnAdjustmentAddedCallback(BudgetItem item) {
         if (onAdjustmentAddedCallback != null) {
             onAdjustmentAddedCallback.call(item);
         }
     }
 
-    private Callback<BudgetItemViewModel, Month> onAdjustmentRemovedCallback;
+    private Callback<BudgetItem, Month> onAdjustmentRemovedCallback;
 
     @Override
-    public void onAdjustmentRemoved(Callback<BudgetItemViewModel, Month> callback) {
+    public void onAdjustmentRemoved(Callback<BudgetItem, Month> callback) {
         this.onAdjustmentRemovedCallback = callback;
     }
 
-    private void callOnAdjustmentRemovedCallback(BudgetItemViewModel item) {
+    private void callOnAdjustmentRemovedCallback(BudgetItem item) {
         if (onAdjustmentRemovedCallback != null) {
             onAdjustmentRemovedCallback.call(item);
         }
     }
 
-    private Callback<BudgetItemViewModel, Month> onAdjustmentModifiedCallback;
+    private Callback<BudgetItem, Month> onAdjustmentModifiedCallback;
 
     @Override
-    public void onAdjustmentModified(Callback<BudgetItemViewModel, Month> callback) {
+    public void onAdjustmentModified(Callback<BudgetItem, Month> callback) {
         this.onAdjustmentModifiedCallback = callback;
     }
 
-    private void callOnAdjustmentModifiedCallback(BudgetItemViewModel item) {
+    private void callOnAdjustmentModifiedCallback(BudgetItem item) {
         if (onAdjustmentModifiedCallback != null) {
             onAdjustmentModifiedCallback.call(item);
         }

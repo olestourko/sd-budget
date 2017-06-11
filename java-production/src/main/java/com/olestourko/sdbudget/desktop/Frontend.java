@@ -156,13 +156,10 @@ public class Frontend {
         });
 
         // Link Scratchpad to other views
-        scratchpadController.onAdjustmentAdded(new Callback<BudgetItemViewModel, Month>() {
+        scratchpadController.onAdjustmentAdded(new Callback<BudgetItem, Month>() {
             @Override
-            public Month call(BudgetItemViewModel itemViewModel) {
+            public Month call(BudgetItem item) {
                 Month month = Frontend.this.scratchpadController.getMonth();
-                BudgetItemMapper mapper = Mappers.getMapper(BudgetItemMapper.class);
-                BudgetItem item = mapper.mapBudgetItemViewModelToBudgetItem(itemViewModel);
-                month.getAdjustments().add(item);
                 monthCalculationServices.recalculateMonths(month);
                 Frontend.this.scratchpadController.setMonth(month);
                 // Update the other controllers
@@ -172,11 +169,10 @@ public class Frontend {
             }
         });
 
-        scratchpadController.onAdjustmentRemoved(new Callback<BudgetItemViewModel, Month>() {
+        scratchpadController.onAdjustmentRemoved(new Callback<BudgetItem, Month>() {
             @Override
-            public Month call(BudgetItemViewModel itemViewModel) {
+            public Month call(BudgetItem item) {
                 Month month = Frontend.this.scratchpadController.getMonth();
-                month.getAdjustments().remove(itemViewModel.getModel());
                 monthCalculationServices.recalculateMonths(month);
                 Frontend.this.scratchpadController.setMonth(month);
                 // Update the other controllers
@@ -186,12 +182,11 @@ public class Frontend {
             }
         });
 
-        scratchpadController.onAdjustmentModified(new Callback<BudgetItemViewModel, Month>() {
+        scratchpadController.onAdjustmentModified(new Callback<BudgetItem, Month>() {
             @Override
-            public Month call(BudgetItemViewModel itemViewModel) {
+            public Month call(BudgetItem item) {
                 Month month = Frontend.this.scratchpadController.getMonth();
                 BudgetItemMapper mapper = Mappers.getMapper(BudgetItemMapper.class);
-                mapper.updateBudgetItemFromBudgetItemViewModel(itemViewModel.getModel(), itemViewModel);
                 monthCalculationServices.recalculateMonths(month);
                 Frontend.this.scratchpadController.setMonth(month);
                 // Update the other controllers

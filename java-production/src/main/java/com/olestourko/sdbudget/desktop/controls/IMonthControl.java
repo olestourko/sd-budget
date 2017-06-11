@@ -1,8 +1,7 @@
 package com.olestourko.sdbudget.desktop.controls;
 
+import com.olestourko.sdbudget.core.models.BudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
-import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
-import com.olestourko.sdbudget.desktop.models.MonthViewModel;
 import javafx.util.Callback;
 
 /**
@@ -17,13 +16,13 @@ public interface IMonthControl {
 
     public void setMonth(Month month);
 
-    public void onItemAdded(Callback<BudgetItemViewModel, Month> callback);
+    public void onItemAdded(Callback<BudgetItem, Month> callback);
 
-    public void onItemRemoved(Callback<BudgetItemViewModel, Month> callback);
+    public void onItemRemoved(Callback<BudgetItem, Month> callback);
 
-    public void onItemModified(Callback<BudgetItemViewModel, Month> callback);
+    public void onItemModified(Callback<BudgetItem, Month> callback);
 
-    public void onMonthCloseModified(Callback<MonthViewModel, Month> callback);
+    public void onMonthCloseModified(Callback<Month, Month> callback);
 
-    public void onMonthCopy(Callback<MonthViewModel, Month> callback);
+    public void onMonthCopy(Callback<Month, Month> callback);
 }
