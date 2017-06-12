@@ -1,6 +1,7 @@
 package com.olestourko.sdbudget.desktop.controllers;
 
 import com.olestourko.sdbudget.core.commands.AddBudgetItem;
+import com.olestourko.sdbudget.core.commands.CommandInvoker;
 import com.olestourko.sdbudget.core.commands.RemoveBudgetItem;
 import com.olestourko.sdbudget.core.commands.UpdateBudgetItem;
 import com.olestourko.sdbudget.core.models.BudgetItem;
@@ -66,6 +67,7 @@ public class ScratchpadController implements Initializable, IScratchpad {
 
     private final BudgetItemViewModel totalAdjustments = new BudgetItemViewModel("Total Adjustments", BigDecimal.ZERO);
     private final MonthMapper monthMapper;
+    private final CommandInvoker commandInvoker;
     private final Budget budget;
     private final SimpleObjectProperty<Month> month = new SimpleObjectProperty<>();
     private final SimpleObjectProperty<MonthViewModel> monthViewModel = new SimpleObjectProperty<>();
@@ -84,10 +86,11 @@ public class ScratchpadController implements Initializable, IScratchpad {
     }
 
     @Inject
-    public ScratchpadController(Budget budget, String currency) {
+    public ScratchpadController(Budget budget, String currency, CommandInvoker commandInvoker) {
         this.monthMapper = Mappers.getMapper(MonthMapper.class);
         this.budget = budget;
         this.currency = currency;
+        this.commandInvoker = commandInvoker;
     }
 
     public void load() {
@@ -123,7 +126,7 @@ public class ScratchpadController implements Initializable, IScratchpad {
             @Override
             public void handle(TableColumn.CellEditEvent<BudgetItemViewModel, String> event) {
                 BudgetItem item = ((BudgetItemViewModel) event.getTableView().getItems().get(event.getTablePosition().getRow())).getModel();
-                new UpdateBudgetItem(item, new BudgetItem(event.getNewValue(), item.getAmount())).execute();
+                commandInvoker.invoke(new UpdateBudgetItem(item, new BudgetItem(event.getNewValue(), item.getAmount())));
                 callOnAdjustmentModifiedCallback(item);
                 scratchpadTable.getSelectionModel().select(event.getTablePosition().getRow());
             }
@@ -142,7 +145,7 @@ public class ScratchpadController implements Initializable, IScratchpad {
             @Override
             public void handle(TableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal> event) {
                 BudgetItem item = ((BudgetItemViewModel) event.getTableView().getItems().get(event.getTablePosition().getRow())).getModel();
-                new UpdateBudgetItem(item, new BudgetItem(item.getName(), event.getNewValue())).execute();
+                commandInvoker.invoke(new UpdateBudgetItem(item, new BudgetItem(item.getName(), event.getNewValue())));
                 callOnAdjustmentModifiedCallback(item);
                 scratchpadTable.getSelectionModel().select(event.getTablePosition().getRow());
             }
@@ -231,7 +234,7 @@ public class ScratchpadController implements Initializable, IScratchpad {
         }
 
         int deletedRow = scratchpadTable.getItems().indexOf(item);
-        new RemoveBudgetItem(month.getValue(), item, RemoveBudgetItem.Type.ADJUSTMENT).execute();
+        commandInvoker.invoke(new RemoveBudgetItem(month.getValue(), item, RemoveBudgetItem.Type.ADJUSTMENT));
         callOnAdjustmentRemovedCallback(item);
 
         if (scratchpadTable.getItems().size() >= deletedRow + 1) {
@@ -245,7 +248,7 @@ public class ScratchpadController implements Initializable, IScratchpad {
         String name = nameField.getText();
         BigDecimal amount = new BigDecimal(amountField.getText());
         BudgetItem item = new BudgetItem(name, amount);
-        new AddBudgetItem(month.getValue(), item, AddBudgetItem.Type.ADJUSTMENT).execute();
+        commandInvoker.invoke(new AddBudgetItem(month.getValue(), item, AddBudgetItem.Type.ADJUSTMENT));
         nameField.setText("");
         amountField.setText("");
         callOnAdjustmentAddedCallback(item);

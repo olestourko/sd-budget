@@ -1,5 +1,6 @@
 package com.olestourko.sdbudget.desktop.controllers;
 
+import com.olestourko.sdbudget.core.commands.CommandInvoker;
 import com.olestourko.sdbudget.core.models.Month;
 import com.olestourko.sdbudget.desktop.controls.MonthControl;
 import java.net.URL;
@@ -28,6 +29,7 @@ public class OneMonthController implements Initializable, INMonthController {
     private final Budget budget;
     private final MonthMapper monthMapper;
     private final String currency;
+    private final CommandInvoker commandInvoker;
 
     @Inject
     public OneMonthController(
@@ -36,7 +38,8 @@ public class OneMonthController implements Initializable, INMonthController {
             MonthCopyService monthCopyService,
             MonthRepository monthRepository,
             Budget budget,
-            String currency
+            String currency,
+            CommandInvoker commandInvoker
     ) {
         this.monthCalculationServices = monthCalculationServices;
         this.monthLogicServices = monthLogicServices;
@@ -45,6 +48,7 @@ public class OneMonthController implements Initializable, INMonthController {
         this.budget = budget;
         this.monthMapper = Mappers.getMapper(MonthMapper.class);
         this.currency = currency;
+        this.commandInvoker = commandInvoker;
     }
 
     @Override
@@ -57,6 +61,7 @@ public class OneMonthController implements Initializable, INMonthController {
 
         monthControl.setCurrency(currency);
         monthControl.setMonthLogicServices(monthLogicServices);
+        monthControl.setCommandInvoker(commandInvoker);
         monthControl.setOnMonthModified(event -> {
             Month month = monthControl.getMonth();
             monthCalculationServices.recalculateMonths(month);

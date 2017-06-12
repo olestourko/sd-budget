@@ -1,6 +1,7 @@
 package com.olestourko.sdbudget.desktop.controls;
 
 import com.olestourko.sdbudget.core.commands.AddBudgetItem;
+import com.olestourko.sdbudget.core.commands.CommandInvoker;
 import com.olestourko.sdbudget.core.commands.RemoveBudgetItem;
 import com.olestourko.sdbudget.core.commands.SetMonthClosed;
 import com.olestourko.sdbudget.core.commands.UpdateBudgetItem;
@@ -84,13 +85,18 @@ public class MonthControl extends AnchorPane implements IMonthControl {
     private final SimpleObjectProperty<Month> month = new SimpleObjectProperty<>();
     private final SimpleObjectProperty<MonthViewModel> monthViewModel = new SimpleObjectProperty<MonthViewModel>();
     private final MonthMapper monthMapper;
-
+    
     private final SimpleObjectProperty<String> currency = new SimpleObjectProperty<>("$");
 
     private MonthLogicServices monthLogicServices;
+    private CommandInvoker commandInvoker;
 
     public void setMonthLogicServices(MonthLogicServices monthLogicServices) {
         this.monthLogicServices = monthLogicServices;
+    }
+    
+    public void setCommandInvoker(CommandInvoker commandInvoker) {
+        this.commandInvoker = commandInvoker;
     }
 
     // <editor-fold defaultstate="collapsed" desc="Month modified callback">
@@ -163,7 +169,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
 
         // Set the handler for the "Close Month" checkbox
         this.closeMonthCheckBox.selectedProperty().addListener(checkbox -> {
-            new SetMonthClosed(this.month.getValue(), this.closeMonthCheckBox.isSelected()).execute();
+            commandInvoker.invoke(new SetMonthClosed(this.month.getValue(), this.closeMonthCheckBox.isSelected()));
             callMonthModifiedCallback();
             updateTableStyles();
             budgetTable.refresh();
@@ -185,10 +191,10 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                     TreeItem<BudgetItemViewModel> parentTreeItem = treeItem.getParent();
                     BudgetItem selectedItem = ((BudgetItemViewModel) treeItem.getValue()).getModel();
                     if (month.getValue().getRevenues().contains(selectedItem)) {
-                        new RemoveBudgetItem(month.getValue(), selectedItem, RemoveBudgetItem.Type.REVENUE).execute();
+                        commandInvoker.invoke(new RemoveBudgetItem(month.getValue(), selectedItem, RemoveBudgetItem.Type.REVENUE));
                         budgetTable.getSelectionModel().select(parentTreeItem);
                     } else if (month.getValue().getExpenses().contains(selectedItem)) {
-                        new RemoveBudgetItem(month.getValue(), selectedItem, RemoveBudgetItem.Type.EXPENSE).execute();
+                        commandInvoker.invoke(new RemoveBudgetItem(month.getValue(), selectedItem, RemoveBudgetItem.Type.EXPENSE));
                         budgetTable.getSelectionModel().select(parentTreeItem);
                     }
                     callMonthModifiedCallback();
@@ -259,7 +265,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                 BudgetItemViewModel budgetItemVM = (BudgetItemViewModel) treeItem.getValue();
                 BudgetItem budgetItem = budgetItemVM.getModel();
                 if (treeItem.getChildren().size() == 0) {
-                    new UpdateBudgetItem(budgetItem, new BudgetItem(t.getNewValue(), budgetItem.getAmount())).execute();
+                    commandInvoker.invoke(new UpdateBudgetItem(budgetItem, new BudgetItem(t.getNewValue(), budgetItem.getAmount())));
                     // Update the month model
                     callMonthModifiedCallback();
 
@@ -317,7 +323,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                     if (!allowNegative.contains(treeItem) && t.getNewValue().compareTo(BigDecimal.ZERO) == -1) {
                         budgetTable.refresh();
                     } else {
-                        new UpdateBudgetItem(budgetItem, new BudgetItem(budgetItem.getName(), t.getNewValue())).execute();
+                        commandInvoker.invoke(new UpdateBudgetItem(budgetItem, new BudgetItem(budgetItem.getName(), t.getNewValue())));
                         callMonthModifiedCallback();
                     }
 
@@ -346,9 +352,9 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                         BudgetItem budgetItem = new BudgetItem("New Item", BigDecimal.ZERO);
                         TreeItem<BudgetItemViewModel> treeItem = cell.getTreeTableRow().getTreeItem();
                         if (treeItem.getValue() == revenuesRoot.getValue()) {
-                            new AddBudgetItem(month.getValue(), budgetItem, AddBudgetItem.Type.REVENUE).execute();
+                            commandInvoker.invoke(new AddBudgetItem(month.getValue(), budgetItem, AddBudgetItem.Type.REVENUE));
                         } else if (treeItem.getValue() == expensesRoot.getValue()) {
-                            new AddBudgetItem(month.getValue(), budgetItem, AddBudgetItem.Type.EXPENSE).execute();
+                            commandInvoker.invoke(new AddBudgetItem(month.getValue(), budgetItem, AddBudgetItem.Type.EXPENSE));
                         }
                         callMonthModifiedCallback();
 
@@ -369,12 +375,11 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                         TreeItem<BudgetItemViewModel> treeItem = cell.getTreeTableRow().getTreeItem();
                         TreeItem<BudgetItemViewModel> parentTreeItem = treeItem.getParent();
                         BudgetItem selectedItem = ((BudgetItemViewModel) treeItem.getValue()).getModel();
-//                        MonthViewModel month = MonthControl.this.monthViewModel.get();
                         if (month.getValue().getRevenues().contains(selectedItem)) {
-                            new RemoveBudgetItem(month.getValue(), selectedItem, RemoveBudgetItem.Type.REVENUE).execute();
+                            commandInvoker.invoke(new RemoveBudgetItem(month.getValue(), selectedItem, RemoveBudgetItem.Type.REVENUE));
                             budgetTable.getSelectionModel().select(parentTreeItem);
                         } else if (month.getValue().getExpenses().contains(selectedItem)) {
-                            new RemoveBudgetItem(month.getValue(), selectedItem, RemoveBudgetItem.Type.EXPENSE).execute();
+                            commandInvoker.invoke(new RemoveBudgetItem(month.getValue(), selectedItem, RemoveBudgetItem.Type.EXPENSE));
                             budgetTable.getSelectionModel().select(parentTreeItem);
                         }
                         callMonthModifiedCallback();
@@ -478,7 +483,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
             @Override
             public void handle(TableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal> t) {
                 BudgetItem budgetItem = ((BudgetItemViewModel) t.getTableView().getItems().get(t.getTablePosition().getRow())).getModel();
-                new UpdateBudgetItem(budgetItem, new BudgetItem(budgetItem.getName(), t.getNewValue())).execute();
+                commandInvoker.invoke(new UpdateBudgetItem(budgetItem, new BudgetItem(budgetItem.getName(), t.getNewValue())));
                 callMonthModifiedCallback();
             }
         });

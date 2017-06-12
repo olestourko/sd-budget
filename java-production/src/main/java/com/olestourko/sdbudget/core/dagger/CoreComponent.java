@@ -1,5 +1,6 @@
 package com.olestourko.sdbudget.core.dagger;
 
+import com.olestourko.sdbudget.core.commands.CommandInvoker;
 import com.olestourko.sdbudget.core.models.factories.MonthFactory;
 import com.olestourko.sdbudget.core.persistence.BudgetItemPersistence;
 import com.olestourko.sdbudget.core.persistence.MonthPersistence;
@@ -68,4 +69,7 @@ public interface CoreComponent {
     
     /* Factories */
     MonthFactory monthFactory();
+    
+    /* Commands */
+    CommandInvoker commandInvoker();
 }

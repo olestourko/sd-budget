@@ -1,5 +1,6 @@
 package com.olestourko.sdbudget.desktop.controllers;
 
+import com.olestourko.sdbudget.core.commands.CommandInvoker;
 import com.olestourko.sdbudget.core.models.Month;
 import com.olestourko.sdbudget.core.services.MonthCalculationServices;
 import com.olestourko.sdbudget.desktop.controls.MonthControl;
@@ -32,6 +33,7 @@ public class ThreeMonthController implements Initializable, INMonthController {
     private final Budget budget;
     private final MonthMapper monthMapper;
     private final String currency;
+    private final CommandInvoker commandInvoker;
 
     @Inject
     public ThreeMonthController(
@@ -40,7 +42,8 @@ public class ThreeMonthController implements Initializable, INMonthController {
             MonthCopyService monthCopyService,
             MonthRepository monthRepository,
             Budget budget,
-            String currency
+            String currency,
+            CommandInvoker commandInvoker
     ) {
         this.monthCalculationServices = monthCalculationServices;
         this.monthLogicServices = monthLogicServices;
@@ -49,6 +52,7 @@ public class ThreeMonthController implements Initializable, INMonthController {
         this.budget = budget;
         this.monthMapper = Mappers.getMapper(MonthMapper.class);
         this.currency = currency;
+        this.commandInvoker = commandInvoker;
     }
 
     @Override
@@ -57,8 +61,11 @@ public class ThreeMonthController implements Initializable, INMonthController {
         monthControls.add((MonthControl) monthControlContainer.getChildren().get(1));
         monthControls.add((MonthControl) monthControlContainer.getChildren().get(2));
         monthControls.get(0).setMonthLogicServices(monthLogicServices);
+        monthControls.get(0).setCommandInvoker(commandInvoker);
         monthControls.get(1).setMonthLogicServices(monthLogicServices);
+        monthControls.get(1).setCommandInvoker(commandInvoker);
         monthControls.get(2).setMonthLogicServices(monthLogicServices);
+        monthControls.get(2).setCommandInvoker(commandInvoker);
 
         // Change the MonthControls' month instance whenever the instance in the Budget changes
         this.budget.currentMonthProperty().addListener(month -> {

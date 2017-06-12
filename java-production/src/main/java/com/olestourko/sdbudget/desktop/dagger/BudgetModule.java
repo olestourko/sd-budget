@@ -1,5 +1,6 @@
 package com.olestourko.sdbudget.desktop.dagger;
 
+import com.olestourko.sdbudget.core.commands.CommandInvoker;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.core.services.MonthCalculationServices;
 import com.olestourko.sdbudget.core.services.MonthCopyService;
@@ -21,7 +22,7 @@ import org.cfg4j.provider.ConfigurationProvider;
 public class BudgetModule {
 
     @Provides
-    public ScratchpadController scratchpadController(Budget budget, ConfigurationProvider configurationProvider) {
+    public ScratchpadController scratchpadController(Budget budget, ConfigurationProvider configurationProvider, CommandInvoker commandInvoker) {
         String currency = "$";
         try {
             currency = configurationProvider.getProperty("currency", String.class);
@@ -29,7 +30,7 @@ public class BudgetModule {
             // The currency probably isn't set in the config file
         }
 
-        return new ScratchpadController(budget, currency);
+        return new ScratchpadController(budget, currency, commandInvoker);
     }
 
     @Provides
@@ -39,7 +40,9 @@ public class BudgetModule {
             MonthCopyService monthCopyService,
             MonthRepository monthRepository,
             Budget budget,
-            ConfigurationProvider configurationProvider) {
+            ConfigurationProvider configurationProvider,
+            CommandInvoker commandInvoker
+    ) {
 
         String currency = "$";
         try {
@@ -54,7 +57,8 @@ public class BudgetModule {
                 monthCopyService,
                 monthRepository,
                 budget,
-                currency
+                currency,
+                commandInvoker
         );
     }
 
@@ -65,7 +69,8 @@ public class BudgetModule {
             MonthCopyService monthCopyService,
             MonthRepository monthRepository,
             Budget budget,
-            ConfigurationProvider configurationProvider) {
+            ConfigurationProvider configurationProvider,
+            CommandInvoker commandInvoker) {
 
         String currency = "$";
         try {
@@ -80,7 +85,8 @@ public class BudgetModule {
                 monthCopyService,
                 monthRepository,
                 budget,
-                currency
+                currency,
+                commandInvoker
         );
     }
 }
