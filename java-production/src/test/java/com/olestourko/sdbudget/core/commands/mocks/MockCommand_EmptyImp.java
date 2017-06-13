@@ -1,10 +1,12 @@
-package com.olestourko.sdbudget.core.commands;
+package com.olestourko.sdbudget.core.commands.mocks;
+
+import com.olestourko.sdbudget.core.commands.ICommand;
 
 /**
  *
  * @author oles
  */
-public class MockCommand implements ICommand {
+public class MockCommand_EmptyImp implements ICommand {
 
     @Override
     public void execute() {

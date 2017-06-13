@@ -1,11 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.olestourko.sdbudget.core.commands;
 
-import com.sun.javafx.sg.prism.NGTriangleMesh;
+import com.olestourko.sdbudget.core.commands.CommandInvoker;
+import com.olestourko.sdbudget.core.commands.ICommand;
+import com.olestourko.sdbudget.core.commands.ICommandCallback;
+import com.olestourko.sdbudget.core.commands.mocks.MockCommand_EmptyImp;
+import com.olestourko.sdbudget.core.commands.mocks.MockCommand_HistoryTestImp;
+import com.olestourko.sdbudget.core.commands.mocks.StringWrapper;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -58,7 +58,7 @@ public class CommandInvokerTest {
      */
     @Test
     public void testAddListener_1() {
-        ICommand command = new MockCommand();
+        ICommand command = new MockCommand_EmptyImp();
         Handler handler = new Handler();
         invoker.addListener(command.getClass(), handler);
         invoker.invoke(command);
@@ -71,7 +71,7 @@ public class CommandInvokerTest {
      */
     @Test
     public void testAddListener_2() {
-        ICommand command = new MockCommand();
+        ICommand command = new MockCommand_EmptyImp();
         Handler handler = new Handler();
         invoker.invoke(command);
         assertEquals(false, handler.called);
@@ -82,7 +82,7 @@ public class CommandInvokerTest {
      */
     @Test
     public void testAddListener_usingPriority_1() {
-        ICommand command = new MockCommand();
+        ICommand command = new MockCommand_EmptyImp();
         ObjectWrapper objectWrapper = new ObjectWrapper(null);
         ICommandCallback handler1 = new PriorityTestHandler(objectWrapper);
         ICommandCallback handler2 = new PriorityTestHandler(objectWrapper);
@@ -100,7 +100,7 @@ public class CommandInvokerTest {
      */
     @Test
     public void testAddListener_usingPriority_2() {
-        ICommand command = new MockCommand();
+        ICommand command = new MockCommand_EmptyImp();
         ObjectWrapper objectWrapper = new ObjectWrapper(null);
         ICommandCallback handler1 = new PriorityTestHandler(objectWrapper);
         ICommandCallback handler2 = new PriorityTestHandler(objectWrapper);
@@ -110,6 +110,23 @@ public class CommandInvokerTest {
         invoker.addListener(command.getClass(), handler1, 2);
         invoker.invoke(command);
         assertEquals(handler3, objectWrapper.object);
+    }
+
+    @Test
+    /*
+    * Test of undo method, of class CommandInvoker
+     */
+    public void testUndo() {
+        StringWrapper stringWrapper = new StringWrapper("A");
+        ICommand command1 = new MockCommand_HistoryTestImp(stringWrapper, "B");
+        invoker.invoke(command1);
+        ICommand command2 = new MockCommand_HistoryTestImp(stringWrapper, "C");
+        invoker.invoke(command2);
+        assertEquals("C", stringWrapper.getValue());
+        invoker.undo();
+        assertEquals("B", stringWrapper.getValue());
+        invoker.undo();
+        assertEquals("A", stringWrapper.getValue());        
     }
 
     class Handler implements ICommandCallback {
