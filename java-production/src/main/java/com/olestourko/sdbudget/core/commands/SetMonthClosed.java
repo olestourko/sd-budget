@@ -1,5 +1,6 @@
 package com.olestourko.sdbudget.core.commands;
 
+import com.olestourko.sdbudget.core.models.BudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
 
 /**
@@ -11,13 +12,13 @@ public class SetMonthClosed implements ICommand {
     private Month month;
     private boolean targetIsClosed;
     private boolean previousIsClosed;
-    
+
     public SetMonthClosed(Month month, boolean isClosed) {
         this.month = month;
         this.targetIsClosed = isClosed;
         this.previousIsClosed = month.getIsClosed();
     }
-    
+
     @Override
     public void execute() {
         this.month.setIsClosed(targetIsClosed);
@@ -27,5 +28,9 @@ public class SetMonthClosed implements ICommand {
     public void undo() {
         this.month.setIsClosed(previousIsClosed);
     }
-    
+
+    public Month getMonth() {
+        return this.month;
+    }
+
 }

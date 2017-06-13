@@ -22,7 +22,11 @@ import org.cfg4j.provider.ConfigurationProvider;
 public class BudgetModule {
 
     @Provides
-    public ScratchpadController scratchpadController(Budget budget, ConfigurationProvider configurationProvider, CommandInvoker commandInvoker) {
+    public ScratchpadController scratchpadController(
+            Budget budget,
+            ConfigurationProvider configurationProvider,
+            CommandInvoker commandInvoker
+    ) {
         String currency = "$";
         try {
             currency = configurationProvider.getProperty("currency", String.class);
@@ -43,7 +47,6 @@ public class BudgetModule {
             ConfigurationProvider configurationProvider,
             CommandInvoker commandInvoker
     ) {
-
         String currency = "$";
         try {
             currency = configurationProvider.getProperty("currency", String.class);

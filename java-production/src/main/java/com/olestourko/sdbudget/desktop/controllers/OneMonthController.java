@@ -1,6 +1,12 @@
 package com.olestourko.sdbudget.desktop.controllers;
 
+import com.olestourko.sdbudget.core.commands.AddBudgetItem;
 import com.olestourko.sdbudget.core.commands.CommandInvoker;
+import com.olestourko.sdbudget.core.commands.ICommand;
+import com.olestourko.sdbudget.core.commands.ICommandCallback;
+import com.olestourko.sdbudget.core.commands.RemoveBudgetItem;
+import com.olestourko.sdbudget.core.commands.SetMonthClosed;
+import com.olestourko.sdbudget.core.commands.UpdateBudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
 import com.olestourko.sdbudget.desktop.controls.MonthControl;
 import java.net.URL;
@@ -62,12 +68,16 @@ public class OneMonthController implements Initializable, INMonthController {
         monthControl.setCurrency(currency);
         monthControl.setMonthLogicServices(monthLogicServices);
         monthControl.setCommandInvoker(commandInvoker);
-        monthControl.setOnMonthModified(event -> {
-            Month month = monthControl.getMonth();
-            monthCalculationServices.recalculateMonths(month);
-            this.monthMapper.updateMonthViewModelFromMonth(month, monthControl.getMonthViewModel());
-            return month;
-        });
+        ICommandCallback commandHandler = new ICommandCallback() {
+            @Override
+            public void handle(ICommand command) {
+                monthControl.refresh();
+            }
+        };
+        commandInvoker.addListener(UpdateBudgetItem.class, commandHandler);
+        commandInvoker.addListener(AddBudgetItem.class, commandHandler);
+        commandInvoker.addListener(RemoveBudgetItem.class, commandHandler);
+        commandInvoker.addListener(SetMonthClosed.class, commandHandler);
 
         // Month cloning
         monthControl.getCopyToNextButton().setOnAction(event -> {

@@ -28,12 +28,15 @@ import org.cfg4j.provider.ConfigurationProvider;
  */
 //@CoreApplicationScope
 @Singleton
-@Component(modules = {PersistenceModule.class, ServicesModule.class, ConfigurationModule.class})
+@Component(modules = {PersistenceModule.class, ServicesModule.class, CoreModule.class})
 public interface CoreComponent {
 
     /* Configuration */
     ConfigurationProvider configurationProvider();
-    
+
+    /* Commands */
+    CommandInvoker commandInvoker();
+
     /* Persistence */
     Provider<MonthPersistence> monthPersistenceProvider();
 
@@ -66,10 +69,7 @@ public interface CoreComponent {
     MonthLogicServices monthLogicServices();
 
     MonthCopyService monthCopyService();
-    
+
     /* Factories */
     MonthFactory monthFactory();
-    
-    /* Commands */
-    CommandInvoker commandInvoker();
 }

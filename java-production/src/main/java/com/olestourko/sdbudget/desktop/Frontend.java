@@ -1,5 +1,10 @@
 package com.olestourko.sdbudget.desktop;
 
+import com.olestourko.sdbudget.core.commands.AddBudgetItem;
+import com.olestourko.sdbudget.core.commands.CommandInvoker;
+import com.olestourko.sdbudget.core.commands.RemoveBudgetItem;
+import com.olestourko.sdbudget.core.commands.SetMonthClosed;
+import com.olestourko.sdbudget.core.commands.UpdateBudgetItem;
 import com.olestourko.sdbudget.core.models.BudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
@@ -53,6 +58,7 @@ public class Frontend {
     protected final OneMonthController oneMonthController;
     protected final ThreeMonthController threeMonthController;
     protected final ScratchpadController scratchpadController;
+    protected final CommandInvoker commandInvoker;
 
     protected Stage stage;
     protected Node currentRoot;
@@ -69,7 +75,8 @@ public class Frontend {
             MainController mainController,
             OneMonthController oneMonthController,
             ThreeMonthController threeMonthController,
-            ScratchpadController scratchpadController
+            ScratchpadController scratchpadController,
+            CommandInvoker commandInvoker
     ) {
         this.budget = budget;
         this.monthCalculationServices = monthCalculationServices;
@@ -78,6 +85,7 @@ public class Frontend {
         this.oneMonthController = oneMonthController;
         this.threeMonthController = threeMonthController;
         this.scratchpadController = scratchpadController;
+        this.commandInvoker = commandInvoker;
     }
 
     public void load(Stage stage) throws Exception {
@@ -155,44 +163,52 @@ public class Frontend {
             }
         });
 
+        // Register command listeners
+        commandInvoker.addListener(UpdateBudgetItem.class, command -> {
+            Month month = monthRepository.getFirst();
+            monthCalculationServices.recalculateMonths(month);
+        }, 9);
+        commandInvoker.addListener(AddBudgetItem.class, command -> {
+            Month month = ((AddBudgetItem) command).getMonth();
+            monthCalculationServices.recalculateMonths(month);
+        }, 9);
+        commandInvoker.addListener(RemoveBudgetItem.class, command -> {
+            Month month = ((RemoveBudgetItem) command).getMonth();
+            monthCalculationServices.recalculateMonths(month);
+        }, 9);
+        commandInvoker.addListener(SetMonthClosed.class, command -> {
+            Month month = ((SetMonthClosed) command).getMonth();
+            monthCalculationServices.recalculateMonths(month);
+        }, 9);
+
         // Link Scratchpad to other views
         scratchpadController.onAdjustmentAdded(new Callback<BudgetItem, Month>() {
             @Override
             public Month call(BudgetItem item) {
-                Month month = Frontend.this.scratchpadController.getMonth();
-                monthCalculationServices.recalculateMonths(month);
-                Frontend.this.scratchpadController.setMonth(month);
                 // Update the other controllers
                 Frontend.this.oneMonthController.refresh();
                 Frontend.this.threeMonthController.refresh();
-                return month;
+                return null;
             }
         });
 
         scratchpadController.onAdjustmentRemoved(new Callback<BudgetItem, Month>() {
             @Override
             public Month call(BudgetItem item) {
-                Month month = Frontend.this.scratchpadController.getMonth();
-                monthCalculationServices.recalculateMonths(month);
-                Frontend.this.scratchpadController.setMonth(month);
                 // Update the other controllers
                 Frontend.this.oneMonthController.refresh();
                 Frontend.this.threeMonthController.refresh();
-                return month;
+                return null;
             }
         });
 
         scratchpadController.onAdjustmentModified(new Callback<BudgetItem, Month>() {
             @Override
             public Month call(BudgetItem item) {
-                Month month = Frontend.this.scratchpadController.getMonth();
-                BudgetItemMapper mapper = Mappers.getMapper(BudgetItemMapper.class);
-                monthCalculationServices.recalculateMonths(month);
-                Frontend.this.scratchpadController.setMonth(month);
                 // Update the other controllers
                 Frontend.this.oneMonthController.refresh();
                 Frontend.this.threeMonthController.refresh();
-                return month;
+                return null;
             }
         });
 
@@ -207,7 +223,7 @@ public class Frontend {
                 alert.setContentText(null);
                 Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
                 stage.getIcons().add(new Image(getClass().getResourceAsStream(thumbUri)));
-                
+
                 ButtonType saveAndExitButton = new ButtonType("Save & Exit");
                 ButtonType exitButton = new ButtonType("Exit");
                 ButtonType cancelButton = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);

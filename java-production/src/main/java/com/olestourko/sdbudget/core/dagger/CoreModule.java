@@ -5,6 +5,7 @@
  */
 package com.olestourko.sdbudget.core.dagger;
 
+import com.olestourko.sdbudget.core.commands.CommandInvoker;
 import dagger.Module;
 import dagger.Provides;
 import java.nio.file.Paths;
@@ -22,7 +23,7 @@ import org.cfg4j.source.files.FilesConfigurationSource;
  */
 @Singleton
 @Module
-public class ConfigurationModule {
+public class CoreModule {
 
     @Singleton
     @Provides
@@ -37,5 +38,11 @@ public class ConfigurationModule {
         return new ConfigurationProviderBuilder()
                 .withConfigurationSource(source)
                 .build();
+    }
+    
+    @Singleton
+    @Provides
+    public CommandInvoker commandInvoker() {
+        return new CommandInvoker();
     }
 }

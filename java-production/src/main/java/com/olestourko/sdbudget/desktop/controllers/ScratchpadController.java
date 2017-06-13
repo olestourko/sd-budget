@@ -2,7 +2,10 @@ package com.olestourko.sdbudget.desktop.controllers;
 
 import com.olestourko.sdbudget.core.commands.AddBudgetItem;
 import com.olestourko.sdbudget.core.commands.CommandInvoker;
+import com.olestourko.sdbudget.core.commands.ICommand;
+import com.olestourko.sdbudget.core.commands.ICommandCallback;
 import com.olestourko.sdbudget.core.commands.RemoveBudgetItem;
+import com.olestourko.sdbudget.core.commands.SetMonthClosed;
 import com.olestourko.sdbudget.core.commands.UpdateBudgetItem;
 import com.olestourko.sdbudget.core.models.BudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
@@ -91,6 +94,18 @@ public class ScratchpadController implements Initializable, IScratchpad {
         this.budget = budget;
         this.currency = currency;
         this.commandInvoker = commandInvoker;
+
+        // Register command listeners
+        ICommandCallback commandHandler = new ICommandCallback() {
+            @Override
+            public void handle(ICommand command) {
+                refresh();
+            }
+        };
+        commandInvoker.addListener(UpdateBudgetItem.class, commandHandler);
+        commandInvoker.addListener(AddBudgetItem.class, commandHandler);
+        commandInvoker.addListener(RemoveBudgetItem.class, commandHandler);
+        commandInvoker.addListener(SetMonthClosed.class, commandHandler);
     }
 
     public void load() {

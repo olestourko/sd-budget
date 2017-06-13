@@ -58,5 +58,13 @@ public class AddBudgetItem implements ICommand {
                 break;
         }
     }
+    
+    public Month getMonth() {
+        return this.month;
+    }
+    
+    public BudgetItem getBudgetItem() {
+        return this.budgetItem;
+    }
 
 }

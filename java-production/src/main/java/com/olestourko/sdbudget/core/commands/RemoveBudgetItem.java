@@ -59,4 +59,12 @@ public class RemoveBudgetItem implements ICommand {
         }
     }
 
+    public Month getMonth() {
+        return this.month;
+    }
+
+    public BudgetItem getBudgetItem() {
+        return this.budgetItem;
+    }
+
 }

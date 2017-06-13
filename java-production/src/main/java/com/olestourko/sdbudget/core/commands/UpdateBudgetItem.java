@@ -1,6 +1,7 @@
 package com.olestourko.sdbudget.core.commands;
 
 import com.olestourko.sdbudget.core.models.BudgetItem;
+import com.olestourko.sdbudget.core.models.Month;
 
 /**
  *
@@ -29,6 +30,10 @@ public class UpdateBudgetItem implements ICommand {
     public void undo() {
         this.item.setName(previousState.getName());
         this.item.setAmount(previousState.getAmount());
+    }
+
+    public BudgetItem getBudgetItem() {
+        return this.item;
     }
 
 }

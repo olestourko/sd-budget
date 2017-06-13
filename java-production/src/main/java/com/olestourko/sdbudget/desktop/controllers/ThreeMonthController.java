@@ -1,6 +1,12 @@
 package com.olestourko.sdbudget.desktop.controllers;
 
+import com.olestourko.sdbudget.core.commands.AddBudgetItem;
 import com.olestourko.sdbudget.core.commands.CommandInvoker;
+import com.olestourko.sdbudget.core.commands.ICommand;
+import com.olestourko.sdbudget.core.commands.ICommandCallback;
+import com.olestourko.sdbudget.core.commands.RemoveBudgetItem;
+import com.olestourko.sdbudget.core.commands.SetMonthClosed;
+import com.olestourko.sdbudget.core.commands.UpdateBudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
 import com.olestourko.sdbudget.core.services.MonthCalculationServices;
 import com.olestourko.sdbudget.desktop.controls.MonthControl;
@@ -16,7 +22,6 @@ import com.olestourko.sdbudget.desktop.mappers.MonthMapper;
 import java.util.LinkedList;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.layout.Pane;
-import javafx.util.Callback;
 import javax.inject.Inject;
 import org.mapstruct.factory.Mappers;
 
@@ -74,31 +79,29 @@ public class ThreeMonthController implements Initializable, INMonthController {
         });
 
         // This callback updates all the months
-        Callback<MonthControl, Month> monthModifiedCallback = new Callback<MonthControl, Month>() {
+        ICommandCallback commandHandler = new ICommandCallback() {
             @Override
-            public Month call(MonthControl monthControl) {
-                monthMapper.updateMonthFromMonthViewModel(monthControl.getMonthViewModel(), monthControl.getMonth());
-                monthCalculationServices.recalculateMonths(monthControl.getMonth());
-
-                for (MonthControl mc : monthControls) {
-                    Month mcMonth = mc.getMonth();
+            public void handle(ICommand command) {
+                for (MonthControl monthControl : monthControls) {
+                    Month mcMonth = monthControl.getMonth();
                     if (mcMonth != null) {
-                        monthMapper.updateMonthViewModelFromMonth(mc.getMonth(), mc.getMonthViewModel());
-                        mc.refresh();
+                        monthControl.refresh();
                     }
                 }
-
-                return monthControl.getMonth();
             }
         };
 
+        // Register command listeners
+        commandInvoker.addListener(UpdateBudgetItem.class, commandHandler);
+        commandInvoker.addListener(AddBudgetItem.class, commandHandler);
+        commandInvoker.addListener(RemoveBudgetItem.class, commandHandler);
+        commandInvoker.addListener(SetMonthClosed.class, commandHandler);
+        
         for (MonthControl monthControl : monthControls) {
             // Set currency for month control
             monthControl.setCurrency(currency);
-            
-            // Set event handlers for all the month components
-            monthControl.setOnMonthModified(monthModifiedCallback);
 
+            // Set event handlers for all the month components
             // Month cloning    
             monthControl.getCopyToNextButton().setOnAction(event -> {
                 Month nextMonth = monthRepository.getNext(monthControl.getMonth());
