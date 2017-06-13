@@ -142,7 +142,6 @@ public class ScratchpadController implements Initializable, IScratchpad {
             public void handle(TableColumn.CellEditEvent<BudgetItemViewModel, String> event) {
                 BudgetItem item = ((BudgetItemViewModel) event.getTableView().getItems().get(event.getTablePosition().getRow())).getModel();
                 commandInvoker.invoke(new UpdateBudgetItem(item, new BudgetItem(event.getNewValue(), item.getAmount())));
-                callOnAdjustmentModifiedCallback(item);
                 scratchpadTable.getSelectionModel().select(event.getTablePosition().getRow());
             }
         });
@@ -161,7 +160,6 @@ public class ScratchpadController implements Initializable, IScratchpad {
             public void handle(TableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal> event) {
                 BudgetItem item = ((BudgetItemViewModel) event.getTableView().getItems().get(event.getTablePosition().getRow())).getModel();
                 commandInvoker.invoke(new UpdateBudgetItem(item, new BudgetItem(item.getName(), event.getNewValue())));
-                callOnAdjustmentModifiedCallback(item);
                 scratchpadTable.getSelectionModel().select(event.getTablePosition().getRow());
             }
         });
@@ -250,7 +248,6 @@ public class ScratchpadController implements Initializable, IScratchpad {
 
         int deletedRow = scratchpadTable.getItems().indexOf(item);
         commandInvoker.invoke(new RemoveBudgetItem(month.getValue(), item, RemoveBudgetItem.Type.ADJUSTMENT));
-        callOnAdjustmentRemovedCallback(item);
 
         if (scratchpadTable.getItems().size() >= deletedRow + 1) {
             scratchpadTable.getSelectionModel().select(deletedRow);
@@ -266,7 +263,6 @@ public class ScratchpadController implements Initializable, IScratchpad {
         commandInvoker.invoke(new AddBudgetItem(month.getValue(), item, AddBudgetItem.Type.ADJUSTMENT));
         nameField.setText("");
         amountField.setText("");
-        callOnAdjustmentAddedCallback(item);
     }
 
     public Month getMonth() {
@@ -305,46 +301,4 @@ public class ScratchpadController implements Initializable, IScratchpad {
             amountField.setDisable(false);
         }
     }
-
-    // <editor-fold defaultstate="collapsed" desc="Callbacks">
-    private Callback<BudgetItem, Month> onAdjustmentAddedCallback;
-
-    @Override
-    public void onAdjustmentAdded(Callback<BudgetItem, Month> callback) {
-        this.onAdjustmentAddedCallback = callback;
-    }
-
-    private void callOnAdjustmentAddedCallback(BudgetItem item) {
-        if (onAdjustmentAddedCallback != null) {
-            onAdjustmentAddedCallback.call(item);
-        }
-    }
-
-    private Callback<BudgetItem, Month> onAdjustmentRemovedCallback;
-
-    @Override
-    public void onAdjustmentRemoved(Callback<BudgetItem, Month> callback) {
-        this.onAdjustmentRemovedCallback = callback;
-    }
-
-    private void callOnAdjustmentRemovedCallback(BudgetItem item) {
-        if (onAdjustmentRemovedCallback != null) {
-            onAdjustmentRemovedCallback.call(item);
-        }
-    }
-
-    private Callback<BudgetItem, Month> onAdjustmentModifiedCallback;
-
-    @Override
-    public void onAdjustmentModified(Callback<BudgetItem, Month> callback) {
-        this.onAdjustmentModifiedCallback = callback;
-    }
-
-    private void callOnAdjustmentModifiedCallback(BudgetItem item) {
-        if (onAdjustmentModifiedCallback != null) {
-            onAdjustmentModifiedCallback.call(item);
-        }
-    }
-
-    // </editor-fold>
 }

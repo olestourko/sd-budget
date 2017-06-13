@@ -99,21 +99,6 @@ public class MonthControl extends AnchorPane implements IMonthControl {
         this.commandInvoker = commandInvoker;
     }
 
-    // <editor-fold defaultstate="collapsed" desc="Month modified callback">
-    // This callback should be called (passing the Month) when and only when the month's items are changed or updated through the Control UI ONLY
-    private Callback<MonthControl, Month> monthModifiedCallback;
-
-    public void setOnMonthModified(Callback<MonthControl, Month> callback) {
-        this.monthModifiedCallback = callback;
-    }
-
-    protected void callMonthModifiedCallback() {
-        if (monthModifiedCallback != null) {
-            monthModifiedCallback.call(this);
-        }
-    }
-    // </editor-fold>
-
     public Button getCopyToNextButton() {
         return this.copyToNext;
     }
@@ -170,7 +155,6 @@ public class MonthControl extends AnchorPane implements IMonthControl {
         // Set the handler for the "Close Month" checkbox
         this.closeMonthCheckBox.selectedProperty().addListener(checkbox -> {
             commandInvoker.invoke(new SetMonthClosed(this.month.getValue(), this.closeMonthCheckBox.isSelected()));
-            callMonthModifiedCallback();
             updateTableStyles();
             budgetTable.refresh();
         });
@@ -197,7 +181,6 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                         commandInvoker.invoke(new RemoveBudgetItem(month.getValue(), selectedItem, RemoveBudgetItem.Type.EXPENSE));
                         budgetTable.getSelectionModel().select(parentTreeItem);
                     }
-                    callMonthModifiedCallback();
                 }
             }
         });
@@ -266,9 +249,6 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                 BudgetItem budgetItem = budgetItemVM.getModel();
                 if (treeItem.getChildren().size() == 0) {
                     commandInvoker.invoke(new UpdateBudgetItem(budgetItem, new BudgetItem(t.getNewValue(), budgetItem.getAmount())));
-                    // Update the month model
-                    callMonthModifiedCallback();
-
                     // Select the edited item
                     // https://www.mkyong.com/java8/java-8-streams-filter-examples/
                     if (parentTreeItem != null) {
@@ -324,7 +304,6 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                         budgetTable.refresh();
                     } else {
                         commandInvoker.invoke(new UpdateBudgetItem(budgetItem, new BudgetItem(budgetItem.getName(), t.getNewValue())));
-                        callMonthModifiedCallback();
                     }
 
                     // Select the edited item
@@ -356,7 +335,6 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                         } else if (treeItem.getValue() == expensesRoot.getValue()) {
                             commandInvoker.invoke(new AddBudgetItem(month.getValue(), budgetItem, AddBudgetItem.Type.EXPENSE));
                         }
-                        callMonthModifiedCallback();
 
                         // Select the newly created item
                         // https://www.mkyong.com/java8/java-8-streams-filter-examples/
@@ -382,7 +360,6 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                             commandInvoker.invoke(new RemoveBudgetItem(month.getValue(), selectedItem, RemoveBudgetItem.Type.EXPENSE));
                             budgetTable.getSelectionModel().select(parentTreeItem);
                         }
-                        callMonthModifiedCallback();
                     }
                 };
 
@@ -484,7 +461,6 @@ public class MonthControl extends AnchorPane implements IMonthControl {
             public void handle(TableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal> t) {
                 BudgetItem budgetItem = ((BudgetItemViewModel) t.getTableView().getItems().get(t.getTablePosition().getRow())).getModel();
                 commandInvoker.invoke(new UpdateBudgetItem(budgetItem, new BudgetItem(budgetItem.getName(), t.getNewValue())));
-                callMonthModifiedCallback();
             }
         });
 
@@ -583,58 +559,6 @@ public class MonthControl extends AnchorPane implements IMonthControl {
     }
 
     // <editor-fold defaultstate="collapsed" desc="Callbacks">
-    private Callback<BudgetItem, Month> onItemAddedCallback;
-
-    @Override
-    public void onItemAdded(Callback<BudgetItem, Month> callback) {
-        this.onItemAddedCallback = callback;
-    }
-
-    private void callOnItemAdded(BudgetItem item) {
-        if (onItemAddedCallback != null) {
-            onItemAddedCallback.call(item);
-        }
-    }
-
-    private Callback<BudgetItem, Month> onItemRemovedCallback;
-
-    @Override
-    public void onItemRemoved(Callback<BudgetItem, Month> callback) {
-        this.onItemRemovedCallback = callback;
-    }
-
-    private void callOnItemRemoved(BudgetItem item) {
-        if (onItemRemovedCallback != null) {
-            onItemRemovedCallback.call(item);
-        }
-    }
-
-    private Callback<BudgetItem, Month> onItemModifiedCallback;
-
-    @Override
-    public void onItemModified(Callback<BudgetItem, Month> callback) {
-        this.onItemModifiedCallback = callback;
-    }
-
-    private void callOnItemModified(BudgetItem item) {
-        if (onItemModifiedCallback != null) {
-            onItemModifiedCallback.call(item);
-        }
-    }
-
-    private Callback<Month, Month> onMonthCloseModifiedCallback;
-
-    @Override
-    public void onMonthCloseModified(Callback<Month, Month> callback) {
-        this.onMonthCloseModifiedCallback = callback;
-    }
-
-    private void callOnMonthCloseModified(Month month) {
-        if (onMonthCloseModifiedCallback != null) {
-            onMonthCloseModifiedCallback.call(month);
-        }
-    }
-
     private Callback<Month, Month> onMonthCopyCallback;
 
     @Override

@@ -181,37 +181,6 @@ public class Frontend {
             monthCalculationServices.recalculateMonths(month);
         }, 9);
 
-        // Link Scratchpad to other views
-        scratchpadController.onAdjustmentAdded(new Callback<BudgetItem, Month>() {
-            @Override
-            public Month call(BudgetItem item) {
-                // Update the other controllers
-                Frontend.this.oneMonthController.refresh();
-                Frontend.this.threeMonthController.refresh();
-                return null;
-            }
-        });
-
-        scratchpadController.onAdjustmentRemoved(new Callback<BudgetItem, Month>() {
-            @Override
-            public Month call(BudgetItem item) {
-                // Update the other controllers
-                Frontend.this.oneMonthController.refresh();
-                Frontend.this.threeMonthController.refresh();
-                return null;
-            }
-        });
-
-        scratchpadController.onAdjustmentModified(new Callback<BudgetItem, Month>() {
-            @Override
-            public Month call(BudgetItem item) {
-                // Update the other controllers
-                Frontend.this.oneMonthController.refresh();
-                Frontend.this.threeMonthController.refresh();
-                return null;
-            }
-        });
-
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
