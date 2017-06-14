@@ -16,7 +16,7 @@ public class MonthCopyService {
     }
 
     public BudgetItem cloneBudgetItem(BudgetItem from) {
-        return MonthCopyService.this.cloneBudgetItem(from, new BudgetItem());
+        return cloneBudgetItem(from, new BudgetItem());
     }
 
     public BudgetItem cloneBudgetItem(BudgetItem from, BudgetItem to) {
@@ -36,7 +36,7 @@ public class MonthCopyService {
             to.getExpenses().add(cloneBudgetItem(expense));
         }
 
-        MonthCopyService.this.cloneBudgetItem(from.getNetIncomeTarget(), to.getNetIncomeTarget());
+        cloneBudgetItem(from.getNetIncomeTarget(), to.getNetIncomeTarget());
         
         return to;
     }

@@ -2,6 +2,7 @@ package com.olestourko.sdbudget.desktop.controllers;
 
 import com.olestourko.sdbudget.core.commands.AddBudgetItem;
 import com.olestourko.sdbudget.core.commands.CommandInvoker;
+import com.olestourko.sdbudget.core.commands.CopyMonth;
 import com.olestourko.sdbudget.core.commands.ICommand;
 import com.olestourko.sdbudget.core.commands.ICommandCallback;
 import com.olestourko.sdbudget.core.commands.RemoveBudgetItem;
@@ -14,45 +15,33 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
-import com.olestourko.sdbudget.core.services.MonthCalculationServices;
 import com.olestourko.sdbudget.desktop.models.Budget;
-import com.olestourko.sdbudget.core.services.MonthCopyService;
 import com.olestourko.sdbudget.core.services.MonthLogicServices;
-import com.olestourko.sdbudget.desktop.mappers.MonthMapper;
 import javafx.beans.property.SimpleObjectProperty;
 import javax.inject.Inject;
-import org.mapstruct.factory.Mappers;
 
 public class OneMonthController implements Initializable, INMonthController {
 
     @FXML
     public MonthControl monthControl;
 
-    private final MonthCalculationServices monthCalculationServices;
     private final MonthLogicServices monthLogicServices;
-    private final MonthCopyService monthCopyService;
     private final MonthRepository monthRepository;
     private final Budget budget;
-    private final MonthMapper monthMapper;
     private final String currency;
     private final CommandInvoker commandInvoker;
 
     @Inject
     public OneMonthController(
-            MonthCalculationServices monthCalculationServices,
             MonthLogicServices monthLogicServices,
-            MonthCopyService monthCopyService,
             MonthRepository monthRepository,
             Budget budget,
             String currency,
             CommandInvoker commandInvoker
     ) {
-        this.monthCalculationServices = monthCalculationServices;
         this.monthLogicServices = monthLogicServices;
-        this.monthCopyService = monthCopyService;
         this.monthRepository = monthRepository;
         this.budget = budget;
-        this.monthMapper = Mappers.getMapper(MonthMapper.class);
         this.currency = currency;
         this.commandInvoker = commandInvoker;
     }
@@ -78,14 +67,13 @@ public class OneMonthController implements Initializable, INMonthController {
         commandInvoker.addListener(AddBudgetItem.class, commandHandler);
         commandInvoker.addListener(RemoveBudgetItem.class, commandHandler);
         commandInvoker.addListener(SetMonthClosed.class, commandHandler);
+        commandInvoker.addListener(CopyMonth.class, commandHandler);
 
         // Month cloning
         monthControl.getCopyToNextButton().setOnAction(event -> {
             Month nextMonth = monthRepository.getNext(monthControl.getMonth());
             if (nextMonth != null) {
-                monthCopyService.cloneMonth(monthControl.getMonth(), nextMonth);
-                monthCalculationServices.recalculateMonths(nextMonth);
-                monthControl.refresh();
+                commandInvoker.invoke(new CopyMonth(monthControl.getMonth(), nextMonth));
             }
         });
     }

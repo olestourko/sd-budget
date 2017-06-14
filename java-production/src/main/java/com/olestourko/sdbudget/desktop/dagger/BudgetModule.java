@@ -55,9 +55,7 @@ public class BudgetModule {
         }
 
         return new OneMonthController(
-                monthCalculationServices,
                 monthLogicServices,
-                monthCopyService,
                 monthRepository,
                 budget,
                 currency,
@@ -83,9 +81,7 @@ public class BudgetModule {
         }
 
         return new ThreeMonthController(
-                monthCalculationServices,
                 monthLogicServices,
-                monthCopyService,
                 monthRepository,
                 budget,
                 currency,

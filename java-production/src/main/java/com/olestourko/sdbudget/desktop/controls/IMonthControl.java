@@ -1,6 +1,5 @@
 package com.olestourko.sdbudget.desktop.controls;
 
-import com.olestourko.sdbudget.core.models.BudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
 import javafx.util.Callback;
 

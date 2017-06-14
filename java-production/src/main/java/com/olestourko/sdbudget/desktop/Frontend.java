@@ -2,6 +2,7 @@ package com.olestourko.sdbudget.desktop;
 
 import com.olestourko.sdbudget.core.commands.AddBudgetItem;
 import com.olestourko.sdbudget.core.commands.CommandInvoker;
+import com.olestourko.sdbudget.core.commands.CopyMonth;
 import com.olestourko.sdbudget.core.commands.RemoveBudgetItem;
 import com.olestourko.sdbudget.core.commands.SetMonthClosed;
 import com.olestourko.sdbudget.core.commands.UpdateBudgetItem;
@@ -180,7 +181,11 @@ public class Frontend {
             Month month = ((SetMonthClosed) command).getMonth();
             monthCalculationServices.recalculateMonths(month);
         }, 9);
-
+        commandInvoker.addListener(CopyMonth.class, command -> {
+            Month month = monthRepository.getFirst();
+            monthCalculationServices.recalculateMonths(month);
+        }, 9);
+        
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
