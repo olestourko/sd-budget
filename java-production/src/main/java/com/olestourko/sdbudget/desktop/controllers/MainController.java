@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.layout.Pane;
 import javax.inject.Inject;
@@ -31,6 +32,8 @@ public class MainController implements Initializable {
     public Button scratchpadViewButton;
     @FXML
     public Pane contentContainer;
+    @FXML
+    public MenuItem undoMenuItem;
     @FXML
     public RadioMenuItem oneMonthViewMenuItem;
     @FXML

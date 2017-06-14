@@ -1,6 +1,5 @@
 package com.olestourko.sdbudget.core.commands;
 
-import com.olestourko.sdbudget.core.models.BudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
 
 /**

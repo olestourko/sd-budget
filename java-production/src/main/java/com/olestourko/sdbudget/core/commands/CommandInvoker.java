@@ -55,7 +55,7 @@ public class CommandInvoker {
     }
 
     public boolean canUndo() {
-        return history.size() > 1;
+        return history.size() > 0;
     }
 
     public void undo() {

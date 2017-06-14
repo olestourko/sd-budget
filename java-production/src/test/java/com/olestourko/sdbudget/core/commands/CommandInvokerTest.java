@@ -126,7 +126,18 @@ public class CommandInvokerTest {
         invoker.undo();
         assertEquals("B", stringWrapper.getValue());
         invoker.undo();
-        assertEquals("A", stringWrapper.getValue());        
+        assertEquals("A", stringWrapper.getValue());
+    }
+
+    @Test
+    /*
+    * Test of canUndo method, of class CommandInvoker
+     */
+    public void testCanUndo() {
+        ICommand command = new MockCommand_EmptyImp();
+        assertEquals(false, invoker.canUndo());
+        invoker.invoke(command);
+        assertEquals(true, invoker.canUndo());
     }
 
     class Handler implements ICommandCallback {

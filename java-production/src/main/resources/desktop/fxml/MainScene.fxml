@@ -17,6 +17,11 @@
                         <MenuItem text="Save"/>
                     </items>
                 </Menu>
+                <Menu text="Edit">
+                    <items>
+                        <MenuItem fx:id="undoMenuItem" text="Undo" accelerator="Shortcut+Z"/>
+                    </items>
+                </Menu>
                 <Menu text="View">
                     <fx:define>
                         <ToggleGroup fx:id="monthViewToggleGroup"/>

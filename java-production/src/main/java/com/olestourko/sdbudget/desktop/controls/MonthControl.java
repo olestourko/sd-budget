@@ -85,7 +85,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
     private final SimpleObjectProperty<Month> month = new SimpleObjectProperty<>();
     private final SimpleObjectProperty<MonthViewModel> monthViewModel = new SimpleObjectProperty<MonthViewModel>();
     private final MonthMapper monthMapper;
-    
+
     private final SimpleObjectProperty<String> currency = new SimpleObjectProperty<>("$");
 
     private MonthLogicServices monthLogicServices;
@@ -94,7 +94,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
     public void setMonthLogicServices(MonthLogicServices monthLogicServices) {
         this.monthLogicServices = monthLogicServices;
     }
-    
+
     public void setCommandInvoker(CommandInvoker commandInvoker) {
         this.commandInvoker = commandInvoker;
     }
@@ -153,8 +153,8 @@ public class MonthControl extends AnchorPane implements IMonthControl {
         preventMultipleRowSelection();
 
         // Set the handler for the "Close Month" checkbox
-        this.closeMonthCheckBox.selectedProperty().addListener(checkbox -> {
-            commandInvoker.invoke(new SetMonthClosed(this.month.getValue(), this.closeMonthCheckBox.isSelected()));
+        this.closeMonthCheckBox.setOnAction(property -> {;
+            commandInvoker.invoke(new SetMonthClosed(month.getValue(), closeMonthCheckBox.selectedProperty().getValue()));
             updateTableStyles();
             budgetTable.refresh();
         });

@@ -6,7 +6,6 @@ import com.olestourko.sdbudget.core.commands.CopyMonth;
 import com.olestourko.sdbudget.core.commands.RemoveBudgetItem;
 import com.olestourko.sdbudget.core.commands.SetMonthClosed;
 import com.olestourko.sdbudget.core.commands.UpdateBudgetItem;
-import com.olestourko.sdbudget.core.models.BudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.core.services.MonthCalculationServices;
@@ -14,9 +13,7 @@ import com.olestourko.sdbudget.desktop.controllers.MainController;
 import com.olestourko.sdbudget.desktop.controllers.OneMonthController;
 import com.olestourko.sdbudget.desktop.controllers.ScratchpadController;
 import com.olestourko.sdbudget.desktop.controllers.ThreeMonthController;
-import com.olestourko.sdbudget.desktop.mappers.BudgetItemMapper;
 import com.olestourko.sdbudget.desktop.models.Budget;
-import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
 import java.util.Optional;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -31,9 +28,7 @@ import javafx.scene.control.RadioMenuItem;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import javafx.util.Callback;
 import javax.inject.Inject;
-import org.mapstruct.factory.Mappers;
 
 /**
  *
@@ -123,6 +118,13 @@ public class Frontend {
             monthRepository.storeMonths();
         });
 
+        // Register handler for undo menu item
+        mainController.undoMenuItem.setOnAction(event -> {
+            if (commandInvoker.canUndo()) {
+                commandInvoker.undo();
+            }
+        });
+
         // Register handler for view switching menu item
         mainController.oneMonthViewMenuItem.setOnAction(event -> {
             RadioMenuItem menuItem = (RadioMenuItem) event.getSource();
@@ -185,7 +187,7 @@ public class Frontend {
             Month month = monthRepository.getFirst();
             monthCalculationServices.recalculateMonths(month);
         }, 9);
-        
+
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
