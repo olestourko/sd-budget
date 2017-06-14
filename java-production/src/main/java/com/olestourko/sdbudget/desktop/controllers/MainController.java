@@ -35,6 +35,8 @@ public class MainController implements Initializable {
     @FXML
     public MenuItem undoMenuItem;
     @FXML
+    public MenuItem redoMenuItem;
+    @FXML
     public RadioMenuItem oneMonthViewMenuItem;
     @FXML
     public RadioMenuItem threeMonthViewMenuItem;
@@ -96,7 +98,7 @@ public class MainController implements Initializable {
 
             monthCalculationServices.recalculateMonths(budget.getCurrentMonth());
             budget.setCurrentMonth(nextMonth);
-            
+
             previousMonthButton.disableProperty().set(false);
         });
     }

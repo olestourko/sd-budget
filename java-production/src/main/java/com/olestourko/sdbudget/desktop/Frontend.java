@@ -40,7 +40,7 @@ public class Frontend {
     protected static final int THREE_MONTH_WIDTH = 920;
     protected static final int SCRATCHPAD_WIDTH = 400;
     protected static final int DEFAULT_HEIGHT = 600;
-    protected static final String baseTitle = "SDBudget 0.1.5b3";
+    protected static final String baseTitle = "SDBudget 0.2.0";
     protected static final String thumbUri = "/desktop/images/thumb.png";
 
     protected double lastOneMonthWidth;
@@ -124,7 +124,14 @@ public class Frontend {
                 commandInvoker.undo();
             }
         });
-
+        
+        // Register handler for redo menu item
+        mainController.redoMenuItem.setOnAction(event -> {
+            if (commandInvoker.canRedo()) {
+                commandInvoker.redo();
+            }
+        });
+        
         // Register handler for view switching menu item
         mainController.oneMonthViewMenuItem.setOnAction(event -> {
             RadioMenuItem menuItem = (RadioMenuItem) event.getSource();
@@ -191,17 +198,20 @@ public class Frontend {
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
-
+                if(!commandInvoker.canUndo()) {
+                    return;
+                }
+                
                 //http://code.makery.ch/blog/javafx-dialogs-official/
                 Alert alert = new Alert(AlertType.INFORMATION);
                 alert.setTitle(baseTitle + " - Exit");
-                alert.setHeaderText("Do you want to save any changes?");
+                alert.setHeaderText("Do you want to save your changes?");
                 alert.setContentText(null);
                 Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
                 stage.getIcons().add(new Image(getClass().getResourceAsStream(thumbUri)));
 
-                ButtonType saveAndExitButton = new ButtonType("Save & Exit");
-                ButtonType exitButton = new ButtonType("Exit");
+                ButtonType saveAndExitButton = new ButtonType("Yes");
+                ButtonType exitButton = new ButtonType("No");
                 ButtonType cancelButton = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
 
                 alert.getButtonTypes().setAll(saveAndExitButton, exitButton, cancelButton);

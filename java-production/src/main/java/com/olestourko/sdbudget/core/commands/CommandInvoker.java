@@ -17,6 +17,7 @@ public class CommandInvoker {
 
     private HashMap<Class<?>, List<Pair<ICommandCallback, Integer>>> listeners = new HashMap<>();
     private Deque<ICommand> history = new ArrayDeque<>();
+    private Deque<ICommand> redos = new ArrayDeque<>();
 
     @Inject
     public CommandInvoker() {
@@ -26,6 +27,7 @@ public class CommandInvoker {
     public void invoke(ICommand command) {
         history.push(command);
         command.execute();
+        redos.clear();
         callListeners(command);
     }
 
@@ -54,13 +56,29 @@ public class CommandInvoker {
         listeners.get(commandClass).add(new Pair<>(handler, priority));
     }
 
+    public boolean canRedo() {
+        return redos.size() > 0;
+    }
+
     public boolean canUndo() {
         return history.size() > 0;
     }
 
     public void undo() {
-        ICommand command = history.pop();
-        command.undo();
-        callListeners(command);
+        if (canUndo()) {
+            ICommand command = history.pop();
+            command.undo();
+            redos.add(command);
+            callListeners(command);
+        }
+    }
+
+    public void redo() {
+        if (canRedo()) {
+            ICommand command = redos.pop();
+            command.execute();
+            history.push(command);
+            callListeners(command);
+        }
     }
 }

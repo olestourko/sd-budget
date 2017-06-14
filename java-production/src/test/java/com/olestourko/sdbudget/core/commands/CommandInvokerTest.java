@@ -112,10 +112,33 @@ public class CommandInvokerTest {
         assertEquals(handler3, objectWrapper.object);
     }
 
+    /*
+    * Test of canUndo method, of class CommandInvoker
+     */
     @Test
+    public void testCanUndo() {
+        ICommand command = new MockCommand_EmptyImp();
+        assertEquals(false, invoker.canUndo());
+        invoker.invoke(command);
+        assertEquals(true, invoker.canUndo());
+    }
+
+    /*
+    * Test of canRedo method, of class CommandInvoker
+     */
+    @Test
+    public void testCanRedo() {
+        ICommand command = new MockCommand_EmptyImp();
+        assertEquals(false, invoker.canRedo());
+        invoker.invoke(command);
+        invoker.undo();
+        assertEquals(true, invoker.canRedo());
+    }
+
     /*
     * Test of undo method, of class CommandInvoker
      */
+    @Test
     public void testUndo() {
         StringWrapper stringWrapper = new StringWrapper("A");
         ICommand command1 = new MockCommand_HistoryTestImp(stringWrapper, "B");
@@ -129,15 +152,34 @@ public class CommandInvokerTest {
         assertEquals("A", stringWrapper.getValue());
     }
 
-    @Test
     /*
-    * Test of canUndo method, of class CommandInvoker
+    * Test of redo method, of class CommandInvoker. Test basic redo.
      */
-    public void testCanUndo() {
-        ICommand command = new MockCommand_EmptyImp();
-        assertEquals(false, invoker.canUndo());
-        invoker.invoke(command);
-        assertEquals(true, invoker.canUndo());
+    @Test
+    public void testRedo_1() {
+        StringWrapper stringWrapper = new StringWrapper("A");
+
+        // 
+        ICommand command1 = new MockCommand_HistoryTestImp(stringWrapper, "B");
+        invoker.invoke(command1);
+        invoker.undo();
+        invoker.redo();
+        assertEquals("B", stringWrapper.getValue());
+    }
+
+    /*
+    * Test of redo method, of class CommandInvoker. Test clearing the redo stack when a new command is invoked.
+     */
+    @Test
+    public void testRedo_2() {
+        StringWrapper stringWrapper = new StringWrapper("A");
+        ICommand command1 = new MockCommand_HistoryTestImp(stringWrapper, "B");
+        invoker.invoke(command1);
+        invoker.undo();
+        ICommand command2 = new MockCommand_HistoryTestImp(stringWrapper, "C");
+        invoker.invoke(command2);
+        invoker.redo();
+        assertEquals("C", stringWrapper.getValue());
     }
 
     class Handler implements ICommandCallback {

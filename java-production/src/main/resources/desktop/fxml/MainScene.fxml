@@ -20,6 +20,7 @@
                 <Menu text="Edit">
                     <items>
                         <MenuItem fx:id="undoMenuItem" text="Undo" accelerator="Shortcut+Z"/>
+                        <MenuItem fx:id="redoMenuItem" text="Redo" accelerator="Shortcut+Y"/>
                     </items>
                 </Menu>
                 <Menu text="View">
