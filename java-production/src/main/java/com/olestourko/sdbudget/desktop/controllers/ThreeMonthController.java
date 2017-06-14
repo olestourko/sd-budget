@@ -112,12 +112,6 @@ public class ThreeMonthController implements Initializable, INMonthController {
         this.monthControls.get(2).setMonth(monthRepository.getNext(this.monthControls.get(1).getMonth()));
     }
 
-    private void populateMonthControls() {
-        for (MonthControl monthControl : monthControls) {
-            monthControl.refresh();
-        }
-    }
-
     @Override
     public void refresh() {
         for (MonthControl monthControl : monthControls) {

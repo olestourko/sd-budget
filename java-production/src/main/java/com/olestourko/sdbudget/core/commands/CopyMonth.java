@@ -24,13 +24,13 @@ public class CopyMonth implements ICommand {
 
     @Override
     public void execute() {
-        originalCopy = monthCopyService.cloneMonth(from, new Month());
-        to = monthCopyService.cloneMonth(from, to);
+        originalCopy = monthCopyService.cloneMonth(to, new Month());
+        monthCopyService.cloneMonth(from, to);
     }
 
     @Override
     public void undo() {
-        from = monthCopyService.cloneMonth(originalCopy, from);
+        monthCopyService.cloneMonth(originalCopy, to);
     }
 
     public Month getFrom() {

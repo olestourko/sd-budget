@@ -18,6 +18,7 @@ import java.util.Calendar;
 import java.util.List;
 import org.flywaydb.core.Flyway;
 import javafx.application.Application.Parameters;
+import org.cfg4j.provider.ConfigurationProvider;
 
 public class Sdbudget extends Application {
 
@@ -25,16 +26,6 @@ public class Sdbudget extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-
-        // Migrate DB if the migrate flag is set
-        Parameters parameters = getParameters();
-        List<String> unnamedParamers = parameters.getUnnamed();
-        if (unnamedParamers.contains("migrate") || ALWAYS_MIGRATE) {
-            Flyway flyway = new Flyway();
-            flyway.setDataSource("jdbc:h2:~/sdbudget", "sdbudget", "");
-            flyway.migrate();
-        }
-
         // Create configuration file if it doesn't exist
         File configFile = new File("./configuration.yaml");
         if (!configFile.exists()) {
@@ -46,6 +37,20 @@ public class Sdbudget extends Application {
         final BudgetComponent budgetComponent = DaggerBudgetComponent.builder().coreComponent(coreComponent).build();
         final Budget budget = budgetComponent.budget().get();
         final Frontend frontend = budgetComponent.frontend().get();
+
+        // Migrate DB if the migrate flag is set
+        Parameters parameters = getParameters();
+        List<String> unnamedParamers = parameters.getUnnamed();
+        if (unnamedParamers.contains("migrate") || ALWAYS_MIGRATE) {
+            ConfigurationProvider configurationProvider = coreComponent.configurationProvider();
+            String dbPathName = configurationProvider.getProperty("db_pathname", String.class);
+            String url = "jdbc:h2:" + dbPathName;
+            String userName = "sdbudget";
+
+            Flyway flyway = new Flyway();
+            flyway.setDataSource(url, userName, "");
+            flyway.migrate();
+        }
 
 //        System.out.println(budgetComponent.configurationProvider().getProperty("currency", String.class));
         // Populate the month repository

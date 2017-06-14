@@ -66,16 +66,16 @@ public class CopyMonthTest {
      */
     @Test
     public void testUndo() {
-        int originalRevenuesSize = from.getRevenues().size();
-        int originalExpensesSize = from.getExpenses().size();
-        int originalAdjustmentsSize = from.getAdjustments().size();
+        int originalRevenuesSize = to.getRevenues().size();
+        int originalExpensesSize = to.getExpenses().size();
+        int originalAdjustmentsSize = to.getAdjustments().size();
         
         CopyMonth command = new CopyMonth(from, to);
         command.execute();
         command.undo();
         
-        assertEquals(originalRevenuesSize, from.getRevenues().size());
-        assertEquals(originalExpensesSize, from.getExpenses().size());
-        assertEquals(originalAdjustmentsSize, from.getAdjustments().size()); // Adjustments should not be cloned
+        assertEquals(originalRevenuesSize, to.getRevenues().size());
+        assertEquals(originalExpensesSize, to.getExpenses().size());
+        assertEquals(originalAdjustmentsSize, to.getAdjustments().size()); // Adjustments should not be cloned
     }
 }
