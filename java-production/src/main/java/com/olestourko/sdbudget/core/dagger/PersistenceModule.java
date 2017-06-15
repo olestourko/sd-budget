@@ -30,6 +30,7 @@ public class PersistenceModule {
          */
         try {
             Class.forName("org.h2.Driver");
+  
             String dbPathName = configurationProvider.getProperty("db_pathname", String.class);
             String url = "jdbc:h2:" + dbPathName;
             String userName = "sdbudget";
