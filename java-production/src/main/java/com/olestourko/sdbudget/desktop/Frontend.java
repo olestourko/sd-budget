@@ -40,7 +40,7 @@ public class Frontend {
     protected static final int THREE_MONTH_WIDTH = 920;
     protected static final int SCRATCHPAD_WIDTH = 400;
     protected static final int DEFAULT_HEIGHT = 600;
-    protected static final String baseTitle = "SDBudget 0.2.0";
+    protected static final String baseTitle = "SDBudget 0.2.0b1";
     protected static final String thumbUri = "/desktop/images/thumb.png";
 
     protected double lastOneMonthWidth;

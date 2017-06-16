@@ -2,7 +2,6 @@ package com.olestourko.sdbudget.desktop.controls.handlers;
 
 import javafx.event.EventHandler;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;

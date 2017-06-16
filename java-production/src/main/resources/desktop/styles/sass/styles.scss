@@ -48,7 +48,8 @@ $green:     #859900;
     -fx-text-fill: $yellow;
     -fx-cursor: hand;
 }
-.button:hover {
+.button:hover,
+.button:focused {
     -fx-underline: true;
 }
 

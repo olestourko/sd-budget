@@ -239,6 +239,8 @@ public class ScratchpadController implements Initializable, IScratchpad {
                 });
             }
         });
+        
+        addTransactionButton.defaultButtonProperty().set(true);
     }
 
     private void deleteItem(BudgetItem item) {
