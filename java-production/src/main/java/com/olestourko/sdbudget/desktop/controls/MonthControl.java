@@ -23,6 +23,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import com.olestourko.sdbudget.desktop.models.MonthViewModel;
 import com.sun.javafx.scene.control.skin.TableHeaderRow;
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -37,6 +38,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
@@ -103,39 +105,6 @@ public class MonthControl extends AnchorPane implements IMonthControl {
         return this.copyToNext;
     }
 
-    // <editor-fold defaultstate="collapsed" desc="Month Revenues/Expenses/Adjustments change listeners">
-    // These update the table tree items whenever monthViewModels's revenues/expenses/adjustments lists change
-    private final ListChangeListener<BudgetItemViewModel> revenuesListChangeListener = new ListChangeListener<BudgetItemViewModel>() {
-        @Override
-        public void onChanged(ListChangeListener.Change<? extends BudgetItemViewModel> change) {
-            revenuesRoot.getValue().setAmount(monthViewModel.getValue().getTotalRevenues());
-            revenuesRoot.getChildren().clear();
-            for (BudgetItemViewModel revenue : monthViewModel.getValue().getRevenues()) {
-                revenuesRoot.getChildren().add(new TreeItem<BudgetItemViewModel>(revenue));
-            }
-        }
-    };
-
-    private final ListChangeListener<BudgetItemViewModel> expensesListChangeListener = new ListChangeListener<BudgetItemViewModel>() {
-        @Override
-        public void onChanged(ListChangeListener.Change<? extends BudgetItemViewModel> change) {
-            expensesRoot.getValue().setAmount(monthViewModel.getValue().getTotalExpenses());
-            expensesRoot.getChildren().clear();
-            for (BudgetItemViewModel expense : monthViewModel.getValue().getExpenses()) {
-                expensesRoot.getChildren().add(new TreeItem<BudgetItemViewModel>(expense));
-            }
-        }
-    };
-
-    private final ListChangeListener<BudgetItemViewModel> adjustmentsListChangeListener = new ListChangeListener<BudgetItemViewModel>() {
-        @Override
-        public void onChanged(ListChangeListener.Change<? extends BudgetItemViewModel> change) {
-            adjustmentsRoot.getValue().setAmount(monthViewModel.getValue().getTotalAdjustments());
-            budgetTable.refresh();
-        }
-    };
-    // </editor-fold>
-
     public MonthControl() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/desktop/fxml/MonthControl.fxml"));
         loader.setRoot(this);
@@ -155,11 +124,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
         // Set the handler for the "Close Month" checkbox
         this.closeMonthCheckBox.setOnAction(property -> {;
             commandInvoker.invoke(new SetMonthClosed(month.getValue(), closeMonthCheckBox.selectedProperty().getValue()));
-            updateTableStyles();
-            budgetTable.refresh();
         });
-
-        updateTableStyles();
 
         // Repopulates the tables when the reference to the month instance changes
         this.monthProperty().addListener(property -> {
@@ -184,21 +149,6 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                 }
             }
         });
-    }
-
-    // Enable / disable tables based on the "Month Closed" checkbox
-    private void updateTableStyles() {
-        if (this.closeMonthCheckBox.isSelected()) {
-            budgetTable.getStyleClass().add("disabled");
-            budgetTable.setEditable(false);
-            closingTable.getStyleClass().removeAll("disabled");
-            closingTable.setEditable(true);
-        } else {
-            budgetTable.getStyleClass().removeAll("disabled");
-            budgetTable.setEditable(true);
-            closingTable.getStyleClass().addAll("disabled");
-            closingTable.setEditable(false);
-        }
     }
 
     public MonthViewModel getMonthViewModel() {
@@ -484,17 +434,8 @@ public class MonthControl extends AnchorPane implements IMonthControl {
 
     public void refresh() {
         MonthViewModel monthViewModel = monthMapper.mapMonthToMonthViewModel(getMonth());
-        if (this.monthViewModel.getValue() != null) {
-            this.monthViewModel.getValue().getRevenues().removeListener(revenuesListChangeListener);
-            this.monthViewModel.getValue().getExpenses().removeListener(expensesListChangeListener);
-            this.monthViewModel.getValue().getAdjustments().removeListener(adjustmentsListChangeListener);
-        }
 
         this.monthViewModel.set(monthViewModel);
-        monthViewModel.getRevenues().addListener(revenuesListChangeListener);
-        monthViewModel.getExpenses().addListener(expensesListChangeListener);
-        monthViewModel.getAdjustments().addListener(adjustmentsListChangeListener);
-
         revenuesRoot.getChildren().clear();
         revenuesRoot.getValue().setAmount(monthViewModel.getTotalRevenues());
         expensesRoot.getChildren().clear();
@@ -538,6 +479,19 @@ public class MonthControl extends AnchorPane implements IMonthControl {
 
         // Enable/Disable month closing button
         copyToNext.setDisable(!monthLogicServices.isMonthCloneable(month.getValue()));
+        
+        // Enable / disable tables based on the "Month Closed" checkbox
+        if (this.closeMonthCheckBox.isSelected()) {
+            budgetTable.getStyleClass().add("disabled");
+            budgetTable.setEditable(false);
+            closingTable.getStyleClass().removeAll("disabled");
+            closingTable.setEditable(true);
+        } else {
+            budgetTable.getStyleClass().removeAll("disabled");
+            budgetTable.setEditable(true);
+            closingTable.getStyleClass().addAll("disabled");
+            closingTable.setEditable(false);
+        }
     }
 
     @Override
