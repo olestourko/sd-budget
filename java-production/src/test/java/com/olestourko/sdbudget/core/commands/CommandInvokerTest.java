@@ -153,6 +153,18 @@ public class CommandInvokerTest {
     }
 
     /*
+    * Test of getLastCommand, of class CommandInvoker
+     */
+    @Test
+    public void testGetLastCommand() {    
+        ICommand command = new MockCommand_EmptyImp();
+        invoker.invoke(command);
+        assertEquals(command, invoker.getLastCommand());
+        invoker.undo();
+        assertEquals(null, invoker.getLastCommand());
+    }
+    
+    /*
     * Test of redo method, of class CommandInvoker. Test basic redo.
      */
     @Test

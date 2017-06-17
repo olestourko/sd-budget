@@ -81,4 +81,9 @@ public class CommandInvoker {
             callListeners(command);
         }
     }
+
+    public ICommand getLastCommand() {
+        https://docs.oracle.com/javase/7/docs/api/java/util/Deque.html
+        return history.peek();
+    }
 }

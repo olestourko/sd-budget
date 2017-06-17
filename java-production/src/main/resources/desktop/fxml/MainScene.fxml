@@ -14,7 +14,7 @@
             <menus>
                 <Menu text="File">
                     <items>
-                        <MenuItem text="Save"/>
+                        <MenuItem fx:id="saveMenuItem" text="Save" accelerator="Shortcut+S" disable="true" />
                     </items>
                 </Menu>
                 <Menu text="Edit">

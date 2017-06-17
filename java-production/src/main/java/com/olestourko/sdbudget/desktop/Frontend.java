@@ -45,7 +45,7 @@ public class Frontend {
     protected static final int THREE_MONTH_WIDTH = 920;
     protected static final int SCRATCHPAD_WIDTH = 400;
     protected static final int DEFAULT_HEIGHT = 600;
-    protected static final String baseTitle = "SDBudget 0.2.1b2";
+    protected static final String baseTitle = "SDBudget 0.2.1b3";
     protected static final String thumbUri = "/desktop/images/thumb.png";
 
     protected double lastOneMonthWidth;
@@ -62,7 +62,8 @@ public class Frontend {
 
     protected final ScratchpadController scratchpadController;
     protected final CommandInvoker commandInvoker;
-
+    ICommand lastCommand = null;
+    
     protected Stage stage;
     protected Node currentRoot;
     protected Node mainControllerRoot;
@@ -128,8 +129,9 @@ public class Frontend {
         mainScene.getStylesheets().add("/desktop/styles/css/styles.css");
 
         // Register handler for save menu item
-        mainController.mainMenu.getMenus().get(0).getItems().get(0).setOnAction(event -> {
+        mainController.saveMenuItem.setOnAction(event -> {
             monthRepository.storeMonths();
+            lastCommand = commandInvoker.getLastCommand();
         });
 
         // Register handler for undo menu item
@@ -211,7 +213,7 @@ public class Frontend {
             monthCalculationServices.recalculateMonths(month);
         }, 9);
 
-        // Register handlers for binding undo/redo button status
+        // Register handlers for binding undo/redo button status and save button status
         List<Class<? extends ICommand>> commandClasses = new ArrayList<>(Arrays.asList(
                 UpdateBudgetItem.class,
                 AddBudgetItem.class,
@@ -221,6 +223,7 @@ public class Frontend {
         ));
         for (Class<? extends ICommand> commandClass : commandClasses) {
             commandInvoker.addListener(commandClass, command -> {
+                mainController.saveMenuItem.setDisable(lastCommand == commandInvoker.getLastCommand());
                 mainController.undoMenuItem.setDisable(!commandInvoker.canUndo());
                 mainController.redoMenuItem.setDisable(!commandInvoker.canRedo());
             });
@@ -229,7 +232,7 @@ public class Frontend {
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
-                if (!commandInvoker.canUndo()) {
+                if (lastCommand == commandInvoker.getLastCommand()) {
                     return;
                 }
 

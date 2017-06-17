@@ -33,6 +33,8 @@ public class MainController implements Initializable {
     @FXML
     public Pane contentContainer;
     @FXML
+    public MenuItem saveMenuItem;
+    @FXML
     public MenuItem undoMenuItem;
     @FXML
     public MenuItem redoMenuItem;
@@ -44,7 +46,7 @@ public class MainController implements Initializable {
     public RadioMenuItem scratchpadViewMenuItem;
     @FXML
     public RadioMenuItem chartViewMenuItem;
-    
+
     private final MonthCalculationServices monthCalculationServices;
     private final MonthRepository monthRepository;
     private final MonthFactory monthFactory;
