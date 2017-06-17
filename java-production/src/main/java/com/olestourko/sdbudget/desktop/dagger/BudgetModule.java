@@ -5,6 +5,7 @@ import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.core.services.MonthCalculationServices;
 import com.olestourko.sdbudget.core.services.MonthCopyService;
 import com.olestourko.sdbudget.core.services.MonthLogicServices;
+import com.olestourko.sdbudget.desktop.controllers.ChartController;
 import com.olestourko.sdbudget.desktop.controllers.OneMonthController;
 import com.olestourko.sdbudget.desktop.controllers.ScratchpadController;
 import com.olestourko.sdbudget.desktop.controllers.ThreeMonthController;
@@ -85,6 +86,19 @@ public class BudgetModule {
                 monthRepository,
                 budget,
                 currency,
+                commandInvoker
+        );
+    }
+
+    @Provides
+    public ChartController chartController(
+            Budget budget,
+            MonthRepository monthRepository,
+            CommandInvoker commandInvoker
+    ) {
+        return new ChartController(
+                budget,
+                monthRepository,
                 commandInvoker
         );
     }

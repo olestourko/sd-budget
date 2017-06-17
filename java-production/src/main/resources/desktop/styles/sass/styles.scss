@@ -196,3 +196,26 @@ $green:     #859900;
         -fx-background-color: $base2;
     }
 }
+
+/* Charts */
+// http://docs.oracle.com/javafx/2/charts/area-chart.htm
+$chartColor: $orange;
+
+.chart {
+    .chart-title .text {
+        -fx-font-size: 10pt;
+    }
+    
+    .chart-plot-background {
+        -fx-background-color: none;
+    }
+
+    .default-color0.chart-area-symbol { -fx-background-color: $chartColor, mix($chartColor, #ffffff, 0.8) }
+    .default-color1.chart-area-symbol { -fx-background-color: rgba($chartColor, 0.5), mix($chartColor, #ffffff, 0.8) }
+    
+    .default-color0.chart-series-area-line { -fx-stroke: $chartColor; }
+    .default-color1.chart-series-area-line { -fx-stroke: rgba($chartColor, 0.5); }
+
+    .default-color0.chart-series-area-fill { -fx-fill: rgba($chartColor, 0.15); }
+    .default-color1.chart-series-area-fill { -fx-fill: rgba($chartColor, 0.05); }
+}

@@ -9,6 +9,7 @@ import com.olestourko.sdbudget.core.commands.UpdateBudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.core.services.MonthCalculationServices;
+import com.olestourko.sdbudget.desktop.controllers.ChartController;
 import com.olestourko.sdbudget.desktop.controllers.MainController;
 import com.olestourko.sdbudget.desktop.controllers.OneMonthController;
 import com.olestourko.sdbudget.desktop.controllers.ScratchpadController;
@@ -40,7 +41,7 @@ public class Frontend {
     protected static final int THREE_MONTH_WIDTH = 920;
     protected static final int SCRATCHPAD_WIDTH = 400;
     protected static final int DEFAULT_HEIGHT = 600;
-    protected static final String baseTitle = "SDBudget 0.2.0b1";
+    protected static final String baseTitle = "SDBudget 0.2.1b1";
     protected static final String thumbUri = "/desktop/images/thumb.png";
 
     protected double lastOneMonthWidth;
@@ -53,6 +54,8 @@ public class Frontend {
     protected final MainController mainController;
     protected final OneMonthController oneMonthController;
     protected final ThreeMonthController threeMonthController;
+    protected final ChartController chartController;
+
     protected final ScratchpadController scratchpadController;
     protected final CommandInvoker commandInvoker;
 
@@ -62,6 +65,7 @@ public class Frontend {
     protected Node oneMonthControllerRoot;
     protected Node threeMonthControllerRoot;
     protected Node scratchpadControllerRoot;
+    protected Node chartControllerRoot;
 
     @Inject
     public Frontend(
@@ -72,6 +76,7 @@ public class Frontend {
             OneMonthController oneMonthController,
             ThreeMonthController threeMonthController,
             ScratchpadController scratchpadController,
+            ChartController chartController,
             CommandInvoker commandInvoker
     ) {
         this.budget = budget;
@@ -81,6 +86,7 @@ public class Frontend {
         this.oneMonthController = oneMonthController;
         this.threeMonthController = threeMonthController;
         this.scratchpadController = scratchpadController;
+        this.chartController = chartController;
         this.commandInvoker = commandInvoker;
     }
 
@@ -106,8 +112,12 @@ public class Frontend {
         scratchpadLoader.setController(scratchpadController);
         scratchpadControllerRoot = scratchpadLoader.load();
         scratchpadController.load();
-        // </editor-fold>
 
+        FXMLLoader chartLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/ChartScene.fxml"));
+        chartLoader.setController(chartController);
+        chartControllerRoot = chartLoader.load();
+
+        // </editor-fold>
         this.currentRoot = oneMonthControllerRoot;
         mainController.contentContainer.getChildren().addAll(currentRoot); // Set the month view
         Scene mainScene = new Scene((Parent) mainControllerRoot);
@@ -124,14 +134,14 @@ public class Frontend {
                 commandInvoker.undo();
             }
         });
-        
+
         // Register handler for redo menu item
         mainController.redoMenuItem.setOnAction(event -> {
             if (commandInvoker.canRedo()) {
                 commandInvoker.redo();
             }
         });
-        
+
         // Register handler for view switching menu item
         mainController.oneMonthViewMenuItem.setOnAction(event -> {
             RadioMenuItem menuItem = (RadioMenuItem) event.getSource();
@@ -150,6 +160,12 @@ public class Frontend {
             RadioMenuItem menuItem = (RadioMenuItem) event.getSource();
             if (menuItem.isSelected()) {
                 switchToScratchpadView();
+            }
+        });
+        mainController.chartViewMenuItem.setOnAction(event -> {
+            RadioMenuItem menuItem = (RadioMenuItem) event.getSource();
+            if (menuItem.isSelected()) {
+                switchToChartView();
             }
         });
 
@@ -198,10 +214,10 @@ public class Frontend {
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
-                if(!commandInvoker.canUndo()) {
+                if (!commandInvoker.canUndo()) {
                     return;
                 }
-                
+
                 //http://code.makery.ch/blog/javafx-dialogs-official/
                 Alert alert = new Alert(AlertType.INFORMATION);
                 alert.setTitle(baseTitle + " - Exit");
@@ -272,5 +288,12 @@ public class Frontend {
         scratchpadController.refresh();
         mainController.contentContainer.getChildren().add(scratchpadControllerRoot);
         stage.setWidth(Math.max(lastScratchpadWidth, SCRATCHPAD_WIDTH));
+    }
+
+    protected void switchToChartView() {
+        mainController.scratchpadViewButton.setText("Budget");
+        currentRoot = chartControllerRoot;
+        mainController.contentContainer.getChildren().clear();
+        mainController.contentContainer.getChildren().add(chartControllerRoot);
     }
 }

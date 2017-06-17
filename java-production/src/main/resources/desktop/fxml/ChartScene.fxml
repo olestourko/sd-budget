@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.cell.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.chart.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1"
+            styleClass="scratchpad"
+            AnchorPane.topAnchor="5"
+            AnchorPane.bottomAnchor="5"
+            AnchorPane.leftAnchor="5"
+            AnchorPane.rightAnchor="5">
+    <children>
+        <AreaChart fx:id="chart"
+                   AnchorPane.bottomAnchor="0.0"
+                   AnchorPane.leftAnchor="0.0"
+                   AnchorPane.rightAnchor="10.0"
+                   AnchorPane.topAnchor="0.0">
+            <title>Surplus Over Time</title>
+            <legendVisible>false</legendVisible>
+            <animated>false</animated>
+            <xAxis>
+                <CategoryAxis fx:id="xAxis" side="BOTTOM">
+                    <tickLabelRotation>-45</tickLabelRotation>
+                    <startMargin>0</startMargin>
+                    <endMargin>0</endMargin>
+                    <!--<autoRanging>false</autoRanging>-->
+                </CategoryAxis>
+            </xAxis>
+            <yAxis>
+                <NumberAxis fx:id="yAxis" side="LEFT">
+                    <minorTickCount>1</minorTickCount>
+                </NumberAxis>
+            </yAxis>
+        </AreaChart>
+    </children>
+</AnchorPane>
