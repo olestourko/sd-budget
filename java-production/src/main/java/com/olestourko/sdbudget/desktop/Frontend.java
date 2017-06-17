@@ -3,6 +3,7 @@ package com.olestourko.sdbudget.desktop;
 import com.olestourko.sdbudget.core.commands.AddBudgetItem;
 import com.olestourko.sdbudget.core.commands.CommandInvoker;
 import com.olestourko.sdbudget.core.commands.CopyMonth;
+import com.olestourko.sdbudget.core.commands.ICommand;
 import com.olestourko.sdbudget.core.commands.RemoveBudgetItem;
 import com.olestourko.sdbudget.core.commands.SetMonthClosed;
 import com.olestourko.sdbudget.core.commands.UpdateBudgetItem;
@@ -15,6 +16,9 @@ import com.olestourko.sdbudget.desktop.controllers.OneMonthController;
 import com.olestourko.sdbudget.desktop.controllers.ScratchpadController;
 import com.olestourko.sdbudget.desktop.controllers.ThreeMonthController;
 import com.olestourko.sdbudget.desktop.models.Budget;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -41,7 +45,7 @@ public class Frontend {
     protected static final int THREE_MONTH_WIDTH = 920;
     protected static final int SCRATCHPAD_WIDTH = 400;
     protected static final int DEFAULT_HEIGHT = 600;
-    protected static final String baseTitle = "SDBudget 0.2.1b1";
+    protected static final String baseTitle = "SDBudget 0.2.1b2";
     protected static final String thumbUri = "/desktop/images/thumb.png";
 
     protected double lastOneMonthWidth;
@@ -130,16 +134,12 @@ public class Frontend {
 
         // Register handler for undo menu item
         mainController.undoMenuItem.setOnAction(event -> {
-            if (commandInvoker.canUndo()) {
-                commandInvoker.undo();
-            }
+            commandInvoker.undo();
         });
 
         // Register handler for redo menu item
         mainController.redoMenuItem.setOnAction(event -> {
-            if (commandInvoker.canRedo()) {
-                commandInvoker.redo();
-            }
+            commandInvoker.redo();
         });
 
         // Register handler for view switching menu item
@@ -210,6 +210,21 @@ public class Frontend {
             Month month = monthRepository.getFirst();
             monthCalculationServices.recalculateMonths(month);
         }, 9);
+
+        // Register handlers for binding undo/redo button status
+        List<Class<? extends ICommand>> commandClasses = new ArrayList<>(Arrays.asList(
+                UpdateBudgetItem.class,
+                AddBudgetItem.class,
+                RemoveBudgetItem.class,
+                SetMonthClosed.class,
+                CopyMonth.class
+        ));
+        for (Class<? extends ICommand> commandClass : commandClasses) {
+            commandInvoker.addListener(commandClass, command -> {
+                mainController.undoMenuItem.setDisable(!commandInvoker.canUndo());
+                mainController.redoMenuItem.setDisable(!commandInvoker.canRedo());
+            });
+        }
 
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override

@@ -19,8 +19,8 @@
                 </Menu>
                 <Menu text="Edit">
                     <items>
-                        <MenuItem fx:id="undoMenuItem" text="Undo" accelerator="Shortcut+Z"/>
-                        <MenuItem fx:id="redoMenuItem" text="Redo" accelerator="Shortcut+Y"/>
+                        <MenuItem fx:id="undoMenuItem" text="Undo" accelerator="Shortcut+Z" disable="true" />
+                        <MenuItem fx:id="redoMenuItem" text="Redo" accelerator="Shortcut+Y" disable="true" />
                     </items>
                 </Menu>
                 <Menu text="View">
