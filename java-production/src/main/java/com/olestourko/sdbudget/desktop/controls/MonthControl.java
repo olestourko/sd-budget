@@ -23,18 +23,19 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import com.olestourko.sdbudget.desktop.models.MonthViewModel;
 import com.sun.javafx.scene.control.skin.TableHeaderRow;
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.control.CheckBox;
@@ -61,17 +62,24 @@ import org.mapstruct.factory.Mappers;
 public class MonthControl extends AnchorPane implements IMonthControl {
 
     @FXML
-    private Label dateLabel;
+    Label dateLabel;
     @FXML
-    private TreeTableView budgetTable;
+    TreeTableView budgetTable;
     @FXML
-    private TableView totalsTable;
+    TreeTableColumn budgetTableAmountColumn;
     @FXML
-    private TableView closingTable;
+    TreeTableColumn budgetTableNameColumn;
     @FXML
-    public CheckBox closeMonthCheckBox;
+    TreeTableColumn budgetTableActionColumn;
+
     @FXML
-    private Button copyToNext;
+    TableView totalsTable;
+    @FXML
+    TableView closingTable;
+    @FXML
+    CheckBox closeMonthCheckBox;
+    @FXML
+    Button copyToNext;
 
     private final TreeItem<BudgetItemViewModel> budgetTableRoot = new TreeItem<>(new BudgetItemViewModel("Budget", BigDecimal.ZERO));
     private final TreeItem<BudgetItemViewModel> revenuesRoot = new TreeItem<>(new BudgetItemViewModel("Revenues", BigDecimal.ZERO));
@@ -149,6 +157,26 @@ public class MonthControl extends AnchorPane implements IMonthControl {
                 }
             }
         });
+
+        // Fix the scrollbars. Using an event listener because they aren't added until the table is added to a scene and rendered :/
+        ListChangeListener changeListener = new ListChangeListener<Node>() {
+            @Override
+            public void onChanged(ListChangeListener.Change<? extends Node> c) {
+                ScrollBar horizontalScrollBar = (ScrollBar) budgetTable.lookup(".virtual-flow .scroll-bar:horizontal");
+                horizontalScrollBar.visibleProperty().addListener(listener -> {
+                    BooleanProperty property = (BooleanProperty) listener;
+                    if (property.getValue()) {
+                        budgetTableNameColumn.prefWidthProperty().bind(budgetTable.widthProperty().multiply(0.7).subtract(28));
+                        budgetTableAmountColumn.prefWidthProperty().bind(budgetTable.widthProperty().multiply(0.3).subtract(16));
+                    } else {
+                        budgetTableNameColumn.prefWidthProperty().bind(budgetTable.widthProperty().multiply(0.7).subtract(28));
+                        budgetTableAmountColumn.prefWidthProperty().bind(budgetTable.widthProperty().multiply(0.3));
+                    }
+                });
+                budgetTable.getChildrenUnmodifiable().removeListener(this);
+            }
+        };
+        budgetTable.getChildrenUnmodifiable().addListener(changeListener);
     }
 
     public MonthViewModel getMonthViewModel() {
@@ -165,24 +193,20 @@ public class MonthControl extends AnchorPane implements IMonthControl {
 
     // <editor-fold defaultstate="collapsed" desc="Table Column / Cell setup functions">
     protected void setupBudgetTable() {
-        TreeTableColumn nameColumn = (TreeTableColumn) budgetTable.getColumns().get(0);
-        TreeTableColumn amountColumn = (TreeTableColumn) budgetTable.getColumns().get(1);
-        TreeTableColumn actionColumn = (TreeTableColumn) budgetTable.getColumns().get(2);
+        budgetTableNameColumn.prefWidthProperty().bind(budgetTable.widthProperty().multiply(0.7).subtract(28));
+        budgetTableAmountColumn.prefWidthProperty().bind(budgetTable.widthProperty().multiply(0.3));
+        budgetTableActionColumn.prefWidthProperty().set(24);
+        budgetTableNameColumn.setResizable(false);
+        budgetTableAmountColumn.setResizable(false);
+        budgetTableActionColumn.setResizable(false);
 
-        nameColumn.prefWidthProperty().bind(budgetTable.widthProperty().multiply(0.7).subtract(28));
-        amountColumn.prefWidthProperty().bind(budgetTable.widthProperty().multiply(0.3));
-        actionColumn.prefWidthProperty().set(24);
-        nameColumn.setResizable(false);
-        amountColumn.setResizable(false);
-        actionColumn.setResizable(false);
-
-        nameColumn.setCellValueFactory(new Callback<CellDataFeatures<BudgetItemViewModel, String>, ObservableValue<String>>() {
+        budgetTableNameColumn.setCellValueFactory(new Callback<CellDataFeatures<BudgetItemViewModel, String>, ObservableValue<String>>() {
             public ObservableValue<String> call(CellDataFeatures<BudgetItemViewModel, String> p) {
                 return p.getValue().getValue().nameProperty();
             }
         });
 
-        nameColumn.setCellFactory(new Callback<TreeTableColumn<BudgetItemViewModel, BigDecimal>, TreeTableCell<BudgetItemViewModel, BigDecimal>>() {
+        budgetTableNameColumn.setCellFactory(new Callback<TreeTableColumn<BudgetItemViewModel, BigDecimal>, TreeTableCell<BudgetItemViewModel, BigDecimal>>() {
             @Override
             public TreeTableCell<BudgetItemViewModel, BigDecimal> call(TreeTableColumn<BudgetItemViewModel, BigDecimal> param) {
                 TextFieldTreeTableCell cell = new TextFieldTreeTableCell(new DefaultStringConverter());
@@ -190,7 +214,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
             }
         });
 
-        nameColumn.setOnEditCommit(new EventHandler<TreeTableColumn.CellEditEvent<BudgetItemViewModel, String>>() {
+        budgetTableNameColumn.setOnEditCommit(new EventHandler<TreeTableColumn.CellEditEvent<BudgetItemViewModel, String>>() {
             @Override
             public void handle(TreeTableColumn.CellEditEvent<BudgetItemViewModel, String> t) {
                 TreeItem<BudgetItemViewModel> treeItem = t.getTreeTablePosition().getTreeItem();
@@ -215,7 +239,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
         });
 
         // This draws the textfield when editing a table cell
-        amountColumn.setCellValueFactory(new Callback<CellDataFeatures<BudgetItemViewModel, BigDecimal>, ObservableValue<BigDecimal>>() {
+        budgetTableAmountColumn.setCellValueFactory(new Callback<CellDataFeatures<BudgetItemViewModel, BigDecimal>, ObservableValue<BigDecimal>>() {
             public ObservableValue<BigDecimal> call(CellDataFeatures<BudgetItemViewModel, BigDecimal> p) {
                 // p.getValue() returns the TreeItem<Person> instance for a particular TreeTableView row,
                 // p.getValue().getValue() returns the Person instance inside the TreeItem<Person>
@@ -224,7 +248,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
         });
 
         // Initializes the currency-formated cells for the amount column
-        amountColumn.setCellFactory(new Callback<TreeTableColumn<BudgetItemViewModel, BigDecimal>, TreeTableCell<BudgetItemViewModel, BigDecimal>>() {
+        budgetTableAmountColumn.setCellFactory(new Callback<TreeTableColumn<BudgetItemViewModel, BigDecimal>, TreeTableCell<BudgetItemViewModel, BigDecimal>>() {
             StringConverter<BigDecimal> converter;
 
             @Override
@@ -235,7 +259,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
             }
         });
 
-        amountColumn.setOnEditCommit(new EventHandler<TreeTableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal>>() {
+        budgetTableAmountColumn.setOnEditCommit(new EventHandler<TreeTableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal>>() {
             @Override
             public void handle(TreeTableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal> t) {
                 TreeItem treeItem = t.getTreeTablePosition().getTreeItem();
@@ -270,7 +294,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
             }
         });
 
-        actionColumn.setCellFactory(new Callback<TreeTableColumn<BudgetItemViewModel, String>, TreeTableCell<BudgetItemViewModel, String>>() {
+        budgetTableActionColumn.setCellFactory(new Callback<TreeTableColumn<BudgetItemViewModel, String>, TreeTableCell<BudgetItemViewModel, String>>() {
             @Override
             public TreeTableCell<BudgetItemViewModel, String> call(TreeTableColumn<BudgetItemViewModel, String> p) {
                 ButtonTreeTableCell cell = new ButtonTreeTableCell("");
@@ -479,7 +503,7 @@ public class MonthControl extends AnchorPane implements IMonthControl {
 
         // Enable/Disable month closing button
         copyToNext.setDisable(!monthLogicServices.isMonthCloneable(month.getValue()));
-        
+
         // Enable / disable tables based on the "Month Closed" checkbox
         if (this.closeMonthCheckBox.isSelected()) {
             budgetTable.getStyleClass().add("disabled");

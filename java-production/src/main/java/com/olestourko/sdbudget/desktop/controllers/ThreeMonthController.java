@@ -102,7 +102,7 @@ public class ThreeMonthController implements Initializable, INMonthController {
         }
     }
 
-    public void load() {
+    public void load() {        
         this.setMonth(budget.getCurrentMonth());
     }
 

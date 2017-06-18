@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener.Change;
@@ -33,7 +34,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
@@ -56,11 +59,15 @@ public class ScratchpadController implements Initializable, IScratchpad {
     @FXML
     private Label periodDate;
     @FXML
-    private TableColumn nameColumn;
+    private TableColumn scratchpadTableNameColumn;
     @FXML
-    private TableColumn amountColumn;
+    private TableColumn scratchpadTableAmountColumn;
     @FXML
-    private TableColumn actionColumn;
+    private TableColumn scratchpadTableActionColumn;
+    @FXML
+    private TableColumn totalsTableNameColumn;
+    @FXML
+    private TableColumn totalsTableAmountColumn;
     @FXML
     private TextField nameField;
     @FXML
@@ -109,35 +116,27 @@ public class ScratchpadController implements Initializable, IScratchpad {
     }
 
     public void load() {
-        nameColumn.prefWidthProperty().bind(scratchpadTable.widthProperty().multiply(0.7).subtract(28));
-        amountColumn.prefWidthProperty().bind(scratchpadTable.widthProperty().multiply(0.3));
-        actionColumn.prefWidthProperty().set(24);
+        scratchpadTableNameColumn.prefWidthProperty().bind(scratchpadTable.widthProperty().multiply(0.7).subtract(28));
+        scratchpadTableAmountColumn.prefWidthProperty().bind(scratchpadTable.widthProperty().multiply(0.3));
+        scratchpadTableActionColumn.prefWidthProperty().set(24);
 
         //Set the month and add callback for when the month property in the Budget model changes       
         this.setMonth(budget.getCurrentMonth());
         budget.currentMonthProperty().addListener(event -> {
             this.setMonth(budget.getCurrentMonth());
         });
-        nameColumn.setCellValueFactory(new PropertyValueFactory<BudgetItemViewModel, String>("name"));
-        amountColumn.setCellValueFactory(new PropertyValueFactory<BudgetItemViewModel, Double>("amount"));
-
-        //Add the "Adjustment Totals" item
-        totalAdjustments.amountProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue observable, Number oldValue, Number newValue) {
-//                budget.getCurrentMonth().adjustments.setAmount((BigDecimal) newValue);
-            }
-        });
+        scratchpadTableNameColumn.setCellValueFactory(new PropertyValueFactory<BudgetItemViewModel, String>("name"));
+        scratchpadTableAmountColumn.setCellValueFactory(new PropertyValueFactory<BudgetItemViewModel, Double>("amount"));
 
         //Allow editing of adjustments, and update "Total Adjustments" row whenever they change.
-        nameColumn.setCellFactory(new Callback<TableColumn<BudgetItemViewModel, String>, TableCell<BudgetItemViewModel, String>>() {
+        scratchpadTableNameColumn.setCellFactory(new Callback<TableColumn<BudgetItemViewModel, String>, TableCell<BudgetItemViewModel, String>>() {
             @Override
             public TableCell<BudgetItemViewModel, String> call(TableColumn<BudgetItemViewModel, String> param) {
                 TextFieldTableCell cell = new TextFieldTableCell(new DefaultStringConverter());
                 return cell;
             }
         });
-        nameColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<BudgetItemViewModel, String>>() {
+        scratchpadTableNameColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<BudgetItemViewModel, String>>() {
             @Override
             public void handle(TableColumn.CellEditEvent<BudgetItemViewModel, String> event) {
                 BudgetItem item = ((BudgetItemViewModel) event.getTableView().getItems().get(event.getTablePosition().getRow())).getModel();
@@ -146,7 +145,7 @@ public class ScratchpadController implements Initializable, IScratchpad {
             }
         });
 
-        amountColumn.setCellFactory(new Callback<TableColumn<BudgetItemViewModel, BigDecimal>, TableCell<BudgetItemViewModel, BigDecimal>>() {
+        scratchpadTableAmountColumn.setCellFactory(new Callback<TableColumn<BudgetItemViewModel, BigDecimal>, TableCell<BudgetItemViewModel, BigDecimal>>() {
             StringConverter<BigDecimal> converter;
 
             @Override
@@ -155,7 +154,7 @@ public class ScratchpadController implements Initializable, IScratchpad {
                 return cell;
             }
         });
-        amountColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal>>() {
+        scratchpadTableAmountColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal>>() {
             @Override
             public void handle(TableColumn.CellEditEvent<BudgetItemViewModel, BigDecimal> event) {
                 BudgetItem item = ((BudgetItemViewModel) event.getTableView().getItems().get(event.getTablePosition().getRow())).getModel();
@@ -164,7 +163,7 @@ public class ScratchpadController implements Initializable, IScratchpad {
             }
         });
 
-        actionColumn.setCellFactory(new Callback<TableColumn<BudgetItemViewModel, String>, TableCell<BudgetItemViewModel, String>>() {
+        scratchpadTableActionColumn.setCellFactory(new Callback<TableColumn<BudgetItemViewModel, String>, TableCell<BudgetItemViewModel, String>>() {
             @Override
             public TableCell<BudgetItemViewModel, String> call(TableColumn<BudgetItemViewModel, String> p) {
                 ButtonTableCell cell = new ButtonTableCell("\u00D7");
@@ -190,10 +189,9 @@ public class ScratchpadController implements Initializable, IScratchpad {
 
         //Set up the totals table
         totalsTable.getItems().add(totalAdjustments);
-        ((TableColumn) totalsTable.getColumns().get(0)).prefWidthProperty().bind(totalsTable.widthProperty().multiply(0.7).subtract(28));
-        ((TableColumn) totalsTable.getColumns().get(1)).prefWidthProperty().bind(totalsTable.widthProperty().multiply(0.3).add(24));
-
-        ((TableColumn) totalsTable.getColumns().get(1)).setCellFactory(new Callback<TableColumn<BudgetItemViewModel, BigDecimal>, TableCell<BudgetItemViewModel, BigDecimal>>() {
+        totalsTableNameColumn.prefWidthProperty().bind(totalsTable.widthProperty().multiply(0.7).subtract(28));
+        totalsTableAmountColumn.prefWidthProperty().bind(totalsTable.widthProperty().multiply(0.3).add(24));
+        totalsTableAmountColumn.setCellFactory(new Callback<TableColumn<BudgetItemViewModel, BigDecimal>, TableCell<BudgetItemViewModel, BigDecimal>>() {
             StringConverter<BigDecimal> converter;
 
             @Override
@@ -239,8 +237,28 @@ public class ScratchpadController implements Initializable, IScratchpad {
                 });
             }
         });
-        
+
         addTransactionButton.defaultButtonProperty().set(true);
+
+        // Fix the scrollbars. Using an event listener because they aren't added until the table is added to a scene and rendered :/
+        ListChangeListener changeListener = new ListChangeListener<Node>() {
+            @Override
+            public void onChanged(ListChangeListener.Change<? extends Node> c) {
+                ScrollBar horizontalScrollBar = (ScrollBar) scratchpadTable.lookup(".virtual-flow .scroll-bar:horizontal");
+                horizontalScrollBar.visibleProperty().addListener(listener -> {
+                    BooleanProperty property = (BooleanProperty) listener;
+                    if (property.getValue()) {
+                        scratchpadTableNameColumn.prefWidthProperty().bind(scratchpadTable.widthProperty().multiply(0.7).subtract(28));
+                        scratchpadTableAmountColumn.prefWidthProperty().bind(scratchpadTable.widthProperty().multiply(0.3).subtract(16));
+                    } else {
+                        scratchpadTableNameColumn.prefWidthProperty().bind(scratchpadTable.widthProperty().multiply(0.7).subtract(28));
+                        scratchpadTableAmountColumn.prefWidthProperty().bind(scratchpadTable.widthProperty().multiply(0.3));
+                    }
+                });
+                scratchpadTable.getChildrenUnmodifiable().removeListener(this);
+            }
+        };
+        scratchpadTable.getChildrenUnmodifiable().addListener(changeListener);
     }
 
     private void deleteItem(BudgetItem item) {

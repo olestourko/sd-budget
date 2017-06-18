@@ -20,22 +20,22 @@
                             <TreeTableView fx:constant="UNCONSTRAINED_RESIZE_POLICY"/>
                         </columnResizePolicy>
                         <columns>
-                            <TreeTableColumn fx:id="nameColumn" editable="true" sortable="false" text="Name" />
-                            <TreeTableColumn fx:id="amountColumn" editable="true" sortable="false" text="Amount" />
-                            <TreeTableColumn fx:id="actionColumn" editable="false" sortable="false" text="" />
+                            <TreeTableColumn fx:id="budgetTableNameColumn" editable="true" sortable="false" text="Name" />
+                            <TreeTableColumn fx:id="budgetTableAmountColumn" editable="true" sortable="false" text="Amount" />
+                            <TreeTableColumn fx:id="budgetTableActionColumn" editable="false" sortable="false" text="" />
                         </columns>
                     </TreeTableView>
                     <TableView fx:id="totalsTable" editable="true" prefHeight="86" AnchorPane.bottomAnchor="58.0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
                         <columnResizePolicy>
-                            <TableView fx:constant="UNCONSTRAINED_RESIZE_POLICY"/>
+                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
                         </columnResizePolicy>
                         <columns>
-                            <TableColumn editable="false" text="Name">
+                            <TableColumn fx:id="totalsTableNameColumn" editable="false" text="Name">
                                 <cellValueFactory>
                                     <PropertyValueFactory property="name" />
                                 </cellValueFactory>
                             </TableColumn>
-                            <TableColumn editable="false" text="Amount">
+                            <TableColumn fx:id="totalsTableAmountColumn" editable="false" text="Amount">
                                 <cellValueFactory>
                                     <PropertyValueFactory property="amount" />
                                 </cellValueFactory>
@@ -44,15 +44,15 @@
                     </TableView>
                     <TableView fx:id="closingTable" editable="true" prefHeight="30" AnchorPane.bottomAnchor="32.0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
                         <columnResizePolicy>
-                            <TableView fx:constant="UNCONSTRAINED_RESIZE_POLICY"/>
+                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
                         </columnResizePolicy>
                         <columns>
-                            <TableColumn editable="true" text="Name">
+                            <TableColumn fx:id="closingTableAmountColumn" editable="true" text="Name">
                                 <cellValueFactory>
                                     <PropertyValueFactory property="name" />
                                 </cellValueFactory>
                             </TableColumn>
-                            <TableColumn editable="true" text="Amount">
+                            <TableColumn fx:id="closingTableAmountColumn" editable="true" text="Amount">
                                 <cellValueFactory>
                                     <PropertyValueFactory property="amount" />
                                 </cellValueFactory>

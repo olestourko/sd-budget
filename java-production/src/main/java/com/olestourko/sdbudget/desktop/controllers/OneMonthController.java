@@ -79,7 +79,7 @@ public class OneMonthController implements Initializable, INMonthController {
     }
 
     public void load() {
-        this.monthControl.setMonth(budget.getCurrentMonth());
+        monthControl.setMonth(budget.getCurrentMonth());
     }
 
     @Override

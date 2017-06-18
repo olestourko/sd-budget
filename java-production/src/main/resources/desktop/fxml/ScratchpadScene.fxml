@@ -16,25 +16,25 @@
             AnchorPane.leftAnchor="5"
             AnchorPane.rightAnchor="5">
     <children>
-        <AnchorPane AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+        <AnchorPane AnchorPane.bottomAnchor="75.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
             <children>
                 <Label fx:id="periodDate" text="" />
                 <TableView fx:id="scratchpadTable" editable="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="20.0">
                     <columnResizePolicy>
-                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                        <TableView fx:constant="UNCONSTRAINED_RESIZE_POLICY"/>
                     </columnResizePolicy>
                     <columns>
-                        <TableColumn fx:id="nameColumn" editable="true" sortable="false" text="Name">
+                        <TableColumn fx:id="scratchpadTableNameColumn" editable="true" sortable="false" text="Name">
                             <cellValueFactory>
                                 <PropertyValueFactory property="name" />
                             </cellValueFactory>
                         </TableColumn>
-                        <TableColumn fx:id="amountColumn" editable="true" sortable="false" text="Amount">
+                        <TableColumn fx:id="scratchpadTableAmountColumn" editable="true" sortable="false" text="Amount">
                             <cellValueFactory>
                                 <PropertyValueFactory property="amount" />
                             </cellValueFactory>
                         </TableColumn>
-                        <TableColumn fx:id="actionColumn" editable="false" sortable="false" text=""/>
+                        <TableColumn fx:id="scratchpadTableActionColumn" editable="false" sortable="false" text=""/>
                     </columns>    
                 </TableView>
             </children>
@@ -46,12 +46,12 @@
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
                     </columnResizePolicy>
                     <columns>
-                        <TableColumn editable="true" text="Name">
+                        <TableColumn fx:id="totalsTableNameColumn" editable="true" text="Name">
                             <cellValueFactory>
                                 <PropertyValueFactory property="name" />
                             </cellValueFactory>
                         </TableColumn>
-                        <TableColumn editable="true" text="Amount">
+                        <TableColumn fx:id="totalsTableAmountColumn" editable="true" text="Amount">
                             <cellValueFactory>
                                 <PropertyValueFactory property="amount" />
                             </cellValueFactory>
