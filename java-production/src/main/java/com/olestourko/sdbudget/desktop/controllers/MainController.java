@@ -67,6 +67,9 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        previousMonthButton.setDisable(monthRepository.getPrevious(budget.getCurrentMonth()) == null);
+        nextMonthButton.setDisable(monthRepository.getNext(budget.getCurrentMonth()) == null);
+        
         previousMonthButton.setOnAction(event -> {
             Month previousMonth = monthRepository.getPrevious(budget.getCurrentMonth());
             if (previousMonth != null) {
@@ -106,5 +109,4 @@ public class MainController implements Initializable {
             previousMonthButton.disableProperty().set(false);
         });
     }
-
 }

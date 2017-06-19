@@ -52,14 +52,11 @@ public class Sdbudget extends Application {
             flyway.migrate();
         }
 
-//        System.out.println(budgetComponent.configurationProvider().getProperty("currency", String.class));
         // Populate the month repository
         MonthRepository monthRepository = coreComponent.monthRepository();
         MonthFactory monthFactory = coreComponent.monthFactory();
-
         monthRepository.fetchMonths();
         Calendar calendar = Calendar.getInstance();
-
         Month month = monthRepository.getMonth((short) calendar.get(Calendar.MONTH), (short) calendar.get(Calendar.YEAR));
         if (month == null) {
             month = monthFactory.createCurrentMonth();
