@@ -1,18 +1,20 @@
 package com.olestourko.sdbudget.desktop.dagger;
 
+import com.olestourko.sdbudget.Configuration;
 import com.olestourko.sdbudget.core.commands.CommandInvoker;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.core.services.MonthCalculationServices;
 import com.olestourko.sdbudget.core.services.MonthCopyService;
 import com.olestourko.sdbudget.core.services.MonthLogicServices;
+import com.olestourko.sdbudget.desktop.Frontend;
 import com.olestourko.sdbudget.desktop.controllers.ChartController;
+import com.olestourko.sdbudget.desktop.controllers.MainController;
 import com.olestourko.sdbudget.desktop.controllers.OneMonthController;
 import com.olestourko.sdbudget.desktop.controllers.ScratchpadController;
 import com.olestourko.sdbudget.desktop.controllers.ThreeMonthController;
 import com.olestourko.sdbudget.desktop.models.Budget;
 import dagger.Module;
 import dagger.Provides;
-import org.cfg4j.provider.ConfigurationProvider;
 
 /**
  *
@@ -23,19 +25,39 @@ import org.cfg4j.provider.ConfigurationProvider;
 public class BudgetModule {
 
     @Provides
+    public Frontend frontend(
+            Budget budget,
+            MonthCalculationServices monthCalculationServices,
+            MonthRepository monthRepository,
+            MainController mainController,
+            OneMonthController oneMonthController,
+            ThreeMonthController threeMonthController,
+            ScratchpadController scratchpadController,
+            ChartController chartController,
+            CommandInvoker commandInvoker,
+            Configuration configuration) {
+
+        return new Frontend(
+                budget,
+                monthCalculationServices,
+                monthRepository,
+                mainController,
+                oneMonthController,
+                threeMonthController,
+                scratchpadController,
+                chartController,
+                commandInvoker,
+                configuration.getVersion()
+        );
+    }
+
+    @Provides
     public ScratchpadController scratchpadController(
             Budget budget,
-            ConfigurationProvider configurationProvider,
+            Configuration configuration,
             CommandInvoker commandInvoker
     ) {
-        String currency = "$";
-        try {
-            currency = configurationProvider.getProperty("currency", String.class);
-        } catch (Exception exception) {
-            // The currency probably isn't set in the config file
-        }
-
-        return new ScratchpadController(budget, currency, commandInvoker);
+        return new ScratchpadController(budget, configuration.getCurrency(), commandInvoker);
     }
 
     @Provides
@@ -45,21 +67,14 @@ public class BudgetModule {
             MonthCopyService monthCopyService,
             MonthRepository monthRepository,
             Budget budget,
-            ConfigurationProvider configurationProvider,
+            Configuration configuration,
             CommandInvoker commandInvoker
     ) {
-        String currency = "$";
-        try {
-            currency = configurationProvider.getProperty("currency", String.class);
-        } catch (Exception exception) {
-            // The currency probably isn't set in the config file
-        }
-
         return new OneMonthController(
                 monthLogicServices,
                 monthRepository,
                 budget,
-                currency,
+                configuration.getCurrency(),
                 commandInvoker
         );
     }
@@ -71,21 +86,14 @@ public class BudgetModule {
             MonthCopyService monthCopyService,
             MonthRepository monthRepository,
             Budget budget,
-            ConfigurationProvider configurationProvider,
-            CommandInvoker commandInvoker) {
-
-        String currency = "$";
-        try {
-            currency = configurationProvider.getProperty("currency", String.class);
-        } catch (Exception exception) {
-            // The currency probably isn't set in the config file
-        }
-
+            Configuration configuration,
+            CommandInvoker commandInvoker
+    ) {
         return new ThreeMonthController(
                 monthLogicServices,
                 monthRepository,
                 budget,
-                currency,
+                configuration.getCurrency(),
                 commandInvoker
         );
     }

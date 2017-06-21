@@ -1,5 +1,6 @@
 package com.olestourko.sdbudget.core.dagger;
 
+import com.olestourko.sdbudget.Configuration;
 import com.olestourko.sdbudget.core.persistence.BudgetItemPersistence;
 import com.olestourko.sdbudget.core.persistence.MonthPersistence;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
@@ -23,7 +24,7 @@ import org.jooq.impl.DSL;
 public class PersistenceModule {
 
     @Provides
-    DSLContext createDSLContext(ConfigurationProvider configurationProvider) {
+    DSLContext createDSLContext(Configuration configuration) {
         /*
         I really need to find an alternative to wrapping this in a try catch and ignoring exceptions.
         Also, that connection needs to get closed at some point.
@@ -31,7 +32,7 @@ public class PersistenceModule {
         try {
             Class.forName("org.h2.Driver");
   
-            String dbPathName = configurationProvider.getProperty("db_pathname", String.class);
+            String dbPathName = configuration.getDbPathname();
             String url = "jdbc:h2:" + dbPathName;
             String userName = "sdbudget";
             Connection connection = DriverManager.getConnection(url, userName, "");

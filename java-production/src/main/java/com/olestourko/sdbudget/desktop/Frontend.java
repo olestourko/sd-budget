@@ -45,7 +45,7 @@ public class Frontend {
     protected static final int THREE_MONTH_WIDTH = 920;
     protected static final int SCRATCHPAD_WIDTH = 400;
     protected static final int DEFAULT_HEIGHT = 600;
-    protected static final String baseTitle = "SDBudget 0.2.1b4";
+    protected static final String baseTitle = "SDBudget";
     protected static final String thumbUri = "/desktop/images/thumb.png";
 
     protected double lastOneMonthWidth;
@@ -59,6 +59,7 @@ public class Frontend {
     protected final OneMonthController oneMonthController;
     protected final ThreeMonthController threeMonthController;
     protected final ChartController chartController;
+    protected final String version;
 
     protected final ScratchpadController scratchpadController;
     protected final CommandInvoker commandInvoker;
@@ -82,7 +83,8 @@ public class Frontend {
             ThreeMonthController threeMonthController,
             ScratchpadController scratchpadController,
             ChartController chartController,
-            CommandInvoker commandInvoker
+            CommandInvoker commandInvoker,
+            String version
     ) {
         this.budget = budget;
         this.monthCalculationServices = monthCalculationServices;
@@ -93,6 +95,7 @@ public class Frontend {
         this.scratchpadController = scratchpadController;
         this.chartController = chartController;
         this.commandInvoker = commandInvoker;
+        this.version = version;
     }
 
     public void load(Stage stage) throws Exception {
@@ -171,7 +174,7 @@ public class Frontend {
             }
         });
 
-        stage.setTitle(baseTitle);
+        stage.setTitle(baseTitle + " " + version);
         stage.getIcons().add(new Image(getClass().getResourceAsStream(thumbUri)));
         stage.setWidth(ONE_MONTH_WIDTH);
         stage.setHeight(DEFAULT_HEIGHT);

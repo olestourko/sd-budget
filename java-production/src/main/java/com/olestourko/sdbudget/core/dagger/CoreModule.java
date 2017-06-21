@@ -5,6 +5,7 @@
  */
 package com.olestourko.sdbudget.core.dagger;
 
+import com.olestourko.sdbudget.Configuration;
 import com.olestourko.sdbudget.core.commands.CommandInvoker;
 import dagger.Module;
 import dagger.Provides;
@@ -29,7 +30,7 @@ public class CoreModule {
 
     @Singleton
     @Provides
-    public ConfigurationProvider configurationProvider() {
+    public Configuration configuration() {
         // Specify which files to load. Configuration from both files will be merged.
         ConfigFilesProvider configFilesProvider = () -> Arrays.asList(Paths.get("configuration.yaml"));
         Environment environment = new ImmutableEnvironment("./");
@@ -38,10 +39,34 @@ public class CoreModule {
         ConfigurationSource source = new FilesConfigurationSource(configFilesProvider);
 
         // Create provider
-        return new ConfigurationProviderBuilder()
+        ConfigurationProvider configurationProvider = new ConfigurationProviderBuilder()
                 .withConfigurationSource(source)
                 .withEnvironment(environment)
                 .build();
+
+        // Copy configuration into a POJO
+        Configuration configuration = new Configuration();
+        configuration.setVersion("0.2.2b1");
+
+        try {
+            configuration.setDbPathname(configurationProvider.getProperty("db_pathname", String.class));
+        } catch (Exception exception) {
+            configuration.setDbPathname("~/sdbudget");
+        }
+
+        try {
+            configuration.setCurrency(configurationProvider.getProperty("currency", String.class));
+        } catch (Exception exception) {
+            configuration.setCurrency("$");
+        }
+
+        try {
+            configuration.setCheckVersion(configurationProvider.getProperty("check_version", Boolean.class));
+        } catch (Exception exception) {
+            configuration.setCheckVersion(true);
+        }
+
+        return configuration;
     }
 
     @Singleton

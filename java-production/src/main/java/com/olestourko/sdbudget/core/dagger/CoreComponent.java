@@ -1,5 +1,6 @@
 package com.olestourko.sdbudget.core.dagger;
 
+import com.olestourko.sdbudget.Configuration;
 import com.olestourko.sdbudget.core.commands.CommandInvoker;
 import com.olestourko.sdbudget.core.models.factories.MonthFactory;
 import com.olestourko.sdbudget.core.persistence.BudgetItemPersistence;
@@ -20,7 +21,6 @@ import com.olestourko.sdbudget.core.services.PeriodCalculationServices;
 import dagger.Component;
 import javax.inject.Provider;
 import javax.inject.Singleton;
-import org.cfg4j.provider.ConfigurationProvider;
 
 /**
  *
@@ -31,9 +31,8 @@ import org.cfg4j.provider.ConfigurationProvider;
 @Component(modules = {PersistenceModule.class, ServicesModule.class, CoreModule.class})
 public interface CoreComponent {
 
-    /* Configuration */
-    ConfigurationProvider configurationProvider();
-
+    Configuration configuration();
+    
     /* Commands */
     CommandInvoker commandInvoker();
 

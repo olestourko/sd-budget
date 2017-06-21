@@ -23,7 +23,6 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import org.cfg4j.provider.ConfigurationProvider;
 
 public class Sdbudget extends Application {
 
@@ -43,16 +42,15 @@ public class Sdbudget extends Application {
         final BudgetComponent budgetComponent = DaggerBudgetComponent.builder().coreComponent(coreComponent).build();
         final Budget budget = budgetComponent.budget().get();
         final Frontend frontend = budgetComponent.frontend().get();
+        final Configuration configuration = coreComponent.configuration();
 
         // Migrate DB if the migrate flag is set
         Parameters parameters = getParameters();
         List<String> unnamedParamers = parameters.getUnnamed();
         if (unnamedParamers.contains("migrate") || ALWAYS_MIGRATE) {
-            ConfigurationProvider configurationProvider = coreComponent.configurationProvider();
-            String dbPathName = configurationProvider.getProperty("db_pathname", String.class);
+            String dbPathName = configuration.getDbPathname();
             String url = "jdbc:h2:" + dbPathName;
             String userName = "sdbudget";
-
             Flyway flyway = new Flyway();
             flyway.setDataSource(url, userName, "");
             flyway.migrate();
@@ -79,22 +77,26 @@ public class Sdbudget extends Application {
         coreComponent.monthServices().recalculateMonths(monthRepository.getFirst());
         budget.setCurrentMonth(monthRepository.getMonth((short) calendar.get(Calendar.MONTH), (short) calendar.get(Calendar.YEAR)));
 
-        stage.setOnShown(value -> {
-            // Get the latest version number from sdbudget.com
-            getVersionService = new GetVersionService();
-            getVersionService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-                @Override
-                public void handle(WorkerStateEvent t) {
-                    Alert alert = new Alert(AlertType.INFORMATION);
-                    alert.setTitle("Update Available");
-                    alert.setHeaderText("A new version of SDBudget is available!");
-                    alert.setContentText("Version " + (String) t.getSource().getValue() + " is now available.\nGet it at www.sdbudget.com.");
-                    alert.showAndWait();
-
-                }
+        if (configuration.getCheckVersion()) {
+            stage.setOnShown(value -> {
+                // Get the latest version number from sdbudget.com
+                getVersionService = new GetVersionService();
+                getVersionService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+                    @Override
+                    public void handle(WorkerStateEvent t) {
+                        String latestVersion = (String) t.getSource().getValue();
+                        if (latestVersion.compareTo(configuration.getVersion()) == 1) {
+                            Alert alert = new Alert(AlertType.INFORMATION);
+                            alert.setTitle("Update Available");
+                            alert.setHeaderText("A new version of SDBudget is available!");
+                            alert.setContentText("Version " + latestVersion + " is now available.\nGet it at www.sdbudget.com.");
+                            alert.showAndWait();
+                        }
+                    }
+                });
+                getVersionService.start();
             });
-            getVersionService.start();
-        });
+        }
 
         frontend.load(stage);
     }

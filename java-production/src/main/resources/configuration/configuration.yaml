@@ -2,3 +2,5 @@
 db_pathname: ~/sdbudget
 # Currency symbol that will be display in amount fields
 currency: $
+# Check for newer versions on startup
+check_version: true
