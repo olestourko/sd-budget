@@ -9,6 +9,7 @@ import com.olestourko.sdbudget.core.dagger.CoreComponent;
 import com.olestourko.sdbudget.core.dagger.DaggerCoreComponent;
 import com.olestourko.sdbudget.core.models.factories.MonthFactory;
 import com.olestourko.sdbudget.desktop.Frontend;
+import com.olestourko.sdbudget.desktop.GetVersionService;
 import com.olestourko.sdbudget.desktop.dagger.BudgetComponent;
 import com.olestourko.sdbudget.desktop.dagger.DaggerBudgetComponent;
 import java.io.File;
@@ -18,11 +19,16 @@ import java.util.Calendar;
 import java.util.List;
 import org.flywaydb.core.Flyway;
 import javafx.application.Application.Parameters;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import org.cfg4j.provider.ConfigurationProvider;
 
 public class Sdbudget extends Application {
 
     private boolean ALWAYS_MIGRATE = true;
+    private GetVersionService getVersionService; // Prevent garbage collection on service
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -73,8 +79,24 @@ public class Sdbudget extends Application {
         coreComponent.monthServices().recalculateMonths(monthRepository.getFirst());
         budget.setCurrentMonth(monthRepository.getMonth((short) calendar.get(Calendar.MONTH), (short) calendar.get(Calendar.YEAR)));
 
-        frontend.load(stage);
+        stage.setOnShown(value -> {
+            // Get the latest version number from sdbudget.com
+            getVersionService = new GetVersionService();
+            getVersionService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+                @Override
+                public void handle(WorkerStateEvent t) {
+                    Alert alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Update Available");
+                    alert.setHeaderText("A new version of SDBudget is available!");
+                    alert.setContentText("Version " + (String) t.getSource().getValue() + " is now available.\nGet it at www.sdbudget.com.");
+                    alert.showAndWait();
 
+                }
+            });
+            getVersionService.start();
+        });
+
+        frontend.load(stage);
     }
 
     /**
