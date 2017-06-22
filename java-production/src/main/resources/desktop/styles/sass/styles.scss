@@ -20,6 +20,11 @@ $blue:      #268bd2;
 $cyan:      #2aa198;
 $green:     #859900;
 
+* {
+    -fx-font-size: 9.75pt;
+    -fx-font-family: Arial;
+}
+
 .root {
     -fx-background-color: $base3;
 }
@@ -119,8 +124,8 @@ $green:     #859900;
 
     /* Button cells */
     .button {
-        -fx-font-size: 11;
-        -fx-padding: 0 1 0 1 !important;
+        -fx-min-width: 14;
+        -fx-text-alignment: center;
     }
 
     .text-field-tree-table-cell > *,
@@ -158,7 +163,9 @@ $green:     #859900;
     }
 
     #copyToNext {
-        -fx-padding: 1 4 1 4;
+        -fx-min-width: 16;
+        -fx-padding: 1 0 1 0;
+        -fx-text-alignment: center;
     }
 }
 
@@ -205,14 +212,14 @@ $chartColor: $orange;
     .chart-title .text {
         -fx-font-size: 10pt;
     }
-    
+
     .chart-plot-background {
         -fx-background-color: none;
     }
 
     .default-color0.chart-area-symbol { -fx-background-color: $chartColor, mix($chartColor, #ffffff, 0.8) }
     .default-color1.chart-area-symbol { -fx-background-color: rgba($chartColor, 0.5), mix($chartColor, #ffffff, 0.8) }
-    
+
     .default-color0.chart-series-area-line { -fx-stroke: $chartColor; }
     .default-color1.chart-series-area-line { -fx-stroke: rgba($chartColor, 0.5); }
 
