@@ -11,7 +11,7 @@
 
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1"
             styleClass="scratchpad"
-            AnchorPane.topAnchor="5"
+            AnchorPane.topAnchor="0"
             AnchorPane.bottomAnchor="5"
             AnchorPane.leftAnchor="5"
             AnchorPane.rightAnchor="5">

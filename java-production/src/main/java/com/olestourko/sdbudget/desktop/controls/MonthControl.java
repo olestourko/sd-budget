@@ -373,12 +373,14 @@ public class MonthControl extends AnchorPane implements IMonthControl {
             @Override
             public void changed(ObservableValue<? extends Number> source, Number oldWidth, Number newWidth) {
                 TableHeaderRow header = (TableHeaderRow) budgetTable.lookup("TableHeaderRow");
-                header.reorderingProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                        header.setReordering(false);
-                    }
-                });
+                if (header != null) {
+                    header.reorderingProperty().addListener(new ChangeListener<Boolean>() {
+                        @Override
+                        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                            header.setReordering(false);
+                        }
+                    });
+                }
             }
         });
 

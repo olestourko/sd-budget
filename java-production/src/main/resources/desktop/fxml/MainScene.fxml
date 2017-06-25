@@ -28,8 +28,8 @@
                         <ToggleGroup fx:id="monthViewToggleGroup"/>
                     </fx:define>
                     <items>
-                        <RadioMenuItem fx:id="oneMonthViewMenuItem" text="1-Month View" toggleGroup="$monthViewToggleGroup" selected="true" />
-                        <RadioMenuItem fx:id="threeMonthViewMenuItem" text="3-Month View" toggleGroup="$monthViewToggleGroup"/>
+                        <RadioMenuItem fx:id="nMonthViewMenuItem" text="N-Month View" toggleGroup="$monthViewToggleGroup" selected="true"/>
+                        <RadioMenuItem fx:id="oneMonthViewMenuItem" text="1-Month View" toggleGroup="$monthViewToggleGroup"/>
                         <RadioMenuItem fx:id="scratchpadViewMenuItem" text="Scratchpad" toggleGroup="$monthViewToggleGroup"/>
                         <SeparatorMenuItem />
                         <RadioMenuItem fx:id="chartViewMenuItem" text="Surplus Chart" toggleGroup="$monthViewToggleGroup"/>

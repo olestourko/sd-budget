@@ -41,7 +41,7 @@ public class MainController implements Initializable {
     @FXML
     public RadioMenuItem oneMonthViewMenuItem;
     @FXML
-    public RadioMenuItem threeMonthViewMenuItem;
+    public RadioMenuItem nMonthViewMenuItem;
     @FXML
     public RadioMenuItem scratchpadViewMenuItem;
     @FXML
@@ -89,18 +89,6 @@ public class MainController implements Initializable {
             if (nextMonth == null) {
                 nextMonth = monthFactory.createNextMonth(budget.getCurrentMonth());
                 monthRepository.putMonth(nextMonth);
-            }
-
-            // Create the 2 months after the next month (for three-month view)
-            Month nextMonth2 = monthRepository.getNext(nextMonth);
-            if (nextMonth2 == null) {
-                nextMonth2 = monthFactory.createNextMonth(nextMonth);
-                monthRepository.putMonth(nextMonth2);
-            }
-            Month nextMonth3 = monthRepository.getNext(nextMonth2);
-            if (nextMonth3 == null) {
-                nextMonth3 = monthFactory.createNextMonth(nextMonth2);
-                monthRepository.putMonth(nextMonth3);
             }
 
             monthCalculationServices.recalculateMonths(budget.getCurrentMonth());

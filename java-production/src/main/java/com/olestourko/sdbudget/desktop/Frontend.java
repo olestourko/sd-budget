@@ -12,9 +12,9 @@ import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.core.services.MonthCalculationServices;
 import com.olestourko.sdbudget.desktop.controllers.ChartController;
 import com.olestourko.sdbudget.desktop.controllers.MainController;
+import com.olestourko.sdbudget.desktop.controllers.NMonthController;
 import com.olestourko.sdbudget.desktop.controllers.OneMonthController;
 import com.olestourko.sdbudget.desktop.controllers.ScratchpadController;
-import com.olestourko.sdbudget.desktop.controllers.ThreeMonthController;
 import com.olestourko.sdbudget.desktop.models.Budget;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,35 +41,29 @@ import javax.inject.Inject;
  */
 public class Frontend {
 
-    protected static final int ONE_MONTH_WIDTH = 400;
-    protected static final int THREE_MONTH_WIDTH = 920;
-    protected static final int SCRATCHPAD_WIDTH = 400;
+    protected static final int DEFAULT_WIDTH = 400;
     protected static final int DEFAULT_HEIGHT = 600;
     protected static final String baseTitle = "SDBudget";
     protected static final String thumbUri = "/desktop/images/thumb.png";
-
-    protected double lastOneMonthWidth;
-    protected double lastThreeMonthWidth;
-    protected double lastScratchpadWidth;
 
     protected final Budget budget;
     protected final MonthCalculationServices monthCalculationServices;
     protected final MonthRepository monthRepository;
     protected final MainController mainController;
     protected final OneMonthController oneMonthController;
-    protected final ThreeMonthController threeMonthController;
+    protected final NMonthController nMonthController;
     protected final ChartController chartController;
     protected final String version;
 
     protected final ScratchpadController scratchpadController;
     protected final CommandInvoker commandInvoker;
     ICommand lastCommand = null;
-    
+
     protected Stage stage;
     protected Node currentRoot;
     protected Node mainControllerRoot;
     protected Node oneMonthControllerRoot;
-    protected Node threeMonthControllerRoot;
+    protected Node nMonthControllerRoot;
     protected Node scratchpadControllerRoot;
     protected Node chartControllerRoot;
 
@@ -80,7 +74,7 @@ public class Frontend {
             MonthRepository monthRepository,
             MainController mainController,
             OneMonthController oneMonthController,
-            ThreeMonthController threeMonthController,
+            NMonthController nMonthController,
             ScratchpadController scratchpadController,
             ChartController chartController,
             CommandInvoker commandInvoker,
@@ -91,7 +85,7 @@ public class Frontend {
         this.monthRepository = monthRepository;
         this.mainController = mainController;
         this.oneMonthController = oneMonthController;
-        this.threeMonthController = threeMonthController;
+        this.nMonthController = nMonthController;
         this.scratchpadController = scratchpadController;
         this.chartController = chartController;
         this.commandInvoker = commandInvoker;
@@ -111,10 +105,10 @@ public class Frontend {
         oneMonthControllerRoot = oneMonthLoader.load();
         oneMonthController.load();
 
-        FXMLLoader threeMonthLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/BudgetScene_ThreeMonth.fxml"));
-        threeMonthLoader.setController(threeMonthController);
-        threeMonthControllerRoot = threeMonthLoader.load();
-        threeMonthController.load();
+        FXMLLoader nMonthLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/BudgetScene_NMonth.fxml"));
+        nMonthLoader.setController(nMonthController);
+        nMonthControllerRoot = nMonthLoader.load();
+        nMonthController.load();
 
         FXMLLoader scratchpadLoader = new FXMLLoader(getClass().getResource("/desktop/fxml/ScratchpadScene.fxml"));
         scratchpadLoader.setController(scratchpadController);
@@ -126,7 +120,7 @@ public class Frontend {
         chartControllerRoot = chartLoader.load();
 
         // </editor-fold>
-        this.currentRoot = oneMonthControllerRoot;
+        this.currentRoot = nMonthControllerRoot;
         mainController.contentContainer.getChildren().addAll(currentRoot); // Set the month view
         Scene mainScene = new Scene((Parent) mainControllerRoot);
         mainScene.getStylesheets().add("/desktop/styles/css/styles.css");
@@ -155,10 +149,10 @@ public class Frontend {
             }
         });
 
-        mainController.threeMonthViewMenuItem.setOnAction(event -> {
+        mainController.nMonthViewMenuItem.setOnAction(event -> {
             RadioMenuItem menuItem = (RadioMenuItem) event.getSource();
             if (menuItem.isSelected()) {
-                switchToThreeMonthView();
+                switchToNMonthView();
             }
         });
         mainController.scratchpadViewMenuItem.setOnAction(event -> {
@@ -176,7 +170,7 @@ public class Frontend {
 
         stage.setTitle(baseTitle + " " + version);
         stage.getIcons().add(new Image(getClass().getResourceAsStream(thumbUri)));
-        stage.setWidth(ONE_MONTH_WIDTH);
+        stage.setWidth(DEFAULT_WIDTH);
         stage.setHeight(DEFAULT_HEIGHT);
         stage.setScene(mainScene);
         stage.show();
@@ -189,7 +183,7 @@ public class Frontend {
                 if (currentRoot == oneMonthControllerRoot) {
                     switchToOneMonthView();
                 } else {
-                    switchToThreeMonthView();
+                    switchToNMonthView();
                 }
             }
         });
@@ -265,18 +259,7 @@ public class Frontend {
         });
     }
 
-    protected void rememberCurrentWidth() {
-        if (mainController.contentContainer.getChildren().contains(oneMonthControllerRoot)) {
-            lastOneMonthWidth = stage.getWidth();
-        } else if (mainController.contentContainer.getChildren().contains(threeMonthControllerRoot)) {
-            lastThreeMonthWidth = stage.getWidth();
-        } else if (mainController.contentContainer.getChildren().contains(scratchpadController)) {
-            lastScratchpadWidth = stage.getWidth();
-        }
-    }
-
     protected void switchToOneMonthView() {
-        rememberCurrentWidth();
         currentRoot = oneMonthControllerRoot;
         mainController.oneMonthViewMenuItem.setSelected(true);
         mainController.scratchpadViewButton.setText("Scratchpad");
@@ -285,30 +268,24 @@ public class Frontend {
             oneMonthController.refresh();
             mainController.contentContainer.getChildren().add(oneMonthControllerRoot);
         }
-        stage.setWidth(Math.max(lastOneMonthWidth, ONE_MONTH_WIDTH));
     }
 
-    protected void switchToThreeMonthView() {
-        rememberCurrentWidth();
-        currentRoot = threeMonthControllerRoot;
-        mainController.threeMonthViewMenuItem.setSelected(true);
+    protected void switchToNMonthView() {
+        currentRoot = nMonthControllerRoot;
+        mainController.nMonthViewMenuItem.setSelected(true);
         mainController.scratchpadViewButton.setText("Scratchpad");
         mainController.contentContainer.getChildren().clear();
-        if (!mainController.contentContainer.getChildren().contains(threeMonthControllerRoot)) {
-            threeMonthController.refresh();
-            mainController.contentContainer.getChildren().add(threeMonthControllerRoot);
+        if (!mainController.contentContainer.getChildren().contains(nMonthControllerRoot)) {
+            mainController.contentContainer.getChildren().add(nMonthControllerRoot);
         }
-        stage.setWidth(Math.max(lastThreeMonthWidth, THREE_MONTH_WIDTH));
     }
 
     protected void switchToScratchpadView() {
-        rememberCurrentWidth();
         mainController.scratchpadViewMenuItem.setSelected(true);
         mainController.scratchpadViewButton.setText("Budget");
         mainController.contentContainer.getChildren().clear();
         scratchpadController.refresh();
         mainController.contentContainer.getChildren().add(scratchpadControllerRoot);
-        stage.setWidth(Math.max(lastScratchpadWidth, SCRATCHPAD_WIDTH));
     }
 
     protected void switchToChartView() {

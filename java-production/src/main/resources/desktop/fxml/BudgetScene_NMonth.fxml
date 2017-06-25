@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.collections.*?>
+<?import com.olestourko.sdbudget.desktop.controls.*?>
+
+<HBox fx:id="container" xmlns:fx="http://javafx.com/fxml/1"
+      AnchorPane.leftAnchor="5"
+      AnchorPane.rightAnchor="5"
+      AnchorPane.topAnchor="0"
+      AnchorPane.bottomAnchor="5">
+    <children>
+        
+    </children>
+</HBox>

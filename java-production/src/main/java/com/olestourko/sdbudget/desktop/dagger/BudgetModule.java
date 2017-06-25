@@ -2,6 +2,7 @@ package com.olestourko.sdbudget.desktop.dagger;
 
 import com.olestourko.sdbudget.Configuration;
 import com.olestourko.sdbudget.core.commands.CommandInvoker;
+import com.olestourko.sdbudget.core.models.factories.MonthFactory;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.core.services.MonthCalculationServices;
 import com.olestourko.sdbudget.core.services.MonthCopyService;
@@ -9,9 +10,9 @@ import com.olestourko.sdbudget.core.services.MonthLogicServices;
 import com.olestourko.sdbudget.desktop.Frontend;
 import com.olestourko.sdbudget.desktop.controllers.ChartController;
 import com.olestourko.sdbudget.desktop.controllers.MainController;
+import com.olestourko.sdbudget.desktop.controllers.NMonthController;
 import com.olestourko.sdbudget.desktop.controllers.OneMonthController;
 import com.olestourko.sdbudget.desktop.controllers.ScratchpadController;
-import com.olestourko.sdbudget.desktop.controllers.ThreeMonthController;
 import com.olestourko.sdbudget.desktop.models.Budget;
 import dagger.Module;
 import dagger.Provides;
@@ -31,7 +32,7 @@ public class BudgetModule {
             MonthRepository monthRepository,
             MainController mainController,
             OneMonthController oneMonthController,
-            ThreeMonthController threeMonthController,
+            NMonthController nMonthController,
             ScratchpadController scratchpadController,
             ChartController chartController,
             CommandInvoker commandInvoker,
@@ -43,7 +44,7 @@ public class BudgetModule {
                 monthRepository,
                 mainController,
                 oneMonthController,
-                threeMonthController,
+                nMonthController,
                 scratchpadController,
                 chartController,
                 commandInvoker,
@@ -80,18 +81,20 @@ public class BudgetModule {
     }
 
     @Provides
-    public ThreeMonthController threeMonthController(
+    public NMonthController nMonthController(
             MonthCalculationServices monthCalculationServices,
             MonthLogicServices monthLogicServices,
+            MonthFactory monthFactory,
             MonthCopyService monthCopyService,
             MonthRepository monthRepository,
             Budget budget,
             Configuration configuration,
             CommandInvoker commandInvoker
     ) {
-        return new ThreeMonthController(
+        return new NMonthController(
                 monthLogicServices,
                 monthRepository,
+                monthFactory,
                 budget,
                 configuration.getCurrency(),
                 commandInvoker
