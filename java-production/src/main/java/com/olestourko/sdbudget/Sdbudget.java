@@ -87,6 +87,7 @@ public class Sdbudget extends Application {
                         String latestVersion = (String) t.getSource().getValue();
                         if (latestVersion.compareTo(configuration.getVersion()) == 1) {
                             Alert alert = new Alert(AlertType.INFORMATION);
+                            alert.getDialogPane().getStylesheets().add("/desktop/styles/css/styles.css");
                             alert.setTitle("Update Available");
                             alert.setHeaderText("A new version of SDBudget is available!");
                             alert.setContentText("Version " + latestVersion + " is now available.\nGet it at www.sdbudget.com.");

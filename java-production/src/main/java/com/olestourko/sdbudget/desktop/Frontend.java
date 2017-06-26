@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -240,6 +241,9 @@ public class Frontend {
                 alert.setContentText(null);
                 Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
                 stage.getIcons().add(new Image(getClass().getResourceAsStream(thumbUri)));
+                
+                /* Add stylesheet */
+                alert.getDialogPane().getStylesheets().add("/desktop/styles/css/styles.css");
 
                 ButtonType saveAndExitButton = new ButtonType("Yes");
                 ButtonType exitButton = new ButtonType("No");

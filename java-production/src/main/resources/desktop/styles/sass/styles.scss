@@ -226,3 +226,8 @@ $chartColor: $orange;
     .default-color0.chart-series-area-fill { -fx-fill: rgba($chartColor, 0.15); }
     .default-color1.chart-series-area-fill { -fx-fill: rgba($chartColor, 0.05); }
 }
+
+/* Dialogs */
+.dialog-pane:header .header-panel {
+    -fx-background-color: $base2;
+}
