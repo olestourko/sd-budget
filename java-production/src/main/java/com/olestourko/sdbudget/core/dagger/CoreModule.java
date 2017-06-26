@@ -46,7 +46,7 @@ public class CoreModule {
 
         // Copy configuration into a POJO
         Configuration configuration = new Configuration();
-        configuration.setVersion("0.2.2b1");
+        configuration.setVersion("0.3.0");
 
         try {
             configuration.setDbPathname(configurationProvider.getProperty("db_pathname", String.class));

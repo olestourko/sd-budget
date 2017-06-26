@@ -8,6 +8,7 @@ import com.olestourko.sdbudget.desktop.models.Budget;
 import com.olestourko.sdbudget.core.dagger.CoreComponent;
 import com.olestourko.sdbudget.core.dagger.DaggerCoreComponent;
 import com.olestourko.sdbudget.core.models.factories.MonthFactory;
+import com.olestourko.sdbudget.core.services.VersionComparisonService;
 import com.olestourko.sdbudget.desktop.Frontend;
 import com.olestourko.sdbudget.desktop.GetVersionService;
 import com.olestourko.sdbudget.desktop.dagger.BudgetComponent;
@@ -85,7 +86,7 @@ public class Sdbudget extends Application {
                     @Override
                     public void handle(WorkerStateEvent t) {
                         String latestVersion = (String) t.getSource().getValue();
-                        if (latestVersion.compareTo(configuration.getVersion()) == 1) {
+                        if (new VersionComparisonService().compare(configuration.getVersion(), latestVersion) == VersionComparisonService.Status.OLDVERSION) {
                             Alert alert = new Alert(AlertType.INFORMATION);
                             alert.getDialogPane().getStylesheets().add("/desktop/styles/css/styles.css");
                             alert.setTitle("Update Available");
