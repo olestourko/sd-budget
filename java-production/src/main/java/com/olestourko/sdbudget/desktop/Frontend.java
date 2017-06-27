@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -130,6 +129,7 @@ public class Frontend {
         mainController.saveMenuItem.setOnAction(event -> {
             monthRepository.storeMonths();
             lastCommand = commandInvoker.getLastCommand();
+            mainController.saveMenuItem.setDisable(lastCommand == commandInvoker.getLastCommand());
         });
 
         // Register handler for undo menu item
