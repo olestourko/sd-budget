@@ -18,9 +18,11 @@ import com.olestourko.sdbudget.core.services.MonthCalculationServices;
 import com.olestourko.sdbudget.core.services.MonthCopyService;
 import com.olestourko.sdbudget.core.services.MonthLogicServices;
 import com.olestourko.sdbudget.core.services.PeriodCalculationServices;
+import com.olestourko.sdbudget.desktop.persistence.MonthRepositoryPersistence;
 import dagger.Component;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import org.jooq.DSLContext;
 
 /**
  *
@@ -37,11 +39,15 @@ public interface CoreComponent {
     CommandInvoker commandInvoker();
 
     /* Persistence */
+    Provider<DSLContext> DSLContextProvider();
+    
     Provider<MonthPersistence> monthPersistenceProvider();
 
     MonthRepository monthRepository();
 
     Provider<BudgetItemPersistence> budgetItemProvider();
+    
+    MonthRepositoryPersistence monthRepositoryPersistence();
 
     /* Relations */
     MonthRevenuesRelation monthRevenuesRelation();

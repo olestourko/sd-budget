@@ -24,6 +24,6 @@ public interface BudgetComponent {
     Provider<MainController> mainController();
 
     PeriodCalculationServices periodServices();
-
+    
     void inject(MonthControl monthControl);
 }

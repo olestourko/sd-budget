@@ -16,6 +16,7 @@ import com.olestourko.sdbudget.desktop.controllers.NMonthController;
 import com.olestourko.sdbudget.desktop.controllers.OneMonthController;
 import com.olestourko.sdbudget.desktop.controllers.ScratchpadController;
 import com.olestourko.sdbudget.desktop.models.Budget;
+import com.olestourko.sdbudget.desktop.persistence.MonthRepositoryPersistence;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -49,6 +50,7 @@ public class Frontend {
     protected final Budget budget;
     protected final MonthCalculationServices monthCalculationServices;
     protected final MonthRepository monthRepository;
+    protected final MonthRepositoryPersistence monthRepositoryPersistence;
     protected final MainController mainController;
     protected final OneMonthController oneMonthController;
     protected final NMonthController nMonthController;
@@ -72,6 +74,7 @@ public class Frontend {
             Budget budget,
             MonthCalculationServices monthCalculationServices,
             MonthRepository monthRepository,
+            MonthRepositoryPersistence monthRepositoryPersistence,
             MainController mainController,
             OneMonthController oneMonthController,
             NMonthController nMonthController,
@@ -83,6 +86,7 @@ public class Frontend {
         this.budget = budget;
         this.monthCalculationServices = monthCalculationServices;
         this.monthRepository = monthRepository;
+        this.monthRepositoryPersistence = monthRepositoryPersistence;
         this.mainController = mainController;
         this.oneMonthController = oneMonthController;
         this.nMonthController = nMonthController;
@@ -127,7 +131,7 @@ public class Frontend {
 
         // Register handler for save menu item
         mainController.saveMenuItem.setOnAction(event -> {
-            monthRepository.storeMonths();
+            monthRepositoryPersistence.storeMonths(monthRepository);
             lastCommand = commandInvoker.getLastCommand();
             mainController.saveMenuItem.setDisable(lastCommand == commandInvoker.getLastCommand());
         });
@@ -253,7 +257,7 @@ public class Frontend {
 
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == saveAndExitButton) {
-                    monthRepository.storeMonths();
+                    monthRepositoryPersistence.storeMonths(monthRepository);
                 } else if (result.get() == exitButton) {
 
                 } else if (result.get() == cancelButton) {

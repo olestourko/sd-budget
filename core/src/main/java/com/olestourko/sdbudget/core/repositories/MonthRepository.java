@@ -19,6 +19,11 @@ public class MonthRepository implements IMonthRepository {
     public final Map<String, Month> months = new TreeMap<>();
 
     @Override
+    public List<Month> getMonths() {
+        return new ArrayList<>(months.values());
+    }
+
+    @Override
     public void putMonth(Month month) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_MONTH, 1);

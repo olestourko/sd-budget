@@ -3,6 +3,8 @@ package com.olestourko.sdbudget.desktop.dagger;
 import com.olestourko.sdbudget.Configuration;
 import com.olestourko.sdbudget.core.commands.CommandInvoker;
 import com.olestourko.sdbudget.core.models.factories.MonthFactory;
+import com.olestourko.sdbudget.core.persistence.BudgetItemPersistence;
+import com.olestourko.sdbudget.core.persistence.MonthPersistence;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.core.services.MonthCalculationServices;
 import com.olestourko.sdbudget.core.services.MonthCopyService;
@@ -14,6 +16,7 @@ import com.olestourko.sdbudget.desktop.controllers.NMonthController;
 import com.olestourko.sdbudget.desktop.controllers.OneMonthController;
 import com.olestourko.sdbudget.desktop.controllers.ScratchpadController;
 import com.olestourko.sdbudget.desktop.models.Budget;
+import com.olestourko.sdbudget.desktop.persistence.MonthRepositoryPersistence;
 import dagger.Module;
 import dagger.Provides;
 
@@ -30,6 +33,7 @@ public class BudgetModule {
             Budget budget,
             MonthCalculationServices monthCalculationServices,
             MonthRepository monthRepository,
+            MonthRepositoryPersistence monthRepositoryPersistence,
             MainController mainController,
             OneMonthController oneMonthController,
             NMonthController nMonthController,
@@ -42,6 +46,7 @@ public class BudgetModule {
                 budget,
                 monthCalculationServices,
                 monthRepository,
+                monthRepositoryPersistence,
                 mainController,
                 oneMonthController,
                 nMonthController,

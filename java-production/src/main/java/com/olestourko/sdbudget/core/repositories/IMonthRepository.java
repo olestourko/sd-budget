@@ -15,10 +15,6 @@ public interface IMonthRepository {
     public Month getPrevious(Month month);
 
     public Month getNext(Month month);
-    
-    public void fetchMonths();
-    
-    public void storeMonths();
-    
+       
     public Month getFirst();
 }

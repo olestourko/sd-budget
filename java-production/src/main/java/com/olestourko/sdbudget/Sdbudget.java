@@ -13,6 +13,7 @@ import com.olestourko.sdbudget.desktop.Frontend;
 import com.olestourko.sdbudget.desktop.GetVersionService;
 import com.olestourko.sdbudget.desktop.dagger.BudgetComponent;
 import com.olestourko.sdbudget.desktop.dagger.DaggerBudgetComponent;
+import com.olestourko.sdbudget.desktop.persistence.MonthRepositoryPersistence;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -59,8 +60,9 @@ public class Sdbudget extends Application {
 
         // Populate the month repository
         MonthRepository monthRepository = coreComponent.monthRepository();
+        MonthRepositoryPersistence monthRepositoryPersistence = coreComponent.monthRepositoryPersistence();
         MonthFactory monthFactory = coreComponent.monthFactory();
-        monthRepository.fetchMonths();
+        monthRepositoryPersistence.fetchMonths(monthRepository);
         Calendar calendar = Calendar.getInstance();
         Month month = monthRepository.getMonth((short) calendar.get(Calendar.MONTH), (short) calendar.get(Calendar.YEAR));
         if (month == null) {

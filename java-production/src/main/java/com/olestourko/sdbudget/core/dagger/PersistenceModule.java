@@ -4,12 +4,12 @@ import com.olestourko.sdbudget.Configuration;
 import com.olestourko.sdbudget.core.persistence.BudgetItemPersistence;
 import com.olestourko.sdbudget.core.persistence.MonthPersistence;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
+import com.olestourko.sdbudget.desktop.persistence.MonthRepositoryPersistence;
 import dagger.Module;
 import dagger.Provides;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import javax.inject.Singleton;
-import org.cfg4j.provider.ConfigurationProvider;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
@@ -31,7 +31,7 @@ public class PersistenceModule {
          */
         try {
             Class.forName("org.h2.Driver");
-  
+
             String dbPathName = configuration.getDbPathname();
             String url = "jdbc:h2:" + dbPathName;
             String userName = "sdbudget";
@@ -47,5 +47,14 @@ public class PersistenceModule {
     @Singleton
     MonthRepository monthRepository(MonthPersistence monthPersistence, BudgetItemPersistence budgetItemPersistence) {
         return new MonthRepository(monthPersistence, budgetItemPersistence);
+    }
+
+    @Provides
+    @Singleton
+    public MonthRepositoryPersistence monthRepositoryPersistence(
+            MonthPersistence monthPersistence,
+            BudgetItemPersistence budgetItemPersistence
+    ) {
+        return new MonthRepositoryPersistence(monthPersistence, budgetItemPersistence);
     }
 }
