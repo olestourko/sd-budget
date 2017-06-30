@@ -1,8 +1,8 @@
 package com.olestourko.sdbudget.core.dagger;
 
 import com.olestourko.sdbudget.Configuration;
-import com.olestourko.sdbudget.core.persistence.BudgetItemPersistence;
-import com.olestourko.sdbudget.core.persistence.MonthPersistence;
+import com.olestourko.sdbudget.desktop.persistence.BudgetItemPersistence;
+import com.olestourko.sdbudget.desktop.persistence.MonthPersistence;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.desktop.persistence.MonthRepositoryPersistence;
 import dagger.Module;
@@ -45,8 +45,8 @@ public class PersistenceModule {
 
     @Provides
     @Singleton
-    MonthRepository monthRepository(MonthPersistence monthPersistence, BudgetItemPersistence budgetItemPersistence) {
-        return new MonthRepository(monthPersistence, budgetItemPersistence);
+    MonthRepository monthRepository() {
+        return new MonthRepository();
     }
 
     @Provides

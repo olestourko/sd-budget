@@ -2,8 +2,6 @@ package com.olestourko.sdbudget.desktop.persistence;
 
 import com.olestourko.sdbudget.core.models.BudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
-import com.olestourko.sdbudget.core.persistence.BudgetItemPersistence;
-import com.olestourko.sdbudget.core.persistence.MonthPersistence;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import java.util.ArrayList;
 import javax.inject.Inject;

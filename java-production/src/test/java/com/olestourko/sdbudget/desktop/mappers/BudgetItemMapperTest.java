@@ -1,5 +1,6 @@
 package com.olestourko.sdbudget.desktop.mappers;
 
+import com.olestourko.sdbudget.desktop.mappers.frontend.BudgetItemMapper;
 import com.olestourko.sdbudget.core.models.BudgetItem;
 import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
 import java.math.BigDecimal;

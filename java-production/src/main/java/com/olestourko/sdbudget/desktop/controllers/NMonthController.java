@@ -9,7 +9,7 @@ import com.olestourko.sdbudget.core.commands.RemoveBudgetItem;
 import com.olestourko.sdbudget.core.commands.SetMonthClosed;
 import com.olestourko.sdbudget.core.commands.UpdateBudgetItem;
 import com.olestourko.sdbudget.core.models.Month;
-import com.olestourko.sdbudget.core.models.factories.MonthFactory;
+import com.olestourko.sdbudget.desktop.models.factories.MonthFactory;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.core.services.MonthLogicServices;
 import com.olestourko.sdbudget.desktop.controls.MonthControl;

@@ -2,9 +2,7 @@ package com.olestourko.sdbudget.desktop.dagger;
 
 import com.olestourko.sdbudget.Configuration;
 import com.olestourko.sdbudget.core.commands.CommandInvoker;
-import com.olestourko.sdbudget.core.models.factories.MonthFactory;
-import com.olestourko.sdbudget.core.persistence.BudgetItemPersistence;
-import com.olestourko.sdbudget.core.persistence.MonthPersistence;
+import com.olestourko.sdbudget.desktop.models.factories.MonthFactory;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.core.services.MonthCalculationServices;
 import com.olestourko.sdbudget.core.services.MonthCopyService;

@@ -14,7 +14,7 @@ import com.olestourko.sdbudget.desktop.controls.ButtonTreeTableCell;
 import com.olestourko.sdbudget.desktop.controls.CurrencyTableCell;
 import com.olestourko.sdbudget.desktop.controls.CurrencyTreeTableCell;
 import com.olestourko.sdbudget.desktop.controls.IMonthControl;
-import com.olestourko.sdbudget.desktop.mappers.MonthMapper;
+import com.olestourko.sdbudget.desktop.mappers.frontend.MonthMapper;
 import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

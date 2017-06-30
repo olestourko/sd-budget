@@ -1,7 +1,7 @@
 package com.olestourko.sdbudget.desktop.controllers;
 
 import com.olestourko.sdbudget.core.models.Month;
-import com.olestourko.sdbudget.core.models.factories.MonthFactory;
+import com.olestourko.sdbudget.desktop.models.factories.MonthFactory;
 import com.olestourko.sdbudget.desktop.models.Budget;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.core.services.MonthCalculationServices;

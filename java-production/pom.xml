@@ -218,10 +218,42 @@
                     <includePath>${project.basedir}/src/main/resources/desktop/styles/sass/</includePath>
                 </configuration>
             </plugin>
+            
+            <!-- Install core.jar to local maven repo -->
+            <!-- https://eureka.ykyuen.info/2014/06/10/maven-include-system-scope-dependency-in-maven-assembly-plugin/ -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>install-external</id>
+                        <phase>clean</phase>
+                        <configuration>
+                            <file>${basedir}/../core/build/libs/core.jar</file>
+                            <repositoryLayout>default</repositoryLayout>
+                            <groupId>com.olestourko.sdbudget.core</groupId>
+                            <artifactId>sdbudget-core</artifactId>
+                            <version>1.0.0</version>
+                            <packaging>jar</packaging>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
     
     <dependencies>
+        <!-- Core .jar -->      
+        <dependency>
+            <groupId>com.olestourko.sdbudget.core</groupId>
+            <artifactId>sdbudget-core</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

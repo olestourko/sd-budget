@@ -15,7 +15,7 @@ import com.olestourko.sdbudget.desktop.controls.CurrencyTableCell;
 import com.olestourko.sdbudget.desktop.controls.handlers.TableViewEnterPressedHandler;
 import com.olestourko.sdbudget.desktop.models.BudgetItemViewModel;
 import com.olestourko.sdbudget.desktop.models.MonthViewModel;
-import com.olestourko.sdbudget.desktop.mappers.MonthMapper;
+import com.olestourko.sdbudget.desktop.mappers.frontend.MonthMapper;
 import com.olestourko.sdbudget.desktop.models.Budget;
 import com.sun.javafx.scene.control.skin.TableHeaderRow;
 import java.math.BigDecimal;
