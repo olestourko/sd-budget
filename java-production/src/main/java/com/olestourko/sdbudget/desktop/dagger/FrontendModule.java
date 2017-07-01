@@ -17,16 +17,18 @@ import com.olestourko.sdbudget.desktop.models.Budget;
 import com.olestourko.sdbudget.desktop.persistence.MonthRepositoryPersistence;
 import dagger.Module;
 import dagger.Provides;
+import javax.inject.Singleton;
 
 /**
  *
  * @author oles
  */
-@DesktopApplicationScope
+@Singleton
 @Module
-public class BudgetModule {
+public class FrontendModule {
 
     @Provides
+    @Singleton
     public Frontend frontend(
             Budget budget,
             MonthCalculationServices monthCalculationServices,
@@ -115,5 +117,11 @@ public class BudgetModule {
                 monthRepository,
                 commandInvoker
         );
+    }
+    
+    @Provides
+    @Singleton
+    public Budget budget() {
+        return new Budget();
     }
 }

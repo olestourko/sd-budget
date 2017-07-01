@@ -1,4 +1,4 @@
-package com.olestourko.sdbudget.core.dagger;
+package com.olestourko.sdbudget.desktop.dagger;
 
 import com.olestourko.sdbudget.Configuration;
 import com.olestourko.sdbudget.core.commands.CommandInvoker;
@@ -18,6 +18,10 @@ import com.olestourko.sdbudget.core.services.MonthCalculationServices;
 import com.olestourko.sdbudget.core.services.MonthCopyService;
 import com.olestourko.sdbudget.core.services.MonthLogicServices;
 import com.olestourko.sdbudget.core.services.PeriodCalculationServices;
+import com.olestourko.sdbudget.desktop.Frontend;
+import com.olestourko.sdbudget.desktop.controllers.MainController;
+import com.olestourko.sdbudget.desktop.controls.MonthControl;
+import com.olestourko.sdbudget.desktop.models.Budget;
 import com.olestourko.sdbudget.desktop.persistence.MonthRepositoryPersistence;
 import dagger.Component;
 import javax.inject.Provider;
@@ -30,23 +34,23 @@ import org.jooq.DSLContext;
  */
 //@CoreApplicationScope
 @Singleton
-@Component(modules = {PersistenceModule.class, ServicesModule.class, CoreModule.class})
-public interface CoreComponent {
+@Component(modules = {PersistenceModule.class, ServicesModule.class, CoreModule.class, FrontendModule.class})
+public interface DesktopComponent {
 
     Configuration configuration();
-    
+
     /* Commands */
     CommandInvoker commandInvoker();
 
     /* Persistence */
     Provider<DSLContext> DSLContextProvider();
-    
+
     Provider<MonthPersistence> monthPersistenceProvider();
 
     MonthRepository monthRepository();
 
     Provider<BudgetItemPersistence> budgetItemProvider();
-    
+
     MonthRepositoryPersistence monthRepositoryPersistence();
 
     /* Relations */
@@ -77,4 +81,13 @@ public interface CoreComponent {
 
     /* Factories */
     MonthFactory monthFactory();
+
+    /* Frontend */
+    Provider<Frontend> frontend();
+
+    Provider<Budget> budget();
+
+    Provider<MainController> mainController();
+
+    void inject(MonthControl monthControl);
 }

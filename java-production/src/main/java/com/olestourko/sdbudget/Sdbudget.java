@@ -5,14 +5,11 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.desktop.models.Budget;
-import com.olestourko.sdbudget.core.dagger.CoreComponent;
-import com.olestourko.sdbudget.core.dagger.DaggerCoreComponent;
+import com.olestourko.sdbudget.desktop.dagger.DaggerDesktopComponent;
 import com.olestourko.sdbudget.desktop.models.factories.MonthFactory;
 import com.olestourko.sdbudget.desktop.services.VersionComparisonService;
 import com.olestourko.sdbudget.desktop.Frontend;
 import com.olestourko.sdbudget.desktop.GetVersionService;
-import com.olestourko.sdbudget.desktop.dagger.BudgetComponent;
-import com.olestourko.sdbudget.desktop.dagger.DaggerBudgetComponent;
 import com.olestourko.sdbudget.desktop.persistence.MonthRepositoryPersistence;
 import java.io.File;
 import java.io.InputStream;
@@ -25,6 +22,7 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import com.olestourko.sdbudget.desktop.dagger.DesktopComponent;
 
 public class Sdbudget extends Application {
 
@@ -40,11 +38,10 @@ public class Sdbudget extends Application {
             Files.copy(link, configFile.getAbsoluteFile().toPath());
         };
 
-        final CoreComponent coreComponent = DaggerCoreComponent.builder().build();
-        final BudgetComponent budgetComponent = DaggerBudgetComponent.builder().coreComponent(coreComponent).build();
-        final Budget budget = budgetComponent.budget().get();
-        final Frontend frontend = budgetComponent.frontend().get();
-        final Configuration configuration = coreComponent.configuration();
+        final DesktopComponent desktopComponent = DaggerDesktopComponent.builder().build();
+        final Budget budget = desktopComponent.budget().get();
+        final Frontend frontend = desktopComponent.frontend().get();
+        final Configuration configuration = desktopComponent.configuration();
 
         // Migrate DB if the migrate flag is set
         Parameters parameters = getParameters();
@@ -59,9 +56,9 @@ public class Sdbudget extends Application {
         }
 
         // Populate the month repository
-        MonthRepository monthRepository = coreComponent.monthRepository();
-        MonthRepositoryPersistence monthRepositoryPersistence = coreComponent.monthRepositoryPersistence();
-        MonthFactory monthFactory = coreComponent.monthFactory();
+        MonthRepository monthRepository = desktopComponent.monthRepository();
+        MonthRepositoryPersistence monthRepositoryPersistence = desktopComponent.monthRepositoryPersistence();
+        MonthFactory monthFactory = desktopComponent.monthFactory();
         monthRepositoryPersistence.fetchMonths(monthRepository);
         Calendar calendar = Calendar.getInstance();
         Month month = monthRepository.getMonth((short) calendar.get(Calendar.MONTH), (short) calendar.get(Calendar.YEAR));
@@ -77,7 +74,7 @@ public class Sdbudget extends Application {
             month = monthRepository.getNext(month);
         }
 
-        coreComponent.monthServices().recalculateMonths(monthRepository.getFirst());
+        desktopComponent.monthServices().recalculateMonths(monthRepository.getFirst());
         budget.setCurrentMonth(monthRepository.getMonth((short) calendar.get(Calendar.MONTH), (short) calendar.get(Calendar.YEAR)));
 
         if (configuration.getCheckVersion()) {

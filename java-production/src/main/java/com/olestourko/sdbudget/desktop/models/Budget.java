@@ -1,7 +1,6 @@
 package com.olestourko.sdbudget.desktop.models;
 
 import com.olestourko.sdbudget.core.models.Month;
-import com.olestourko.sdbudget.desktop.dagger.DesktopApplicationScope;
 import javafx.beans.property.SimpleObjectProperty;
 import javax.inject.Inject;
 
@@ -9,7 +8,6 @@ import javax.inject.Inject;
  *
  * @author oles
  */
-@DesktopApplicationScope
 public class Budget {
 
     private final SimpleObjectProperty<Month> currentMonth = new SimpleObjectProperty<Month>();

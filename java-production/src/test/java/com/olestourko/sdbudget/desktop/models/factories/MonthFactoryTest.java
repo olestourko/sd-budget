@@ -1,8 +1,6 @@
 package com.olestourko.sdbudget.desktop.models.factories;
 
 import com.olestourko.sdbudget.desktop.models.factories.MonthFactory;
-import com.olestourko.sdbudget.core.dagger.CoreComponent;
-import com.olestourko.sdbudget.core.dagger.DaggerCoreComponent;
 import com.olestourko.sdbudget.core.models.Month;
 import java.util.Calendar;
 import org.junit.After;
@@ -21,8 +19,7 @@ public class MonthFactoryTest {
     MonthFactory monthFactory;
 
     public MonthFactoryTest() {
-        CoreComponent coreComponent = DaggerCoreComponent.create();
-        this.monthFactory = coreComponent.monthFactory();
+        this.monthFactory = new MonthFactory();
     }
 
     @BeforeClass

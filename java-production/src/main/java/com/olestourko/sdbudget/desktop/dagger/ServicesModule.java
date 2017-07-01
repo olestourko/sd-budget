@@ -1,4 +1,4 @@
-package com.olestourko.sdbudget.core.dagger;
+package com.olestourko.sdbudget.desktop.dagger;
 
 import com.olestourko.sdbudget.core.repositories.MonthRepository;
 import com.olestourko.sdbudget.core.services.MonthCalculationServices;
