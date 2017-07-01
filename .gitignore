@@ -5,3 +5,8 @@
 /core/.nb-gradle/
 /core/build/
 /core/.gradle
+/sdbudget-desktop/nbproject/
+/sdbudget-web/.gradle/
+/sdbudget-web/.nb-gradle/
+/sdbudget-web/build/
+/sdbudget-web/private/

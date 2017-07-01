@@ -2,11 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.olestourko</groupId>
-    <artifactId>sdbudget</artifactId>
+    <artifactId>sdbudget-desktop</artifactId>
     <version>0.3.0</version>
     <packaging>jar</packaging>
     
-    <name>sdbudget</name>
+    <name>sdbudget-desktop</name>
     
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -229,7 +229,7 @@
                         <id>install-external</id>
                         <phase>clean</phase>
                         <configuration>
-                            <file>${basedir}/../core/build/libs/core.jar</file>
+                            <file>${basedir}/../sdbudget-core/build/libs/sdbudget-core.jar</file>
                             <repositoryLayout>default</repositoryLayout>
                             <groupId>com.olestourko.sdbudget.core</groupId>
                             <artifactId>sdbudget-core</artifactId>

@@ -1,0 +1,3 @@
+db_pathname: ~/sdbudget-0.3.0-test
+currency: $
+check_version: true
