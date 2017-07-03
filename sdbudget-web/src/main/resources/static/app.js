@@ -18,7 +18,8 @@ function connect() {
         setConnected(true);
         console.log('Connected: ' + frame);
         stompClient.subscribe('/topic/example', function (response) {
-            showResponse(JSON.parse(response.body).content);
+//            showResponse(JSON.parse(response.body).content);
+            showResponse(response);
         });
     });
 }
@@ -54,10 +55,29 @@ jQuery(function () {
     });
 });
 
-function addBugetItem(month, name, amount) {
+/*
+ * Month: int
+ * Type: "revenue", "expense", "adjustment"
+ */
+function addBugetItem(month, name, amount, type) {
     stompClient.send("/app/add-budget-item", {}, JSON.stringify({
         month: month,
         name: name,
+        amount: amount,
+        type: type
+    }));
+}
+
+function updateBudgetItem(id, name, amount) {
+    stompClient.send("/app/update-budget-item", {}, JSON.stringify({
+        id: id,
+        name: name,
         amount: amount
+    }));
+}
+
+function removeBudgetItem(id) {
+    stompClient.send("/app/remove-budget-item", {}, JSON.stringify({
+        id: id
     }));
 }

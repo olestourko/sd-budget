@@ -1,4 +1,4 @@
-package com.olestourko;
+package com.olestourko.sdbudget.web;
 
 /**
  *

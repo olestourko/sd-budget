@@ -1,24 +1,24 @@
-package com.olestourko;
-
+package com.olestourko.sdbudget.web;
 /**
  *
  * @author oles
  */
-public class ExampleWebSocketMessage {
+public class ExampleWebSocketResponse {
+
     private String content;
-    
-    public ExampleWebSocketMessage() {
-        
+
+    public ExampleWebSocketResponse() {
+
     }
-    
-    public ExampleWebSocketMessage(String content) {
+
+    public ExampleWebSocketResponse(String content) {
         this.content = content;
     }
-    
+
     public String getContent() {
         return content;
     }
-    
+
     public void setContent(String content) {
         this.content = content;
     }

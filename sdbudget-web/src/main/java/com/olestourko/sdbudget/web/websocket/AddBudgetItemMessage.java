@@ -1,4 +1,4 @@
-package com.olestourko;
+package com.olestourko.sdbudget.web.websocket;
 
 import java.math.BigDecimal;
 
@@ -11,15 +11,17 @@ public class AddBudgetItemMessage {
     private int month;
     private String name;
     private BigDecimal amount;
+    private String type;
     
     public AddBudgetItemMessage() {
         
     }
     
-    public AddBudgetItemMessage(int month, String name, BigDecimal amount) {
+    public AddBudgetItemMessage(int month, String name, BigDecimal amount, String type) {
         this.month = month;
         this.name = name;
-        this.amount = this.amount;
+        this.amount = amount;
+        this.type = type;
     }
     
     public int getMonth() {
@@ -44,5 +46,13 @@ public class AddBudgetItemMessage {
     
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+    }
+    
+    public String getType() {
+        return type;
+    }
+    
+    public void setType(String type) {
+        this.type = type;
     }
 }
