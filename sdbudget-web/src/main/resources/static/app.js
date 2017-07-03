@@ -53,3 +53,11 @@ jQuery(function () {
         sendMessage();
     });
 });
+
+function addBugetItem(month, name, amount) {
+    stompClient.send("/app/add-budget-item", {}, JSON.stringify({
+        month: month,
+        name: name,
+        amount: amount
+    }));
+}

@@ -1,4 +1,4 @@
-package org.olestourko;
+package com.olestourko;
 /**
  *
  * @author oles
