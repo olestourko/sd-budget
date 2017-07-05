@@ -3,11 +3,9 @@
 import React from 'react';
 import {render}
 from 'react-dom';
-
 class App extends React.Component {
     constructor() {
         super();
-
         this.state = {
             data:
                     [
@@ -43,27 +41,72 @@ class App extends React.Component {
 }
 
 class MonthTable extends React.Component {
+    constructor(props) {
+        super(props);
+        this.addBudgetItem = this.addBudgetItem.bind(this);
+        this.state = {
+            budgetItems: this.props.budgetItems
+        }
+
+        this.addBudgetItem = this.addBudgetItem.bind(this);
+    }
+
     render() {
         return (
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Type</th>
-                            <th>Name</th>
-                            <th>Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {this.props.budgetItems.map((budgetItem, i) =>
-                                        <tr key =  {i}>
-                                            <td>{budgetItem.type}</td>
-                                            <td>{budgetItem.name}</td>
-                                            <td>{budgetItem.amount}</td>
-                                        </tr>
+                <div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Name</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {this.state.budgetItems.map((budgetItem, i) =>
+                                        <MonthTableEntry key={i} type={budgetItem.type} name={budgetItem.name} amount={budgetItem.amount}/>
                                     )}                
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                    <button onClick={this.addBudgetItem}>Add BudgetItem</button>
+                </div>
                 );
+    }
+
+    addBudgetItem() {
+        var nextState = this.state;
+        nextState.budgetItems.push({
+            type: "Expense",
+            name: "Food",
+            amount: 250.00
+        });
+        this.setState(nextState);
+    }
+}
+
+class MonthTableEntry extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            data: props
+        }
+
+        this.updateState = this.updateState.bind(this);
+    }
+
+    updateState(e) {
+        this.setState({data: e.target.value})
+    }
+
+    render() {
+        return (
+                <tr>
+                    <td><input type="text" value={this.state.data.type} onChange={this.updateState}/></td>
+                    <td><input type="text" value={this.state.data.name} onChange={this.updateState}/></td>
+                    <td><input type="text" value={this.state.data.amount} onChange={this.updateState}/></td>
+                </tr>
+                )
     }
 }
 
