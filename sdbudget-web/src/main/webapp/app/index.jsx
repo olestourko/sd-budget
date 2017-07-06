@@ -16,16 +16,29 @@ class App extends React.Component {
     render() {
         return (
                 <div>
-                    <MonthTable budgetItems = {this.state.data}/>
+                    <MonthTable ref = {(ref) => {
+                            this.monthTable = ref
+                                }} budgetItems = {this.state.data}/>
                     <hr/>
                     <WebSocketControls onResponse={this.onResponse}/>
                 </div>
-                );
+                    );
     }
 
     onResponse(response) {
         // TODO
         // Update BudgetItem list appropriately
+        var month = JSON.parse(response.body);
+        var component = this;
+        month.revenues.forEach(function (v, i) {
+            component.monthTable.addBudgetItem("Revenue", v.name, v.amount);
+        });
+        month.expenses.forEach(function (v, i) {
+            component.monthTable.addBudgetItem("Expense", v.name, v.amount);
+        });
+        month.adjustments.forEach(function (v, i) {
+            component.monthTable.addBudgetItem("Adjustment", v.name, v.amount);
+        });
     }
 }
 
@@ -98,6 +111,7 @@ class MonthTable extends React.Component {
         }
 
         this.addBudgetItem = this.addBudgetItem.bind(this);
+        this.addBudgetItemButtonHandler = this.addBudgetItemButtonHandler.bind(this);
     }
 
     render() {
@@ -117,19 +131,23 @@ class MonthTable extends React.Component {
                                     )}                
                         </tbody>
                     </table>
-                    <button onClick={this.addBudgetItem}>Add BudgetItem</button>
+                    <button onClick={this.addBudgetItemButtonHandler}>Add BudgetItem</button>
                 </div>
                 );
     }
 
-    addBudgetItem() {
+    addBudgetItem(type, name, amount) {
         var nextState = this.state;
         nextState.budgetItems.push({
-            type: "Expense",
-            name: "Food",
-            amount: 250.00
+            type: type,
+            name: name,
+            amount: amount
         });
         this.setState(nextState);
+    }
+
+    addBudgetItemButtonHandler() {
+        this.addBudgetItem("", "", 0.00);
     }
 }
 
