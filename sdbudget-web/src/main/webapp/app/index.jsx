@@ -6,9 +6,7 @@ import {render} from 'react-dom';
 class App extends React.Component {
     constructor() {
         super();
-        this.state = {
-            data: []
-        };
+        this.state = {};
 
         this.onResponse = this.onResponse.bind(this);
     }
@@ -18,7 +16,7 @@ class App extends React.Component {
                 <div>
                     <MonthTable ref = {(ref) => {
                             this.monthTable = ref
-                                }} budgetItems = {this.state.data}/>
+                                }}/>
                     <hr/>
                     <WebSocketControls onResponse={this.onResponse}/>
                 </div>
@@ -38,6 +36,19 @@ class App extends React.Component {
         });
         month.adjustments.forEach(function (v, i) {
             component.monthTable.addBudgetItem("Adjustment", v.name, v.amount);
+        });
+        component.monthTable.addBudgetItem("Debt Repayments", month.debtRepayments.name, month.debtRepayments.amount);
+        component.monthTable.addBudgetItem("Investment Outflows", month.investmentOutflows.name, month.investmentOutflows.amount);
+        component.monthTable.addBudgetItem("Net Income Target", month.netIncomeTarget.name, month.netIncomeTarget.amount);
+        component.monthTable.addBudgetItem("Opening Balance", month.openingBalance.name, month.openingBalance.amount);
+        component.monthTable.addBudgetItem("Opening Surplus", month.openingSurplus.name, month.openingSurplus.amount);
+        component.monthTable.addBudgetItem("Closing Surplus", month.closingSurplus.name, month.closingSurplus.amount);
+        component.monthTable.addBudgetItem("Closing Balance Target", month.closingBalanceTarget.name, month.closingBalanceTarget.amount);
+        component.monthTable.addBudgetItem("Estimated Closing Balance", month.estimatedClosingBalance.name, month.estimatedClosingBalance.amount);
+        component.monthTable.addBudgetItem("Closing Balance", month.closingBalance.name, month.closingBalance.amount);
+
+        component.monthTable.setState({
+            isClosed: true
         });
     }
 }
@@ -106,8 +117,10 @@ class MonthTable extends React.Component {
     constructor(props) {
         super(props);
         this.addBudgetItem = this.addBudgetItem.bind(this);
+
         this.state = {
-            budgetItems: this.props.budgetItems
+            budgetItems: [],
+            isClosed: false
         }
 
         this.addBudgetItem = this.addBudgetItem.bind(this);
@@ -131,6 +144,10 @@ class MonthTable extends React.Component {
                                     )}                
                         </tbody>
                     </table>
+                    <label>
+                        Close Month
+                        <input type="checkbox" name="isClosed" checked={this.state.isClosed}/>
+                    </label>
                     <button onClick={this.addBudgetItemButtonHandler}>Add BudgetItem</button>
                 </div>
                 );

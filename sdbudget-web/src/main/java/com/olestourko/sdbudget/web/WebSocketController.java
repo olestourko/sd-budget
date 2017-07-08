@@ -36,6 +36,7 @@ public class WebSocketController {
         month.getRevenues().add(new BudgetItem("Salary 1", new BigDecimal(2000.00)));
         month.getRevenues().add(new BudgetItem("Salary 2", new BigDecimal(2000.00)));
         month.getExpenses().add(new BudgetItem("Rent", new BigDecimal(800.00)));
+        month.setIsClosed(true);
         return month;
     }
 
