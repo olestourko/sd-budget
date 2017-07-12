@@ -3,12 +3,28 @@
 import React from 'react';
 import {render} from 'react-dom';
 
+function updateBudgetItem(id, name, amount) {
+    context.stompClient.send("/app/update-budget-item", {}, JSON.stringify({
+        id: id,
+        name: name,
+        amount: amount
+    }));
+}
+
+function removeBudgetItem(id) {
+    context.stompClient.send("/app/remove-budget-item", {}, JSON.stringify({
+        id: id
+    }));
+}
+
 class App extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {};
 
         this.onResponse = this.onResponse.bind(this);
+        this.onConnect = this.onConnect.bind(this);
+        this.onAddBudgetItem = this.onAddBudgetItem.bind(this);
     }
 
     render() {
@@ -16,9 +32,11 @@ class App extends React.Component {
                 <div>
                     <MonthTable ref = {(ref) => {
                             this.monthTable = ref
-                                }}/>
+                                }}
+                                onAddBudgetItem = {this.onAddBudgetItem}
+                                />
                     <hr/>
-                    <WebSocketControls onResponse={this.onResponse}/>
+                    <WebSocketControls onResponse={this.onResponse} onConnect={this.onConnect}/>
                 </div>
                     );
     }
@@ -51,6 +69,16 @@ class App extends React.Component {
             isClosed: true
         });
     }
+
+    onConnect(stompClient) {
+        this.setState({
+            stompClient: stompClient
+        });
+    }
+
+    onAddBudgetItem(budgetItem) {
+        this.state.stompClient.send("/app/add-budget-item", {}, JSON.stringify(budgetItem));
+    }
 }
 
 class WebSocketControls extends React.Component {
@@ -72,6 +100,9 @@ class WebSocketControls extends React.Component {
         var component = this;
         state.stompClient = Stomp.over(socket);
         state.stompClient.connect({}, function (frame) {
+            if (component.props.onConnect != undefined) {
+                component.props.onConnect(state.stompClient);
+            }
             state.stompClient.subscribe('/topic/example', function (response) {
                 var nextState = state;
                 nextState.responses.push(response.body);
@@ -81,7 +112,6 @@ class WebSocketControls extends React.Component {
                 if (component.props.onResponse != undefined) {
                     component.props.onResponse(response);
                 }
-//            showResponse(JSON.parse(response.body).content);
             });
             state.stompClient.send("/app/get-month", {}, JSON.stringify({}));
         });
@@ -164,7 +194,16 @@ class MonthTable extends React.Component {
     }
 
     addBudgetItemButtonHandler() {
-        this.addBudgetItem("", "", 0.00);
+        this.addBudgetItem("Revenue", "New Item", 0.00);
+
+        if (this.props.onAddBudgetItem != undefined) {
+            this.props.onAddBudgetItem({
+                month: 0,
+                type: "Revenue",
+                name: "New Item",
+                amount: 0.00
+            })
+        }
     }
 }
 
@@ -195,31 +234,3 @@ class MonthTableEntry extends React.Component {
 }
 
 render(<App/>, document.getElementById('app'));
-
-
-/*
- * Month: int
- * Type: "revenue", "expense", "adjustment"
- */
-function addBugetItem(month, name, amount, type) {
-    stompClient.send("/app/add-budget-item", {}, JSON.stringify({
-        month: month,
-        name: name,
-        amount: amount,
-        type: type
-    }));
-}
-
-function updateBudgetItem(id, name, amount) {
-    stompClient.send("/app/update-budget-item", {}, JSON.stringify({
-        id: id,
-        name: name,
-        amount: amount
-    }));
-}
-
-function removeBudgetItem(id) {
-    stompClient.send("/app/remove-budget-item", {}, JSON.stringify({
-        id: id
-    }));
-}

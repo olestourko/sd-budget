@@ -10,7 +10,6 @@ import com.olestourko.sdbudget.web.websocket.RemoveBudgetItemResponse;
 import com.olestourko.sdbudget.web.websocket.Response;
 import com.olestourko.sdbudget.web.websocket.UpdateBudgetItemMessage;
 import com.olestourko.sdbudget.web.websocket.UpdateBudgetItemResponse;
-import java.math.BigDecimal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -25,7 +24,7 @@ public class WebSocketController {
 
     @Autowired
     private MonthRepository monthRepository;
-    
+
     @MessageMapping("/example")
     @SendTo("/topic/example")
     public ExampleWebSocketResponse greeting(ExampleWebSocketMessage message) throws Exception {
@@ -39,8 +38,23 @@ public class WebSocketController {
     }
 
     @MessageMapping("/add-budget-item")
-    @SendTo("/topic/example")
+    @SendTo("/topic/added-budget-item")
     public AddBudgetItemResponse addBudgetItem(AddBudgetItemMessage message) throws Exception {
+        BudgetItem budgetItem = new BudgetItem();
+        budgetItem.setName(message.getName());
+        budgetItem.setAmount(message.getAmount());
+        switch (message.getType()) {
+            case "Revenue":
+                monthRepository.getFirst().getRevenues().add(budgetItem);
+                break;
+            case "Expense":
+                monthRepository.getFirst().getExpenses().add(budgetItem);
+                break;
+            case "Adjustment":
+                monthRepository.getFirst().getAdjustments().add(budgetItem);
+                break;
+        }
+
         return new AddBudgetItemResponse(Response.Status.SUCCESS, 0);
     }
 
