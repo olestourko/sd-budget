@@ -22,8 +22,8 @@ class App extends React.Component {
         super(props);
         this.state = {};
 
-        this.onResponse = this.onResponse.bind(this);
-        this.onConnect = this.onConnect.bind(this);
+        this.onConnected = this.onConnected.bind(this);
+        this.onDisconnected = this.onDisconnected.bind(this);
         this.onAddBudgetItem = this.onAddBudgetItem.bind(this);
     }
 
@@ -36,44 +36,48 @@ class App extends React.Component {
                                 onAddBudgetItem = {this.onAddBudgetItem}
                                 />
                     <hr/>
-                    <WebSocketControls onResponse={this.onResponse} onConnect={this.onConnect}/>
+                    <WebSocketControls onConnected={this.onConnected} onDisconnected={this.onDisconnected}/>
                 </div>
                     );
     }
 
-    onResponse(response) {
-        // TODO
-        // Update BudgetItem list appropriately
-        var month = JSON.parse(response.body);
+    onConnected(stompClient) {
         var component = this;
-        month.revenues.forEach(function (v, i) {
-            component.monthTable.addBudgetItem("Revenue", v.name, v.amount);
-        });
-        month.expenses.forEach(function (v, i) {
-            component.monthTable.addBudgetItem("Expense", v.name, v.amount);
-        });
-        month.adjustments.forEach(function (v, i) {
-            component.monthTable.addBudgetItem("Adjustment", v.name, v.amount);
-        });
-        component.monthTable.addBudgetItem("Debt Repayments", month.debtRepayments.name, month.debtRepayments.amount);
-        component.monthTable.addBudgetItem("Investment Outflows", month.investmentOutflows.name, month.investmentOutflows.amount);
-        component.monthTable.addBudgetItem("Net Income Target", month.netIncomeTarget.name, month.netIncomeTarget.amount);
-        component.monthTable.addBudgetItem("Opening Balance", month.openingBalance.name, month.openingBalance.amount);
-        component.monthTable.addBudgetItem("Opening Surplus", month.openingSurplus.name, month.openingSurplus.amount);
-        component.monthTable.addBudgetItem("Closing Surplus", month.closingSurplus.name, month.closingSurplus.amount);
-        component.monthTable.addBudgetItem("Closing Balance Target", month.closingBalanceTarget.name, month.closingBalanceTarget.amount);
-        component.monthTable.addBudgetItem("Estimated Closing Balance", month.estimatedClosingBalance.name, month.estimatedClosingBalance.amount);
-        component.monthTable.addBudgetItem("Closing Balance", month.closingBalance.name, month.closingBalance.amount);
 
-        component.monthTable.setState({
-            isClosed: true
-        });
-    }
-
-    onConnect(stompClient) {
         this.setState({
             stompClient: stompClient
         });
+        stompClient.subscribe('/topic/get-month', function (response) {
+            var month = JSON.parse(response.body);
+            month.revenues.forEach(function (v, i) {
+                component.monthTable.addBudgetItem("Revenue", v.name, v.amount);
+            });
+            month.expenses.forEach(function (v, i) {
+                component.monthTable.addBudgetItem("Expense", v.name, v.amount);
+            });
+            month.adjustments.forEach(function (v, i) {
+                component.monthTable.addBudgetItem("Adjustment", v.name, v.amount);
+            });
+            component.monthTable.addBudgetItem("Debt Repayments", month.debtRepayments.name, month.debtRepayments.amount);
+            component.monthTable.addBudgetItem("Investment Outflows", month.investmentOutflows.name, month.investmentOutflows.amount);
+            component.monthTable.addBudgetItem("Net Income Target", month.netIncomeTarget.name, month.netIncomeTarget.amount);
+            component.monthTable.addBudgetItem("Opening Balance", month.openingBalance.name, month.openingBalance.amount);
+            component.monthTable.addBudgetItem("Opening Surplus", month.openingSurplus.name, month.openingSurplus.amount);
+            component.monthTable.addBudgetItem("Closing Surplus", month.closingSurplus.name, month.closingSurplus.amount);
+            component.monthTable.addBudgetItem("Closing Balance Target", month.closingBalanceTarget.name, month.closingBalanceTarget.amount);
+            component.monthTable.addBudgetItem("Estimated Closing Balance", month.estimatedClosingBalance.name, month.estimatedClosingBalance.amount);
+            component.monthTable.addBudgetItem("Closing Balance", month.closingBalance.name, month.closingBalance.amount);
+
+            component.monthTable.setState({
+                isClosed: true
+            });
+        });
+
+        stompClient.send("/app/get-month", {}, JSON.stringify({}));
+    }
+
+    onDisconnected() {
+        this.monthTable.clear();
     }
 
     onAddBudgetItem(budgetItem) {
@@ -100,20 +104,9 @@ class WebSocketControls extends React.Component {
         var component = this;
         state.stompClient = Stomp.over(socket);
         state.stompClient.connect({}, function (frame) {
-            if (component.props.onConnect != undefined) {
-                component.props.onConnect(state.stompClient);
+            if (component.props.onConnected != undefined) {
+                component.props.onConnected(state.stompClient);
             }
-            state.stompClient.subscribe('/topic/get-month', function (response) {
-                var nextState = state;
-                nextState.responses.push(response.body);
-                component.setState(nextState);
-
-                // Propogate the event
-                if (component.props.onResponse != undefined) {
-                    component.props.onResponse(response);
-                }
-            });
-            state.stompClient.send("/app/get-month", {}, JSON.stringify({}));
         });
     }
 
@@ -121,6 +114,10 @@ class WebSocketControls extends React.Component {
         var state = this.state;
         if (state.stompClient != null) {
             state.stompClient.disconnect();
+
+            if (this.props.onDisconnected != undefined) {
+                this.props.onDisconnected();
+            }
         }
     }
 
@@ -155,6 +152,7 @@ class MonthTable extends React.Component {
 
         this.addBudgetItem = this.addBudgetItem.bind(this);
         this.addBudgetItemButtonHandler = this.addBudgetItemButtonHandler.bind(this);
+        this.clear = this.clear.bind(this);
     }
 
     render() {
@@ -204,6 +202,12 @@ class MonthTable extends React.Component {
                 amount: 0.00
             })
         }
+    }
+
+    clear() {
+        var nextState = this.state;
+        nextState.budgetItems = [];
+        this.setState(nextState);
     }
 }
 
