@@ -25,20 +25,14 @@ public class WebSocketController {
     @Autowired
     private MonthRepository monthRepository;
 
-    @MessageMapping("/example")
-    @SendTo("/topic/example")
-    public ExampleWebSocketResponse greeting(ExampleWebSocketMessage message) throws Exception {
-        return new ExampleWebSocketResponse("(Response) " + message.getContent());
-    }
-
     @MessageMapping("/get-month")
-    @SendTo("/topic/example")
+    @SendTo("/topic/get-month")
     public Month getMonth(String message) throws Exception {
         return monthRepository.getFirst();
     }
 
     @MessageMapping("/add-budget-item")
-    @SendTo("/topic/added-budget-item")
+    @SendTo("/topic/add-budget-item")
     public AddBudgetItemResponse addBudgetItem(AddBudgetItemMessage message) throws Exception {
         BudgetItem budgetItem = new BudgetItem();
         budgetItem.setName(message.getName());
@@ -59,13 +53,13 @@ public class WebSocketController {
     }
 
     @MessageMapping("/update-budget-item")
-    @SendTo("/topic/example")
+    @SendTo("/topic/update-budget-item")
     public UpdateBudgetItemResponse updateBudgetItem(UpdateBudgetItemMessage message) throws Exception {
         return new UpdateBudgetItemResponse(Response.Status.SUCCESS);
     }
 
     @MessageMapping("/remove-budget-item")
-    @SendTo("/topic/example")
+    @SendTo("/topic/remove-budget-item")
     public RemoveBudgetItemResponse removeBudgetItem(RemoveBudgetItemMessage message) throws Exception {
         return new RemoveBudgetItemResponse(Response.Status.SUCCESS);
     }

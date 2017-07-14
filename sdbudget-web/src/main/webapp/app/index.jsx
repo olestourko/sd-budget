@@ -103,7 +103,7 @@ class WebSocketControls extends React.Component {
             if (component.props.onConnect != undefined) {
                 component.props.onConnect(state.stompClient);
             }
-            state.stompClient.subscribe('/topic/example', function (response) {
+            state.stompClient.subscribe('/topic/get-month', function (response) {
                 var nextState = state;
                 nextState.responses.push(response.body);
                 component.setState(nextState);
@@ -212,7 +212,7 @@ class MonthTableEntry extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: props
+            budgetItem: props
         }
 
         this.updateState = this.updateState.bind(this);
@@ -225,9 +225,9 @@ class MonthTableEntry extends React.Component {
     render() {
         return (
                 <tr>
-                    <td><input type="text" value={this.state.data.type} onChange={this.updateState}/></td>
-                    <td><input type="text" value={this.state.data.name} onChange={this.updateState}/></td>
-                    <td><input type="text" value={this.state.data.amount} onChange={this.updateState}/></td>
+                    <td><input type="text" value={this.state.budgetItem.type} onChange={this.updateState}/></td>
+                    <td><input type="text" value={this.state.budgetItem.name} onChange={this.updateState}/></td>
+                    <td><input type="text" value={this.state.budgetItem.amount} onChange={this.updateState}/></td>
                 </tr>
                 )
     }
