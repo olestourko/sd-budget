@@ -10,4 +10,5 @@
 /sdbudget-web/build/
 /sdbudget-web/private/
 /sdbudget-web/.nb-gradle-properties
-.gitignore.swp
+*.swp
+/gh-pages/
