@@ -11,14 +11,18 @@ sass:
 
 primary_navigation:
         - title: SDBudget
-          url: index.html
-        - title: FAQ
-          url: faq.html
+          url: /index.html#about
         - title: Download
-          url: download.html
+          url: /index.html#download
+        - title: FAQ
+          url: /index.html#faq
 
 secondary_navigation:
         - title: Documentation
-          url: documentation.html
+          url: /documentation.html
         - title: Changelog
-          url: changelog.html
+          url: /changelog.html
+
+download:
+        filepath: /assets/download/sdbudget-0.3.0.zip
+        version: 0.3.0

@@ -12,7 +12,7 @@ description: Budgeting for investors and FIRE-minded individuals
         <img class="screenshot" src="{{ '/assets/images/screenshot.png' | absolute_url }}"/>
         <img id="charting" class="{{ '/assets/images/charting.png' | absolute_url }}"/>
         <img class="screenshot mobile" src="{{ '/assets/images/screenshot-mobile.png' | absolute_url }}"/>
-        <a id="download-cta" class="button" href="">Download Now</a>
+        <a id="download-cta" class="button" href="{{ site.download.filepath | absolute_url }}">Download Now</a>
 
         <h3>Pragmatic Budgeting</h3>
         <p>SDBudget is a low maintenance budgeting application. It tracks a rolling surplus: the cash left over after expenses and investment spending.</p>
@@ -40,7 +40,7 @@ description: Budgeting for investors and FIRE-minded individuals
     <div class="container">
         <h3>Download</h3>
         <p>SDBudget is free to use and is currently in beta.<br>The author does not take legal responsibility for any lost data or related damages.</p>
-        <a class="button" href="">Download <span class="version">(VERSION)</span></a>
+        <a class="button" href="{{ site.download.filepath | absolute_url }}">Download <span class="version">({{site.download.version}})</span></a>
         <p>*Supported Platforms: Windows, Linux, OS X<br>
             *Requires <a href="http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html">JRE8</a> (Java).
         </p>

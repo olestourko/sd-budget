@@ -1,0 +1,23 @@
+{
+  "nodeVersion": "v8.9.4",
+  "modulesFolders": [
+    "assets/yarn-packages"
+  ],
+  "flags": [],
+  "linkedModules": [],
+  "topLevelPatterns": [
+    "jquery@^3.3.1",
+    "scrollmagic@^2.0.5",
+    "skeleton-css@^2.0.4",
+    "slicknav@^1.0.8"
+  ],
+  "lockfileEntries": {
+    "jquery@>=1.7": "https://registry.yarnpkg.com/jquery/-/jquery-3.3.1.tgz#958ce29e81c9790f31be7792df5d4d95fc57fbca",
+    "jquery@^3.3.1": "https://registry.yarnpkg.com/jquery/-/jquery-3.3.1.tgz#958ce29e81c9790f31be7792df5d4d95fc57fbca",
+    "scrollmagic@^2.0.5": "https://registry.yarnpkg.com/scrollmagic/-/scrollmagic-2.0.5.tgz#ad7597341c76fb1f4a5bec12968a09223bd08dd9",
+    "skeleton-css@^2.0.4": "https://registry.yarnpkg.com/skeleton-css/-/skeleton-css-2.0.4.tgz#d70db2f01fe8209ac79f2f4eee83fae8a40591b8",
+    "slicknav@^1.0.8": "https://registry.yarnpkg.com/slicknav/-/slicknav-1.0.8.tgz#1a363a77e9c882748246ae6f51d188d1cfc731d0"
+  },
+  "files": [],
+  "artifacts": {}
+}
