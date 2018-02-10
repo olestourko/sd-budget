@@ -1,0 +1,62 @@
+---
+layout: default
+title: Changelog
+description: Changelog
+---
+
+<section id="changelog">
+    <div class="container">
+        <h3>Changelog</h3>
+        <h4>0.1.0</h4>
+        <div class="date">05/27/2017</div>
+        <ul>
+            <li>Initial release</li>
+        </ul>
+        <h4>0.1.2</h4>
+        <div class="date">05/31/2017</div>
+        <ul>
+            <li>Add "Delete" button by items in Scratchpad</li>
+            <li>Edit cell when pressing "Enter"</li>
+        </ul>
+        <h4>0.1.5b3</h4>
+        <div class="date">06/06/2017</div>
+        <ul>
+            <li>Pass alternative DB name from config file</li>
+            <li>Ability to set currency symbol (tied to config)</li>
+            <li>(Scratchpad) On delete, select cell immediately above</li>
+            <li><i>Bug:</i> (Scratchpad) When completing edit, item is deselected</li>
+            <li><i>Bug:</i> Exception thrown when selecting closing table the first time</li>
+            <li><i>Bug:</i> Scratchpad/Budget button label not always updated</li>
+        </ul>
+        <h4>0.2.0</h4>
+        <div class="date">06/14/2017</div>
+        <ul>
+            <li>Command-based system for going forward/backward in history</li>
+            <li>Prompt for save on close only when changes have been made</li>
+            <li><i>Bug:</i> Fixed migrations when using non-default DB pathfile</li>
+        </ul>
+        <h4>0.2.1b4</h4>
+        <div class="date">06/18/2017</div>
+        <ul>
+            <li>Surplus charting</li>
+            <li><i>Bug:</i> Scratchpad: "Enter" key should add new Adjustment</li>
+            <li><i>Bug:</i> Fix overlapping scrollbars</li>
+            <li><i>Bug:</i> Don’t prompt for save on close if the user already saved and no additional changes have been made</li>
+            <li><i>Bug:</i> Disable undo/redo buttons when applicable</li>
+        </ul>
+        <h4>0.2.2b1</h4>
+        <div class="date">06/21/2017</div>
+        <ul>
+            <li>Check for updates on startup (don’t download and install, just check) </li>
+            <li><i>Bug:</i> On startup, the "Previous Month" button will always be enabled regardless of if there really is a previous month</li>
+        </ul>
+        <h4>0.3.0</h4>
+        <div class="date">06/27/2017</div>
+        <ul>
+            <li>Implemented N-month view to replace 3-month view</li>
+            <li>Styled dialogue windows</li>
+            <li><i>Bug:</i> Fix and unit test version checking service (eg: 0.2.1b2 isn't treated as higher than 0.2.1b1)</li>
+            <li><i>Bug:</i> Save button doesn’t disable (when clicked)</li>
+        </ul>
+    </div>
+</section>

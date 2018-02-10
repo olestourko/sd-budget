@@ -1,0 +1,188 @@
+---
+layout: default
+title: Low Maintenance Budgeting
+description: Budgeting for investors and FIRE-minded individuals
+---
+
+<section id="about">
+    <div class="container">
+        <img class="icon" title="Temporary Logo - By Kokota" src="{{ '/assets/images/icon_64x64.png' | absolute_url }}">
+        <h2>SDBudget</h2>
+        <h3 class="main-subtitle">Low Maintenance Budgeting</h3>
+        <img class="screenshot" src="{{ '/assets/images/screenshot.png' | absolute_url }}"/>
+        <img id="charting" class="{{ '/assets/images/charting.png' | absolute_url }}"/>
+        <img class="screenshot mobile" src="{{ '/assets/images/screenshot-mobile.png' | absolute_url }}"/>
+        <a id="download-cta" class="button" href="">Download Now</a>
+
+        <h3>Pragmatic Budgeting</h3>
+        <p>SDBudget is a low maintenance budgeting application. It tracks a rolling surplus: the cash left over after expenses and investment spending.</p>
+        <p>It assumes that you are already in control of your finances and is not meant to replace other (excellent) budgeting software such as YNAB or Mint, which focus on getting you through the month and building a habit of saving.</p>
+        <p>Instead, SDBudget is intended to be a tool for when you are no longer living paycheck to paycheck. It may be particularily useful for investors and FIRE-minded users.</p>
+        <br>
+        <div class="month-steps">
+            <div>
+                <h3>Simple Workflow</h3>
+                <h4>1. Start of the month: <span>Prepare your budget</span></h4>
+                <p>Create your budget by estimating your revenues and expenses. Decide on how much you want to save this month, how much debt you want to repay, and how much you want to invest.</p>
+                <h4>2. During the month: <span>Enter adjustments</span></h4>
+                <p>Record transactions which aren't covered in your budget categories. The more transactions you record, the more accurate the end-of-month estimate is. However, <strong>you don't have to record everything.</strong> Its entirely up to you how accurate you want to be.</p>
+                <h4>3. End of the month: <span>Close the month</span></h4>
+                <p>Mark the month as closed and enter the closing balance from your bank account.</p>
+            </div>
+            <img class="adjustments" src="{{ '/assets/images/scratchpad.png' | absolute_url }}" style="display: table-cell"/>
+        </div>
+    </div>
+    <div class="seperator container">
+        <hr>
+    </div>
+</section>
+<section id="download">
+    <div class="container">
+        <h3>Download</h3>
+        <p>SDBudget is free to use and is currently in beta.<br>The author does not take legal responsibility for any lost data or related damages.</p>
+        <a class="button" href="">Download <span class="version">(VERSION)</span></a>
+        <p>*Supported Platforms: Windows, Linux, OS X<br>
+            *Requires <a href="http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html">JRE8</a> (Java).
+        </p>
+        <br>
+        <h4>Development Status</h4>
+        <p>SDBudget is in beta; core features are implemented but some bugs are to be expected.
+            Additional features are planned out and will be added with future releases.</p>
+
+        <p>For bugs, feature requests, or suggestions, please contact <a href="mailto:olestourko@gmail.com">olestourko@gmail.com</a>.</p>
+    </div>
+    <div class="seperator container">
+        <hr>
+    </div>
+</section>
+<section id="faq">
+    <div class="container">
+        <h3>FAQ</h3>
+        <h4>What about other budgeting software?</h4>
+        <p>Other applications such as YNAB and Mint are excellent. However, they aren't necessarily the best tool for every job.
+            If you are already comfortable with your finances and don't want to categorize everything, SDBudget may be better for you.</p>
+        <p><strong>For example:</strong><br>
+            You are financially stable and have a financial plan.<br>
+            You have a grasp of what your monthly revenue and expenses are.<br>
+            Maybe you're an investor and make consistent contributions every month.<br>
+        </p>
+        <p>You don't want to spend time cataloging every transaction or reconciling your bank account, but still want to keep your financial plan on track while knowing how much "fun" money you can spend.</p>
+        <p>That's what SDBudget is for. Set up your budget and give it the closing balance of your account every month. That's it.</p>
+
+        <h4>Couldn't I just use a spreadsheet?</h4>
+        <p>Yes, and building a spreadsheet can actually be a fun exercise.
+            It may not have the friendliest presentation though, and doing something like closing out a month can be inconvenient.
+            I first decided to develop SDBudget to replace my own spreadsheets for that very reason.
+        </p>
+
+        <h4>Do I need to pay to use it?</h4>
+        <p><strong>No.</strong> SDBudget is free to use. There may eventually be optional paid features (for example, to pay for servers that handle data syncing), but there will always be a free version.</p>
+
+        <h4>Does it require an internet connection?</h4>
+        <p><strong>No.</strong> You shouldn't be forced to subscribe or otherwise use the Cloud for something like this.
+            Cloud storage and syncing may come later if there is interest, but it will be optional.</p>
+    </div>
+</section>
+<script>
+    jQuery(function () {
+        var id = window.location.hash.substr(1);
+        if (id) {
+            id = "#" + id;
+            if (jQuery(id).length) {
+                scrollTo(id);
+
+                jQuery('.nav .primary a').removeClass('active');
+                jQuery("nav .nav .primary a").each(function (key, value) {
+                    var href = value.href;
+                    var regExp = new RegExp("#.*$");
+                    var elementId = regExp.exec(href)[0];
+                    var linkElement = jQuery(value);
+                    if (elementId == id) {
+                        linkElement.addClass("active");
+                    }
+                });
+            }
+        }
+
+        jQuery('nav .nav .primary a').on('click', function (e) {
+            e.preventDefault();
+            var regExp = new RegExp("#.*$");
+            var target = regExp.exec(jQuery(this).attr('href'))[0];
+            scrollTo(target);
+        });
+
+        function scrollTo(target) {
+            var scrollFactor = 0.75;
+            var currentScroll = jQuery(document).scrollTop();
+            var targetScroll = jQuery(target).offset().top - 50;
+            var duration = Math.max(Math.abs(targetScroll - currentScroll) * scrollFactor, 800);
+            jQuery('html, body').animate({
+                scrollTop: targetScroll,
+            }, {
+                duration: duration,
+                easing: 'swing'
+            });
+        }
+    });
+</script>
+<script>
+    jQuery(function () {
+        var controller = new ScrollMagic.Controller({
+            addIndicators: false
+        });
+
+        var viewedSections = [];
+        jQuery("nav .nav .primary a").each(function (key, value) {
+            var href = value.href;
+            var regExp = new RegExp("#.*$");
+            var elementId = regExp.exec(href)[0];
+            var element = jQuery(elementId);
+            var linkElement = jQuery(value);
+
+            new ScrollMagic.Scene({
+                triggerElement: elementId,
+                triggerHook: 0.25,
+                duration: function () {
+                    return element.outerHeight();
+                }
+            }).on("enter", function () {
+                jQuery('.nav .primary a').removeClass('active');
+                linkElement.addClass("active");
+
+                // Fire GA event, if it hasn't been fired yet
+                if (viewedSections.indexOf(elementId) == -1) {
+                    viewedSections.push(elementId);
+                    ga('send', {
+                        hitType: 'event',
+                        eventCategory: 'Navigation',
+                        eventAction: 'scrolled',
+                        eventLabel: elementId
+                    })
+                }
+            }).on("leave", function () {
+                linkElement.removeClass("active");
+            }).addTo(controller);
+        });
+    });
+</script>
+<script>
+    jQuery(function () {
+        jQuery('#download-cta').on('click', function () {
+            ga('send', {
+                hitType: 'event',
+                eventCategory: 'Navigation',
+                eventAction: 'click',
+                eventLabel: 'Download CTA'
+            })
+        })
+
+        jQuery('#download .button').on('click', function () {
+            ga('send', {
+                hitType: 'event',
+                eventCategory: 'Navigation',
+                eventAction: 'click',
+                eventLabel: 'Download Button'
+            })
+        })
+    })
+</script>

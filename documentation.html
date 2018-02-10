@@ -1,0 +1,137 @@
+---
+layout: default
+title: Documentation
+description: Monthly workflow
+---
+
+<section id="documentation">
+    <div class="container">
+        <h3>Documentation</h3>
+        <div class="philosophy">
+            <p><span class="wrapper">SDBudget keeps track of a rolling surplus: your "fun" money.<span class="item" data-item="0">[0]</span></span>
+                <br>
+                It assumes that you already have a general idea of what your monthly budget looks like.
+        </div>
+        <div class="diagram">
+            <div class="inner">
+                <img class="screenshot" src="{{ '/assets/images/screenshot-mobile.png' | absolute_url }}"/>
+                <div class="points">
+                    <div class="point" style="top: 470px; left: -10px;" data-item="0">0</div>
+                    <div class="point" style="top: 125px; left: -8px;" data-item="1.1">1.1</div>
+                    <div class="point" style="top: 321px; left: 6px;" data-item="1.2">1.2</div>
+                    <div class="point" style="top: 269px; left: 6px;" data-item="1.3">1.3</div>
+                    <div class="point" style="top: 295px; left: 6px;" data-item="1.4">1.4</div>
+                    <div class="point" style="top: 244px; left: -8px;" data-item="2.1">2.1</div>
+                    <div class="point" style="top: 563px; left: 267px;" data-item="2.2">2.2</div>
+                    <div class="point" style="top: 532px; left: -16px;" data-item="3.1">3.1</div>
+                    <div class="point" style="top: 499px; left: -10px;" data-item="3.2">3.2</div>
+                    <div class="point" style="top: 347px; left: 6px;" data-item="4.1">4.1</div>
+                    <div class="point" style="top: 373px; left: 6px;" data-item="4.2">4.2</div>
+                </div>
+            </div>
+        </div>
+        <div class="workflow">
+            <h3>Regular Workflow</h3>
+            <h4>1. Start of the month: <span>Prepare your budget</span></h4>
+            <p>Create your budget by <span class="wrapper">estimating your revenues and expenses. <span class="item" data-item="1.1">[1.1]</span></span>
+                Decide on <span class="wrapper">how much you want to save this month, <span class="item" data-item="1.2">[1.2]</span></span> 
+                <span class="wrapper">how much debt you want to repay, <span class="item" data-item="1.3">[1.3]</span></span>
+                and <span class="wrapper">how much you want to invest. <span class="item" data-item="1.4">[1.4]</span></span>
+            </p>
+
+            <h4>2. During the month: <span>Enter adjustments</span></h4>
+            <p><span class="wrapper">Record transactions which aren't covered in your budget categories. <span class="item" data-item="2.1">[2.1]</span> <span class="item" data-item="2.2">[2.2]</span></span>
+                The more transactions you record, the more accurate the
+                end-of-month estimate is. However, <strong>you don't have to
+                    record everything.</strong> Its entirely up to you how
+                accurate you want to be.
+            </p>
+
+            <h4>3. End of the month: <span>Close the month</span></h4>
+            <p><span class="wrapper">Mark the month as closed <span class="item" data-item="3.1">[3.1]</span></span>
+                and <span class="wrapper">enter the closing balance from your bank account. <span class="item" data-item="3.2">[3.2]</span></span>
+            </p>
+        </div>
+        <div class="first-month">
+            <h3>Your First Month</h3>
+            <p>At the start of your first month using SDBudget, you need to <span class="wrapper">set
+                    your opening account balance. <span class="item" data-item="4.1">[4.1]</span></span>
+            </p>
+            <p>
+                Optionally, you can also <span class="wrapper">set your opening
+                    surplus. <span class="item" data-item="4.2">[4.2]</span></span>
+                This may be useful if you are making the transition from a similar budgeting system.
+            </p>
+        </div>
+    </div>
+</section>
+<script>
+    var Point = function (numberEl, descriptionEl) {
+        this.numberEl = numberEl;
+        this.descriptionEl = descriptionEl;
+        this.isSelected = false;
+
+        var point = this;
+
+        this.numberEl.on('mouseenter', function () {
+            point.setIsActive(true);
+        });
+
+        this.numberEl.on('mouseleave', function () {
+            point.setIsActive(false);
+        })
+
+        this.descriptionEl.on('mouseenter', function () {
+            point.setIsActive(true);
+        });
+
+        this.descriptionEl.on('mouseleave', function () {
+            point.setIsActive(false);
+        })
+
+//        this.numberEl.on('click', function () {
+//            point.isSelected = !point.isSelected;
+//            point.setIsActive(point.isSelected);
+//
+//            if (typeof point.onClick != "undefined") {
+//                point.onClick();
+//            }
+//        })
+    };
+    Point.prototype.setIsActive = function (value) {
+        if (value) {
+            this.numberEl.addClass('active');
+            this.descriptionEl.addClass('active');
+        } else {
+            if (!this.isSelected) {
+                this.numberEl.removeClass('active');
+                this.descriptionEl.removeClass('active');
+            }
+        }
+    };
+    Point.prototype.setIsSelected = function (value) {
+        this.isSelected = value;
+    };
+    Point.prototype.onClick;
+
+    jQuery(function () {
+        var points = [];
+//        var pointClickCallback = function () {
+//            var clickedPoint = this;
+//            points.forEach(function (point) {
+//                if (point != clickedPoint) {
+//                    point.setIsSelected(false);
+//                    point.setIsActive(false);
+//                }
+//            });
+//        }
+
+        jQuery('.points .point').each(function (key, numberEl) {
+            var itemNumber = numberEl.dataset.item;
+            var descriptionEl = jQuery('.item[data-item="' + itemNumber + '"]').parent()
+            var point = new Point(jQuery(numberEl), descriptionEl);
+//            point.onClick = pointClickCallback;
+            points.push(point);
+        })
+    });
+</script>

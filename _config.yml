@@ -1,0 +1,24 @@
+title: SDBudget
+# http://downtothewire.io/2015/08/15/configuring-jekyll-for-user-and-project-github-pages/
+baseurl: '/sd-budget'
+exclude: ['README.md']
+show_downloads: false
+github:
+        is_project_page: false
+        is_user_page: true
+sass:
+        sass_dir: _sass
+
+primary_navigation:
+        - title: SDBudget
+          url: index.html
+        - title: FAQ
+          url: faq.html
+        - title: Download
+          url: download.html
+
+secondary_navigation:
+        - title: Documentation
+          url: documentation.html
+        - title: Changelog
+          url: changelog.html

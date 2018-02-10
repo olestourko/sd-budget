@@ -1,0 +1,290 @@
+---
+---
+
+$base03:    #002b36;
+$base02:    #073642;
+$base01:    #586e75;
+$base00:    #657b83;
+$base0:     #839496;
+$base1:     #93a1a1;
+$base2:     #eee8d5;
+$base3:     #fdf6e3;
+$yellow:    #b58900;
+$orange:    #cb4b16;
+$red:       #dc322f;
+$magenta:   #d33682;
+$violet:    #6c71c4;
+$blue:      #268bd2;
+$cyan:      #2aa198;
+$green:     #859900;
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    background-color: #fff;
+    color: #657b83;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 100;
+    min-height: 100%;
+    margin: 0;
+    background-color: $base3;
+}
+
+html {
+    position: relative;
+    padding-bottom: 2em;
+}
+
+img {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+a {
+    color: $yellow;
+}
+
+li {
+    margin-bottom: 0.25rem;
+}
+
+header {
+    position: fixed;
+    z-index: 10;
+    width: 100%;
+    background-color: $base01;
+    padding: 0 20px;
+
+    nav {
+        ul {
+            float: left;
+            margin-bottom: 0;
+        }
+
+        li {
+            font-size: 14pt;
+            display: inline;
+            list-style-type: none;
+            margin-right: 1em;
+        }
+
+        a {
+            text-decoration: none;
+            color: $base1;
+
+            &:hover {
+                color: white;
+            }
+
+            &.active {
+                color: white;
+            }
+        }
+    }
+}
+
+.slicknav_menu {
+    display:none;
+    background-color: $base01;
+
+    .slicknav_btn {
+        margin: 0;
+        background-color: rgba(black, 0.5);
+
+        .slicknav_menu, .slicknav_menutxt {
+            text-shadow: none;
+        }
+    }
+}
+
+@media screen and (max-width: 35em) {
+    /* #menu is the original menu */
+    .nav {
+        display:none;
+    }
+
+    .slicknav_menu {
+        display:block;
+    }
+}
+
+button, .button, input[type="submit"] {
+    border: 1px solid $yellow;
+    color: $yellow;
+    border-radius: 0;
+
+    &:hover {
+        border: 1px solid $yellow;
+        color: $yellow;
+        background-color: rgba($yellow, 0.1);    
+    }
+
+    &.disabled {
+        opacity: 0.5;
+
+        &:hover {
+            background: none;
+            cursor: inherit;
+        }
+    }
+}
+
+input, input[type="password"], input[type="email"]  {
+    height: 38px;
+    border-radius: 0;
+    border: 1px solid $yellow;
+    background-color: $base2;
+    margin: 0;
+    padding: 0 4px;
+}
+
+hr {
+    margin: 3em 0;
+    border-top: 1px solid $base2;
+}
+
+h3 {
+    font-size: 3rem;
+}
+
+h4 {
+    font-size: 2rem;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    line-height: 2em;
+    background: $base2;
+}
+
+.content {
+    padding-top: 25px;
+
+    section {
+        overflow: hidden; // Fixes <hr> margin bleed
+
+        &:last-of-type {
+            margin-bottom: 3em;
+        }
+    }
+
+    #about {
+        padding-top: 2em;
+
+        .icon {
+            float: left;
+            margin-top: 10px;
+            margin-right: 10px;
+            display: none;
+        }
+
+        h2 {
+            margin-bottom: 0;
+        }
+        .main-subtitle {
+            font-size: 14pt;
+            line-height: 1em;
+        }
+        .screenshot {
+            display: block;
+            box-shadow: 4px 4px 25px rgba(black, 0.2);
+            border-radius: 7px 7px 0 0;
+            margin-bottom: 40px;
+
+            &.mobile {
+                display: none;
+            }
+        }
+        #charting {
+            position: absolute;
+            top: 160px;
+            left: 509px;
+            box-shadow: 4px 4px 25px rgba(black, 0.2);
+        }
+        #download-cta {
+            font-size: 14pt;
+            height: auto;
+            line-height: 3em;
+            margin-bottom: 2em;
+        }
+        .month-steps {
+            display: table;
+
+            div {
+                display: table-cell;
+                vertical-align: middle;
+                padding-right: 2em;
+
+                span {
+                    color: $yellow;
+                }
+            }
+        }
+    }
+
+    #download {
+        .button {
+            font-size: 14pt;
+            height: auto;
+            line-height: 3em;
+
+            .version {
+                text-transform: none;
+            }
+        }
+    }
+
+    #release {
+        .button {
+            font-size: 14pt;
+            height: auto;
+            line-height: 3em;
+        }        
+    }
+    #validate {
+        input {
+            float: left;
+            margin-right: 0.5em;
+        }
+    }
+
+    #faq {
+        min-height: 87vh;
+    }
+}
+
+@media (max-width: 1000px) {
+    .content {
+        #about {
+            .screenshot {
+                display: none;
+
+                &.mobile {
+                    display: block;
+                }
+            }
+
+
+            .month-steps {
+                display: block;
+
+                > div {
+                    display: block;
+                }
+            }
+
+            img {
+                max-width: 100%;
+            }
+        }
+    }
+}
+
+@import "_documentation";
+@import "_changelog";

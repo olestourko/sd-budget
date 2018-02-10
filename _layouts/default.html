@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="{{ site.lang | default: "en-US" }}">
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>SDBudget - {{ page.title }}</title>
+    <meta name="description" content="{{ page.description }}">
+    <link rel="icon" href="{{ '/assets/images/thumb.png' | absolute_url }}">
+
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ '/assets/css/styles.css' | absolute_url }}" type="text/css">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+  </head>
+
+<header>
+  <nav>
+      <ul class="nav">
+          {% for link in site.primary_navigation %}
+          <li class="primary"><a href="{{site.baseurl}}{{link.url}}" class="" rel="canonical">{{link.title}}</a></li>
+          {% endfor %}
+          {% for link in site.secondary_navigation %}
+          <li class="secondary"><a href="{{site.baseurl}}{{link.url}}" class="" rel="canonical">{{link.title}}</a></li>
+          {% endfor %}
+      </ul>
+  </nav>
+</header>
+<body>
+{{ content }}
+</body>
+</html>
